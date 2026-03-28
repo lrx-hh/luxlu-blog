@@ -8,12 +8,12 @@ comments: false
 
 <section class="about-luxlu-card">
 <h2>欢迎来到luxlu的小博客</h2>
-<p>这里会记录 luxlu 的比赛日常、学习笔记和一些碎碎念。</p>
+<p>什么都塞进去一点</p>
 </section>
 
 <section class="about-luxlu-card">
 <h3>留言框（公开）</h3>
-<p>无需登录，提交后会显示在下方（当前设备）。</p>
+<p>不需要登录就可以直接发欸</p>
 <form id="luxlu-public-form" class="luxlu-whisper-form">
 <label>你的昵称
 <input type="text" name="nickname" maxlength="30" placeholder="怎么称呼你" required>
@@ -42,4 +42,4 @@ comments: false
 <p id="luxlu-whisper-status" class="about-status"></p>
 </section>
 
-<script src="/js/about-page.js?v=20260329a"></script>
+<script src="/js/about-page.js?v=20260329b"></script>

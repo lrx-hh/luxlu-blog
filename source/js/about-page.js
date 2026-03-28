@@ -25,7 +25,7 @@
     if (!host) return;
     const list = getList();
     if (!list.length) {
-      host.innerHTML = '<li class="luxlu-public-empty">还没有留言，来做第一个吧。</li>';
+      host.innerHTML = "<li class=\"luxlu-public-empty\">\u4f60\u60f3\u505a\u7b2c\u4e00\u4e2a\u4eba\u5417^^<\/li>";
       return;
     }
 

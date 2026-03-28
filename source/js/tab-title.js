@@ -7,7 +7,7 @@
     "/archives/": "归档",
     "/tools/": "工具箱",
     "/music/": "音乐",
-    "/roadmap/": "训练计划",
+    "/roadmap/": "还没想好欸",
     "/categories/": "分类",
     "/tags/": "标签",
     "/about/": "关于",
