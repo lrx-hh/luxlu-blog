@@ -78,6 +78,6 @@ deploy:
   type: git
   repo: https://github.com/lrx-hh/luxlu-blog.git
   branch: gh-pages
-  message: "site update: {{ now('YYYY-MM-DD HH:mm:ss') }}"
+  message: "site update: {{ now('yyyy-MM-dd HH:mm:ss') }}"
   name: lrx-hh
   email: lrx-hh@users.noreply.github.com
