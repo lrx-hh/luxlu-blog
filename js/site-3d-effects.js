@@ -63,6 +63,7 @@
     initZipperIntro();
     initReveal3D();
     initHeadingDepth();
+    initGlobalParallaxBackground();
 
     if (fxMode === "lite") return;
 
@@ -94,9 +95,48 @@
       initNeonComets(8);
       initMagneticElements();
       initImageDepth();
-      initBackgroundGyro();
       initRightsideGyro();
     }
+  }
+
+  function initGlobalParallaxBackground() {
+    const bg = document.getElementById("web_bg");
+    if (!bg || window.__luxluBgParallaxBound) return;
+    window.__luxluBgParallaxBound = true;
+
+    let scrollRaf = 0;
+    let moveRaf = 0;
+
+    const updateScrollParallax = () => {
+      const y = window.scrollY || window.pageYOffset || 0;
+      // Scroll-based parallax: slower than content.
+      const shift = Math.max(-120, Math.min(120, y * -0.14));
+      document.documentElement.style.setProperty("--luxlu-bg-y", shift.toFixed(2) + "px");
+      scrollRaf = 0;
+    };
+
+    const onScroll = () => {
+      if (scrollRaf) return;
+      scrollRaf = requestAnimationFrame(updateScrollParallax);
+    };
+
+    const onMouseMove = (e) => {
+      if (moveRaf) cancelAnimationFrame(moveRaf);
+      moveRaf = requestAnimationFrame(() => {
+        const x = (e.clientX / window.innerWidth) * 100;
+        const y = (e.clientY / window.innerHeight) * 100;
+        document.documentElement.style.setProperty("--luxlu-mx", x.toFixed(2) + "%");
+        document.documentElement.style.setProperty("--luxlu-my", y.toFixed(2) + "%");
+      });
+    };
+
+    updateScrollParallax();
+    document.documentElement.style.setProperty("--luxlu-mx", "50%");
+    document.documentElement.style.setProperty("--luxlu-my", "42%");
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
   }
 
   function cleanupDeprecatedEffects() {
