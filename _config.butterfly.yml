@@ -54,7 +54,7 @@ aside:
     category: true
   card_author:
     enable: true
-    description: 大一 CTF 选手，主攻 Misc / 取证 / 隐写
+    description: CTF Misc<br>Hziee<br>计算机科学与技术<br>06年9月
     button:
       enable: true
       icon: fab fa-github
