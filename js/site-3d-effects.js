@@ -56,6 +56,7 @@
     setFxMode(fxMode, false);
     exposeFxHelpers();
     cleanupDeprecatedEffects();
+    stabilizeContentFrames();
     cleanupByMode(fxMode);
     initScrollProgress3D();
     initCategoryCollabEntry();
@@ -67,6 +68,7 @@
 
     initHeaderParallax();
     initTiltCards(fxMode === "full" ? 24 : 10);
+    initCodeBlockTilt(fxMode === "full" ? 32 : 20);
     initParticles(
       fxMode === "full"
         ? { count: 24, drawLinks: true, linkDistance: 110, frameStride: 1 }
@@ -123,6 +125,18 @@
       if (particleRafId) cancelAnimationFrame(particleRafId);
       particleRafId = null;
     }
+  }
+
+  function stabilizeContentFrames() {
+    ["post", "page", "archive"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove("tilt-3d", "tilt-3d-frame", "neon-breathe", "reveal-3d", "in-view");
+      el.style.transform = "";
+      el.style.transition = "";
+      delete el.dataset.tiltBound;
+      delete el.dataset.revealBound;
+    });
   }
 
   function removeFxElements(ids) {
@@ -196,24 +210,22 @@
 
   function initTiltCards(limit) {
     const targets = Array.from(
-      document.querySelectorAll("#recent-posts > .recent-post-item, #aside-content .card-widget, #post, #page, #archive")
+      document.querySelectorAll("#recent-posts > .recent-post-item, #aside-content .card-widget")
     ).slice(0, Math.max(1, limit || 1));
 
     targets.forEach((el) => {
       if (el.dataset.tiltBound === "1") return;
       el.dataset.tiltBound = "1";
       el.classList.add("tilt-3d", "neon-breathe");
-      const isContentFrame = el.id === "post" || el.id === "page" || el.id === "archive";
-      if (isContentFrame) el.classList.add("tilt-3d-frame");
 
       let hoverRafId = null;
       let targetRx = 0;
       let targetRy = 0;
       let currentRx = 0;
       let currentRy = 0;
-      const maxTilt = isContentFrame ? 1.1 : 5;
-      const perspective = isContentFrame ? 1450 : 1000;
-      const smoothing = isContentFrame ? 0.13 : 0.24;
+      const maxTilt = 5;
+      const perspective = 1000;
+      const smoothing = 0.24;
 
       const runTilt = () => {
         currentRx += (targetRx - currentRx) * smoothing;
@@ -255,6 +267,68 @@
         targetRx = 0;
         targetRy = 0;
         kickTilt();
+      });
+    });
+  }
+
+  function initCodeBlockTilt(limit) {
+    const all = Array.from(
+      document.querySelectorAll("#post .highlight, #page .highlight, #archive .highlight, #post pre, #page pre, #archive pre")
+    );
+
+    const targets = all
+      .filter((el) => !(el.tagName === "PRE" && el.closest(".highlight")))
+      .slice(0, Math.max(1, Number(limit || 20)));
+
+    targets.forEach((el) => {
+      if (el.dataset.codeTiltBound === "1") return;
+      el.dataset.codeTiltBound = "1";
+      el.classList.add("code-tilt");
+
+      let rafId = null;
+      let targetRx = 0;
+      let targetRy = 0;
+      let currentRx = 0;
+      let currentRy = 0;
+
+      const run = () => {
+        currentRx += (targetRx - currentRx) * 0.2;
+        currentRy += (targetRy - currentRy) * 0.2;
+
+        const nearZero = Math.abs(currentRx) < 0.02 && Math.abs(currentRy) < 0.02 && Math.abs(targetRx) < 0.02 && Math.abs(targetRy) < 0.02;
+        if (nearZero) {
+          el.style.transform = "";
+          rafId = null;
+          return;
+        }
+
+        el.style.transform =
+          "perspective(1100px) rotateX(" +
+          currentRx.toFixed(3) +
+          "deg) rotateY(" +
+          currentRy.toFixed(3) +
+          "deg) translateZ(0)";
+        rafId = requestAnimationFrame(run);
+      };
+
+      const kick = () => {
+        if (rafId) return;
+        rafId = requestAnimationFrame(run);
+      };
+
+      el.addEventListener("mousemove", (e) => {
+        const rect = el.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width;
+        const py = (e.clientY - rect.top) / rect.height;
+        targetRy = (px - 0.5) * 1.6;
+        targetRx = (0.5 - py) * 1.6;
+        kick();
+      });
+
+      el.addEventListener("mouseleave", () => {
+        targetRx = 0;
+        targetRy = 0;
+        kick();
       });
     });
   }
@@ -604,7 +678,7 @@
 
   function initReveal3D() {
     const targets = document.querySelectorAll(
-      "#recent-posts > .recent-post-item, #aside-content .card-widget, .article-sort-item, #post, #page, #archive"
+      "#recent-posts > .recent-post-item, #aside-content .card-widget, .article-sort-item"
     );
     const observer = new IntersectionObserver(
       (entries) => {

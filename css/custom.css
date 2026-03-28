@@ -1384,31 +1384,23 @@ html[data-fx-mode="lite"] div#archive {
 }
 
 /* Article/page frame anti-flicker stable mode (keep motion, reduce jitter) */
-div#post.tilt-3d-frame,
-div#page.tilt-3d-frame,
-div#archive.tilt-3d-frame {
+div#post,
+div#page,
+div#archive,
+div#post.tilt-3d,
+div#page.tilt-3d,
+div#archive.tilt-3d {
+  transform: none !important;
+}
+
+/* Keep motion on code blocks only */
+.code-tilt {
   will-change: transform;
   transform-style: preserve-3d;
-  backface-visibility: hidden;
   transform-origin: center center;
-  transition: transform 0.32s ease-out, box-shadow 0.55s ease;
+  transition: transform 0.22s ease-out, box-shadow 0.3s ease;
 }
 
-div#post.tilt-3d-frame::after,
-div#page.tilt-3d-frame::after,
-div#archive.tilt-3d-frame::after {
-  opacity: 0.04;
-  transition: opacity 0.35s ease;
-}
-
-div#post.tilt-3d-frame:hover::after,
-div#page.tilt-3d-frame:hover::after,
-div#archive.tilt-3d-frame:hover::after {
-  opacity: 0.1;
-}
-
-div#post.tilt-3d-frame.neon-breathe,
-div#page.tilt-3d-frame.neon-breathe,
-div#archive.tilt-3d-frame.neon-breathe {
-  animation-duration: 11s;
+.code-tilt:hover {
+  box-shadow: 0 12px 26px rgba(255, 88, 176, 0.2);
 }
