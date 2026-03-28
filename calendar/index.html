@@ -1,13 +1,13 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>私人日历 | luxlu's blog (〃'▽'〃)</title><meta name="author" content="luxlu"><meta name="copyright" content="luxlu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#09050d"><meta name="description" content="仅主人可编辑的训练日历页。">
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>私人日历 | luxlu's blog (〃'▽'〃)</title><meta name="author" content="luxlu"><meta name="copyright" content="luxlu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#09050d"><meta name="description" content="访客只读，主人模式可编辑日程与代办">
 <meta property="og:type" content="website">
 <meta property="og:title" content="私人日历">
 <meta property="og:url" content="https://luxlu.top/calendar/">
 <meta property="og:site_name" content="luxlu&#39;s blog (〃&#39;▽&#39;〃)">
-<meta property="og:description" content="仅主人可编辑的训练日历页。">
+<meta property="og:description" content="访客只读，主人模式可编辑日程与代办">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://luxlu.top/img/avatar.jpg">
 <meta property="article:published_time" content="2026-03-28T11:00:00.000Z">
-<meta property="article:modified_time" content="2026-03-28T11:17:29.352Z">
+<meta property="article:modified_time" content="2026-03-28T14:02:41.953Z">
 <meta property="article:author" content="luxlu">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Misc">
@@ -157,22 +157,22 @@
     <div>
       <p class="calendar-eyebrow">LUXLU PRIVATE MODE</p>
       <h1>训练日历</h1>
-      <p class="calendar-note">访客只读。输入主人口令后可增删改日程。</p>
+      <p class="calendar-note">支持颜色标签、开始/结束日期时间、代办勾选完成。</p>
     </div>
     <div class="calendar-actions">
       <button id="owner-toggle" class="cal-btn cal-btn-owner" type="button">进入主人模式</button>
-      <button id="today-btn" class="cal-btn" type="button">回到今天</button>
+      <button id="today-btn" class="cal-btn" type="button">今天</button>
     </div>
   </header>
 
   <div class="calendar-panel">
     <div class="month-bar">
-      <button id="prev-month" class="month-btn" type="button">‹</button>
+      <button id="prev-month" class="month-btn" type="button">&#8249;</button>
       <h2 id="month-title"></h2>
-      <button id="next-month" class="month-btn" type="button">›</button>
+      <button id="next-month" class="month-btn" type="button">&#8250;</button>
     </div>
     <div class="week-head">
-      <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+      <span>周一</span><span>周二</span><span>周三</span><span>周四</span><span>周五</span><span>周六</span><span>周日</span>
     </div>
     <div id="calendar-grid" class="calendar-grid"></div>
   </div>
@@ -187,15 +187,47 @@
 <dialog id="edit-dialog">
   <form method="dialog" id="edit-form">
     <h3 id="dialog-title">编辑日程</h3>
-    <label>开始时间（如 20:30）<input id="item-start-time" maxlength="5" placeholder="20:30"></label>
-    <label>结束时间（可选）<input id="item-end-time" maxlength="5" placeholder="22:00"></label>
-    <label>标题<input id="item-title" maxlength="40" placeholder="做 2 道隐写题"></label>
-    <label>详情<input id="item-desc" maxlength="80" placeholder="zsteg + stegsolve 复盘"></label>
-    <menu>
-      <button value="cancel" type="button" id="delete-item-btn" class="danger hidden">删除</button>
-      <button value="cancel" type="button" id="cancel-btn">取消</button>
-      <button value="confirm" type="submit">保存</button>
-    </menu>
+
+<pre><code>&lt;label&gt;标题
+  &lt;input id=&quot;item-title&quot; maxlength=&quot;60&quot; placeholder=&quot;例如：CISCN 半决赛&quot;&gt;
+&lt;/label&gt;
+
+&lt;label&gt;标签颜色
+  &lt;div class=&quot;color-row&quot;&gt;
+    &lt;input id=&quot;item-color&quot; type=&quot;color&quot; value=&quot;#ff4fa3&quot;&gt;
+  &lt;/div&gt;
+&lt;/label&gt;
+
+&lt;div class=&quot;date-time-grid&quot;&gt;
+  &lt;label&gt;开始日期
+    &lt;input id=&quot;item-start-date&quot; type=&quot;date&quot;&gt;
+  &lt;/label&gt;
+  &lt;label&gt;开始时间
+    &lt;input id=&quot;item-start-time&quot; type=&quot;time&quot;&gt;
+  &lt;/label&gt;
+  &lt;label&gt;结束日期
+    &lt;input id=&quot;item-end-date&quot; type=&quot;date&quot;&gt;
+  &lt;/label&gt;
+  &lt;label&gt;结束时间
+    &lt;input id=&quot;item-end-time&quot; type=&quot;time&quot;&gt;
+  &lt;/label&gt;
+&lt;/div&gt;
+
+&lt;label&gt;说明
+  &lt;input id=&quot;item-desc&quot; maxlength=&quot;120&quot; placeholder=&quot;可选，记录任务细节&quot;&gt;
+&lt;/label&gt;
+
+&lt;label class=&quot;todo-toggle&quot;&gt;
+  &lt;input id=&quot;item-done&quot; type=&quot;checkbox&quot;&gt;
+  &lt;span&gt;标记为已完成&lt;/span&gt;
+&lt;/label&gt;
+
+&lt;menu&gt;
+  &lt;button value=&quot;cancel&quot; type=&quot;button&quot; id=&quot;delete-item-btn&quot; class=&quot;danger hidden&quot;&gt;删除&lt;/button&gt;
+  &lt;button value=&quot;cancel&quot; type=&quot;button&quot; id=&quot;cancel-btn&quot;&gt;取消&lt;/button&gt;
+  &lt;button value=&quot;confirm&quot; type=&quot;submit&quot;&gt;保存&lt;/button&gt;
+&lt;/menu&gt;
+</code></pre>
   </form>
 </dialog>
 
@@ -207,7 +239,7 @@
           </div>
           <ul class="card-category-list" id="aside-cat-list">
             <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Misc/"><span class="card-category-list-name">Misc</span><span class="card-category-list-count">1</span></a></li>
-          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/HID/" style="font-size: 1.1em; color: #999">HID</a> <a href="/tags/Forensics/" style="font-size: 1.1em; color: #999">Forensics</a> <a href="/tags/USB/" style="font-size: 1.1em; color: #999">USB</a> <a href="/tags/CTF/" style="font-size: 1.1em; color: #999">CTF</a></div></div><div class="card-widget card-archives">
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/CTF/" style="font-size: 1.1em; color: #999">CTF</a> <a href="/tags/USB/" style="font-size: 1.1em; color: #999">USB</a> <a href="/tags/HID/" style="font-size: 1.1em; color: #999">HID</a> <a href="/tags/Forensics/" style="font-size: 1.1em; color: #999">Forensics</a></div></div><div class="card-widget card-archives">
     <div class="item-headline">
       <i class="fas fa-archive"></i>
       <span>归档</span>
@@ -226,4 +258,4 @@
         </li>
       
     </ul>
-  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">1</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-28T13:59:33.157Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By luxlu</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script src="/js/site-3d-effects.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">1</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-28T14:12:20.299Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By luxlu</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script src="/js/site-3d-effects.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
