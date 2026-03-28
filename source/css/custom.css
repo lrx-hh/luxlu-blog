@@ -883,13 +883,15 @@ body::before {
   width: 50%;
   height: 100%;
   transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-  background:
-    linear-gradient(180deg, rgba(8, 6, 12, 0.98), rgba(20, 10, 30, 0.96)),
-    radial-gradient(circle at 20% 20%, rgba(255, 112, 193, 0.12), transparent 36%);
+  background-image:
+    linear-gradient(180deg, rgba(8, 6, 12, 0.66), rgba(20, 10, 30, 0.6)),
+    url("/img/zipper-bg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
-#zipper-intro .zip-left { left: 0; border-right: 1px solid rgba(255, 154, 216, 0.28); }
-#zipper-intro .zip-right { right: 0; border-left: 1px solid rgba(255, 154, 216, 0.28); }
+#zipper-intro .zip-left { left: 0; border-right: 1px solid rgba(255, 154, 216, 0.28); background-position: left center; }
+#zipper-intro .zip-right { right: 0; border-left: 1px solid rgba(255, 154, 216, 0.28); background-position: right center; }
 
 #zipper-intro .zip-cut {
   position: absolute;
@@ -969,7 +971,7 @@ body::before {
 
 @media (max-width: 900px), (pointer: coarse), (prefers-reduced-motion: reduce) {
   #fx-glass-portal,
-  #fx-heart-field,
+  #fx-cube-field,
   #fx-holo-strips,
   #fx-ribbon-wave,
   #fx-depth-fog,
@@ -979,49 +981,94 @@ body::before {
   }
 }
 
-/* 2026-03 tweak: remove laser/square portal and use normal heart */
+/* 2026-03 tweak: remove laser/square portal and restore cubes */
 #fx-laser,
 #fx-glass-portal,
 #fx-prism {
   display: none !important;
 }
 
-#fx-heart-field .heart-shape,
-#fx-heart-field .heart-square,
-#fx-heart-field .heart-circle {
+#fx-heart-field {
   display: none !important;
 }
 
-#fx-heart-field .heart-svg {
+#fx-cube-field {
+  display: block !important;
+  z-index: 1 !important;
+}
+
+#fx-cube-field .cube-wrap {
+  position: absolute;
   width: 62px;
   height: 62px;
-  display: block;
-  filter: drop-shadow(0 8px 16px rgba(255, 106, 188, 0.22));
-  opacity: 0.58;
-  animation: heartPulseSoft 3.6s ease-in-out infinite;
-}
-
-#fx-heart-field .heart-svg path {
-  fill: rgba(255, 136, 205, 0.26);
-  stroke: rgba(255, 203, 231, 0.5);
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-}
-
-#fx-heart-field .heart-wrap {
-  width: 66px;
-  height: 66px;
   transform-style: preserve-3d;
 }
 
-@keyframes heartPulseSoft {
-  0%,
-  100% {
-    transform: scale(0.96);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.68;
-  }
+#fx-cube-field .cube-wrap-1 { left: 8%; top: 32%; animation: cubeDrift1 10s ease-in-out infinite; }
+#fx-cube-field .cube-wrap-2 { left: 20%; top: 74%; animation: cubeDrift2 12s ease-in-out infinite; }
+#fx-cube-field .cube-wrap-3 { left: 36%; top: 24%; animation: cubeDrift3 11s ease-in-out infinite; }
+#fx-cube-field .cube-wrap-4 { left: 54%; top: 66%; animation: cubeDrift4 13s ease-in-out infinite; }
+#fx-cube-field .cube-wrap-5 { left: 68%; top: 28%; animation: cubeDrift5 9s ease-in-out infinite; }
+#fx-cube-field .cube-wrap-6 { left: 80%; top: 62%; animation: cubeDrift6 11.5s ease-in-out infinite; }
+#fx-cube-field .cube-wrap-7 { left: 90%; top: 38%; animation: cubeDrift7 12.5s ease-in-out infinite; }
+#fx-cube-field .cube-wrap-8 { left: 45%; top: 84%; animation: cubeDrift8 10.5s ease-in-out infinite; }
+
+#fx-cube-field .cube {
+  position: absolute;
+  width: 62px;
+  height: 62px;
+  transform-style: preserve-3d;
+  animation: cubeSpin 9s linear infinite;
+}
+
+#fx-cube-field .cube .face {
+  position: absolute;
+  width: 62px;
+  height: 62px;
+  border: 1px solid rgba(255, 175, 221, 0.28);
+  background: linear-gradient(135deg, rgba(255, 126, 201, 0.12), rgba(255, 255, 255, 0.05));
+  box-shadow: inset 0 0 14px rgba(255, 95, 173, 0.12), 0 0 12px rgba(255, 95, 173, 0.12);
+  backdrop-filter: blur(6px) saturate(125%);
+  -webkit-backdrop-filter: blur(6px) saturate(125%);
+  opacity: 0.56;
+}
+
+#fx-cube-field .cube .f1 { transform: translateZ(31px); }
+#fx-cube-field .cube .f2 { transform: rotateY(180deg) translateZ(31px); }
+#fx-cube-field .cube .f3 { transform: rotateY(90deg) translateZ(31px); }
+#fx-cube-field .cube .f4 { transform: rotateY(-90deg) translateZ(31px); }
+#fx-cube-field .cube .f5 { transform: rotateX(90deg) translateZ(31px); }
+#fx-cube-field .cube .f6 { transform: rotateX(-90deg) translateZ(31px); }
+
+@keyframes cubeSpin {
+  to { transform: rotateX(360deg) rotateY(360deg); }
+}
+
+@keyframes cubeDrift1 { 50% { transform: translate3d(22px, -16px, 20px); } }
+@keyframes cubeDrift2 { 50% { transform: translate3d(-16px, 18px, 30px); } }
+@keyframes cubeDrift3 { 50% { transform: translate3d(20px, 20px, 18px); } }
+@keyframes cubeDrift4 { 50% { transform: translate3d(-14px, -16px, 34px); } }
+@keyframes cubeDrift5 { 50% { transform: translate3d(12px, -10px, 22px); } }
+@keyframes cubeDrift6 { 50% { transform: translate3d(-12px, 14px, 20px); } }
+@keyframes cubeDrift7 { 50% { transform: translate3d(-16px, -12px, 28px); } }
+@keyframes cubeDrift8 { 50% { transform: translate3d(14px, -16px, 24px); } }
+
+/* text layering fix */
+#nav,
+#site-info,
+#page-site-info,
+#post-info {
+  position: relative;
+  z-index: 30;
+}
+
+#fx-showcase,
+#fx-holo-strips,
+#fx-ribbon-wave,
+#fx-depth-fog,
+#fx-star-field,
+#fx-depth-grid,
+#fx-cube-field,
+#fx-particles {
+  z-index: 0 !important;
 }
