@@ -12,7 +12,7 @@ nav:
   fixed: true
 
 social:
-  fab fa-github: https://github.com/luxlu || GitHub || "#ff4fa3"
+  fab fa-github: https://github.com/lrx-hh || GitHub || "#ff4fa3"
   fas fa-envelope: mailto:you@example.com || Email || "#ff79bd"
 
 favicon: /img/avatar.svg
@@ -53,7 +53,7 @@ aside:
       enable: true
       icon: fab fa-github
       text: Follow
-      link: https://github.com/luxlu
+      link: https://github.com/lrx-hh
   card_announcement:
     enable: true
     content: 欢迎来到我的 CTF 黑粉实验室
