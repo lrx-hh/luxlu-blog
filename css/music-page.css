@@ -1,0 +1,94 @@
+.music-shell {
+  border: 1px solid rgba(255, 136, 205, 0.24);
+  border-radius: 18px;
+  padding: 18px;
+  background: linear-gradient(145deg, rgba(14, 10, 21, 0.9), rgba(19, 11, 28, 0.82));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
+}
+
+.music-shell h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.music-tip {
+  margin-top: 0;
+  color: #f4cbe0;
+}
+
+.music-controls label {
+  display: block;
+  margin-bottom: 6px;
+  color: #ffd4eb;
+}
+
+.music-controls input {
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid rgba(255, 145, 210, 0.34);
+  border-radius: 10px;
+  background: rgba(26, 16, 36, 0.9);
+  color: #ffe8f4;
+  padding: 10px 12px;
+}
+
+.music-btn-row {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.music-btn-row button {
+  border: 1px solid rgba(255, 145, 210, 0.3);
+  border-radius: 10px;
+  padding: 9px 14px;
+  background: rgba(31, 18, 42, 0.9);
+  color: #ffe7f4;
+  cursor: pointer;
+}
+
+.music-btn-row button:hover {
+  box-shadow: 0 8px 20px rgba(255, 92, 176, 0.2);
+}
+
+#music-save-btn {
+  background: linear-gradient(130deg, #ff4fa3, #ff2f94);
+  border-color: transparent;
+}
+
+.music-status {
+  min-height: 20px;
+  margin-top: 8px;
+  color: #ffcde5;
+}
+
+.music-help {
+  margin-top: 12px;
+  color: #f5d7e9;
+}
+
+.music-help ol {
+  margin-top: 6px;
+  padding-left: 18px;
+}
+
+.music-player {
+  margin-top: 14px;
+}
+
+.music-player .aplayer {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+@media (max-width: 760px) {
+  .music-shell {
+    padding: 14px;
+  }
+
+  .music-btn-row button {
+    width: 100%;
+  }
+}
+
