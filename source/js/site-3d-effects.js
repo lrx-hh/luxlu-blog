@@ -18,7 +18,11 @@
 
   function resolveFxMode() {
     const saved = (localStorage.getItem(MODE_KEY) || "").toLowerCase();
-    if (MODES.indexOf(saved) >= 0) return saved;
+    if (MODES.indexOf(saved) >= 0) {
+      // Anti-flicker safety: old "full" profile can feel strobing on some screens.
+      if (saved === "full") return "balanced";
+      return saved;
+    }
 
     if (prefersReduced || isCoarse) return "lite";
     if (cpuCores <= 4 || deviceMemory <= 4) return "lite";
@@ -65,14 +69,18 @@
     initTiltCards(fxMode === "full" ? 24 : 10);
     initParticles(
       fxMode === "full"
-        ? { count: 30, drawLinks: true, linkDistance: 120, frameStride: 1 }
-        : { count: 16, drawLinks: false, linkDistance: 0, frameStride: 2 }
+        ? { count: 24, drawLinks: true, linkDistance: 110, frameStride: 1 }
+        : { count: 10, drawLinks: false, linkDistance: 0, frameStride: 3 }
     );
 
-    initDepthGrid();
-    initCubeField(fxMode === "full" ? 8 : 4);
-    initShowcaseShapes(fxMode === "full" ? 10 : 4);
-    initStarField(fxMode === "full" ? 18 : 8);
+    if (fxMode === "full") {
+      initDepthGrid();
+      initCubeField(6);
+      initShowcaseShapes(8);
+      initStarField(14);
+    } else {
+      initCubeField(3);
+    }
 
     if (fxMode === "full") {
       initCursorGlow();
@@ -655,4 +663,3 @@
   document.addEventListener("DOMContentLoaded", init);
   document.addEventListener("pjax:complete", init);
 })();
-
