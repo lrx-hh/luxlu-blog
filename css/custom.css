@@ -1507,3 +1507,8 @@ div#archive.tilt-3d {
 .code-tilt:hover {
   box-shadow: 0 12px 26px rgba(255, 88, 176, 0.2);
 }
+
+#aside-content .author-info-description {
+  text-align: center !important;
+  line-height: 1.85;
+}
