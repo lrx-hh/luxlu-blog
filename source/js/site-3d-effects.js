@@ -15,6 +15,8 @@
     initHeaderParallax();
     initParticles();
     initPrismRings();
+    initDepthGrid();
+    initCubeField();
     initShowcaseShapes();
     initLaserSweep();
     initMagneticElements();
@@ -159,6 +161,35 @@
       "<span class=\"prism-ring ring-b\"></span>" +
       "<span class=\"prism-ring ring-c\"></span>";
     document.body.appendChild(prism);
+  }
+
+  function initDepthGrid() {
+    if (document.getElementById("fx-depth-grid")) return;
+    const grid = document.createElement("div");
+    grid.id = "fx-depth-grid";
+    grid.innerHTML = "<span></span>";
+    document.body.appendChild(grid);
+  }
+
+  function initCubeField() {
+    if (document.getElementById("fx-cube-field")) return;
+    const field = document.createElement("div");
+    field.id = "fx-cube-field";
+    let html = "";
+    for (let i = 1; i <= 6; i++) {
+      html +=
+        "<div class=\"cube-wrap cube-wrap-" + i + "\">" +
+        "<div class=\"cube\">" +
+        "<span class=\"face f1\"></span>" +
+        "<span class=\"face f2\"></span>" +
+        "<span class=\"face f3\"></span>" +
+        "<span class=\"face f4\"></span>" +
+        "<span class=\"face f5\"></span>" +
+        "<span class=\"face f6\"></span>" +
+        "</div></div>";
+    }
+    field.innerHTML = html;
+    document.body.appendChild(field);
   }
 
   function initShowcaseShapes() {

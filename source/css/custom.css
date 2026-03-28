@@ -211,6 +211,97 @@ div#archive {
   animation: prismFloat 7s ease-in-out infinite alternate;
 }
 
+#fx-depth-grid {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: -10vh;
+  height: 46vh;
+  pointer-events: none;
+  z-index: 1;
+  transform-style: preserve-3d;
+  perspective: 900px;
+}
+
+#fx-depth-grid span {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 120, 196, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 120, 196, 0.18) 1px, transparent 1px);
+  background-size: 42px 42px;
+  transform-origin: center bottom;
+  transform: rotateX(72deg) scale(1.8);
+  animation: gridFlow 9s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 95, 173, 0.45));
+}
+
+@keyframes gridFlow {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 0 240px, 240px 0;
+  }
+}
+
+#fx-cube-field {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  transform-style: preserve-3d;
+}
+
+.cube-wrap {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  transform-style: preserve-3d;
+}
+
+.cube-wrap-1 { left: 8%; top: 34%; animation: cubeDrift1 9s ease-in-out infinite; }
+.cube-wrap-2 { left: 22%; top: 74%; animation: cubeDrift2 11s ease-in-out infinite; }
+.cube-wrap-3 { left: 42%; top: 26%; animation: cubeDrift3 10s ease-in-out infinite; }
+.cube-wrap-4 { left: 61%; top: 68%; animation: cubeDrift4 12s ease-in-out infinite; }
+.cube-wrap-5 { left: 79%; top: 40%; animation: cubeDrift5 8s ease-in-out infinite; }
+.cube-wrap-6 { left: 90%; top: 77%; animation: cubeDrift6 10.5s ease-in-out infinite; }
+
+.cube {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  transform-style: preserve-3d;
+  animation: cubeSpin 7s linear infinite;
+}
+
+.cube .face {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border: 1px solid rgba(255, 138, 203, 0.6);
+  background: linear-gradient(135deg, rgba(255, 95, 173, 0.25), rgba(255, 224, 242, 0.08));
+  box-shadow: inset 0 0 20px rgba(255, 95, 173, 0.2), 0 0 20px rgba(255, 95, 173, 0.2);
+}
+
+.cube .f1 { transform: translateZ(32px); }
+.cube .f2 { transform: rotateY(180deg) translateZ(32px); }
+.cube .f3 { transform: rotateY(90deg) translateZ(32px); }
+.cube .f4 { transform: rotateY(-90deg) translateZ(32px); }
+.cube .f5 { transform: rotateX(90deg) translateZ(32px); }
+.cube .f6 { transform: rotateX(-90deg) translateZ(32px); }
+
+@keyframes cubeSpin {
+  to { transform: rotateX(360deg) rotateY(360deg); }
+}
+
+@keyframes cubeDrift1 { 50% { transform: translate3d(32px, -26px, 34px); } }
+@keyframes cubeDrift2 { 50% { transform: translate3d(-24px, 22px, 42px); } }
+@keyframes cubeDrift3 { 50% { transform: translate3d(28px, 30px, 30px); } }
+@keyframes cubeDrift4 { 50% { transform: translate3d(-20px, -24px, 46px); } }
+@keyframes cubeDrift5 { 50% { transform: translate3d(18px, -18px, 36px); } }
+@keyframes cubeDrift6 { 50% { transform: translate3d(-18px, 20px, 28px); } }
+
 #fx-showcase {
   position: fixed;
   inset: 0;
@@ -409,6 +500,8 @@ body::before {
 @media (max-width: 900px), (pointer: coarse), (prefers-reduced-motion: reduce) {
   body::before,
   #fx-prism,
+  #fx-depth-grid,
+  #fx-cube-field,
   #fx-showcase,
   #fx-laser {
     display: none;
