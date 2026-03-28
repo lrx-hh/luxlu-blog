@@ -70,3 +70,107 @@ div#archive {
   background: rgba(255, 47, 149, 0.35);
   color: #fff;
 }
+
+#page-header {
+  transform-style: preserve-3d;
+}
+
+#page-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg, rgba(255, 95, 173, 0.08), rgba(255, 95, 173, 0), rgba(255, 147, 210, 0.12), rgba(255, 95, 173, 0));
+  animation: headerSpin 16s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes headerSpin {
+  to {
+    transform: rotate(360deg) scale(1.2);
+  }
+}
+
+.tilt-3d {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tilt-3d::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
+  opacity: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.tilt-3d:hover::after {
+  opacity: 1;
+}
+
+#fx-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.75;
+}
+
+.layout,
+#aside-content,
+#recent-posts,
+#post,
+#page,
+#archive,
+#footer {
+  position: relative;
+  z-index: 1;
+}
+
+.fx-cursor {
+  position: fixed;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1000;
+  background: radial-gradient(circle, rgba(255, 87, 173, 0.22), rgba(255, 87, 173, 0));
+  mix-blend-mode: screen;
+  transition: transform 0.07s linear;
+}
+
+.fx-cursor-dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffd6ec;
+  pointer-events: none;
+  z-index: 1001;
+  box-shadow: 0 0 14px rgba(255, 98, 176, 0.9);
+}
+
+#nav .menus_item > .site-page {
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease, text-shadow 0.2s ease;
+}
+
+#nav .menus_item > .site-page:hover {
+  transform: translateZ(6px);
+  text-shadow: 0 0 14px rgba(255, 107, 184, 0.5);
+}
+
+@media (max-width: 900px), (pointer: coarse) {
+  #fx-particles,
+  .fx-cursor,
+  .fx-cursor-dot {
+    display: none;
+  }
+
+  .tilt-3d {
+    transform: none !important;
+  }
+}

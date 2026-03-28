@@ -21,7 +21,7 @@ social:
 favicon: /img/avatar.svg
 
 avatar:
-  img: /img/avatar.svg
+  img: /img/avatar.jpg
   effect: true
 
 index_img: /img/black-pink-cover.svg
@@ -89,3 +89,5 @@ darkmode:
 inject:
   head:
     - <link rel="stylesheet" href="/css/custom.css">
+  bottom:
+    - <script src="/js/site-3d-effects.js"></script>
