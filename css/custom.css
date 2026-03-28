@@ -978,3 +978,50 @@ body::before {
     display: none !important;
   }
 }
+
+/* 2026-03 tweak: remove laser/square portal and use normal heart */
+#fx-laser,
+#fx-glass-portal,
+#fx-prism {
+  display: none !important;
+}
+
+#fx-heart-field .heart-shape,
+#fx-heart-field .heart-square,
+#fx-heart-field .heart-circle {
+  display: none !important;
+}
+
+#fx-heart-field .heart-svg {
+  width: 62px;
+  height: 62px;
+  display: block;
+  filter: drop-shadow(0 8px 16px rgba(255, 106, 188, 0.22));
+  opacity: 0.58;
+  animation: heartPulseSoft 3.6s ease-in-out infinite;
+}
+
+#fx-heart-field .heart-svg path {
+  fill: rgba(255, 136, 205, 0.26);
+  stroke: rgba(255, 203, 231, 0.5);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+#fx-heart-field .heart-wrap {
+  width: 66px;
+  height: 66px;
+  transform-style: preserve-3d;
+}
+
+@keyframes heartPulseSoft {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.68;
+  }
+}

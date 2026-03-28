@@ -8,6 +8,7 @@
   let introPlayed = false;
 
   function init() {
+    cleanupDeprecatedEffects();
     initScrollProgress3D();
     initCategoryCollabEntry();
     initZipperIntro();
@@ -20,11 +21,9 @@
     initParticles();
 
     // 3D packs
-    initGlassPortal();
     initDepthGrid();
     initHeartField();
     initShowcaseShapes();
-    initLaserSweep();
     initHoloStrips();
     initRibbonWave();
     initDepthFog();
@@ -36,6 +35,18 @@
     initHeadingDepth();
     initBackgroundGyro();
     initRightsideGyro();
+  }
+
+  function cleanupDeprecatedEffects() {
+    ["fx-laser", "fx-glass-portal", "fx-prism"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    });
+
+    const heartField = document.getElementById("fx-heart-field");
+    if (heartField && heartField.dataset.ver !== "2") {
+      heartField.remove();
+    }
   }
 
   function initCategoryCollabEntry() {
@@ -238,20 +249,22 @@
   }
 
   function initHeartField() {
-    if (document.getElementById("fx-heart-field")) return;
+    const existing = document.getElementById("fx-heart-field");
+    if (existing && existing.dataset.ver === "2") return;
+    if (existing) existing.remove();
+
     const field = document.createElement("div");
     field.id = "fx-heart-field";
+    field.dataset.ver = "2";
     let html = "";
     for (let i = 1; i <= 8; i++) {
       html +=
         "<div class=\"heart-wrap heart-wrap-" +
         i +
         "\">" +
-        "<div class=\"heart-shape\">" +
-        "<span class=\"heart-square\"></span>" +
-        "<span class=\"heart-circle left\"></span>" +
-        "<span class=\"heart-circle right\"></span>" +
-        "</div></div>";
+        "<svg class=\"heart-svg\" viewBox=\"0 0 100 100\" aria-hidden=\"true\" focusable=\"false\">" +
+        "<path d=\"M50 88c-2 0-4-1-6-3C24 68 10 54 10 37 10 24 20 14 33 14c8 0 14 4 17 10 3-6 9-10 17-10 13 0 23 10 23 23 0 17-14 31-34 48-2 2-4 3-6 3z\"></path>" +
+        "</svg></div>";
     }
     field.innerHTML = html;
     document.body.appendChild(field);
