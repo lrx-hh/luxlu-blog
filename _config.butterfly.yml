@@ -27,11 +27,11 @@ avatar:
   img: /img/avatar.jpg
   effect: true
 
-index_img: /img/black-pink-cover.svg
-default_top_img: /img/black-pink-cover.svg
-archive_img: /img/black-pink-cover.svg
-tag_img: /img/black-pink-cover.svg
-category_img: /img/black-pink-cover.svg
+index_img: /img/bg.jpg
+default_top_img: /img/bg.jpg
+archive_img: /img/bg.jpg
+tag_img: /img/bg.jpg
+category_img: /img/bg.jpg
 footer_img: false
 
 subtitle:
@@ -101,7 +101,7 @@ darkmode:
 
 inject:
   head:
-    - <link rel="stylesheet" href="/css/custom.css">
+    - <link rel="stylesheet" href="/css/custom.css?v=20260329bg2">
   bottom:
     - <script src="/js/site-3d-effects.js"></script>
     - <script src="/js/tab-title.js?v=20260329a"></script>
