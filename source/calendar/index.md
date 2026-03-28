@@ -1,4 +1,4 @@
----
+﻿---
 title: 私人日历
 date: 2026-03-28 19:00:00
 comments: false
@@ -6,7 +6,7 @@ top_img: /img/black-pink-cover.svg
 description: 访客只读，主人模式可编辑日程与代办
 ---
 
-<link rel="stylesheet" href="/css/calendar-3d.css">
+<link rel="stylesheet" href="/css/calendar-3d.css?v=20260328c">
 
 <section class="calendar-shell">
   <div class="calendar-glow glow-a"></div>
@@ -48,17 +48,14 @@ description: 访客只读，主人模式可编辑日程与代办
 <dialog id="edit-dialog">
   <form method="dialog" id="edit-form">
     <h3 id="dialog-title">编辑日程</h3>
-
     <label>标题
       <input id="item-title" maxlength="60" placeholder="例如：CISCN 半决赛">
     </label>
-
     <label>标签颜色
       <div class="color-row">
         <input id="item-color" type="color" value="#ff4fa3">
       </div>
     </label>
-
     <div class="date-time-grid">
       <label>开始日期
         <input id="item-start-date" type="date">
@@ -73,16 +70,13 @@ description: 访客只读，主人模式可编辑日程与代办
         <input id="item-end-time" type="time">
       </label>
     </div>
-
     <label>说明
       <input id="item-desc" maxlength="120" placeholder="可选，记录任务细节">
     </label>
-
     <label class="todo-toggle">
       <input id="item-done" type="checkbox">
       <span>标记为已完成</span>
     </label>
-
     <menu>
       <button value="cancel" type="button" id="delete-item-btn" class="danger hidden">删除</button>
       <button value="cancel" type="button" id="cancel-btn">取消</button>
@@ -91,4 +85,4 @@ description: 访客只读，主人模式可编辑日程与代办
   </form>
 </dialog>
 
-<script src="/js/calendar-3d.js"></script>
+<script src="/js/calendar-3d.js?v=20260328c"></script>
