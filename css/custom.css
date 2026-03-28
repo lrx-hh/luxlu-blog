@@ -80,7 +80,7 @@ div#archive {
   position: absolute;
   inset: 0;
   background: conic-gradient(from 0deg, rgba(255, 95, 173, 0.08), rgba(255, 95, 173, 0), rgba(255, 147, 210, 0.12), rgba(255, 95, 173, 0));
-  animation: headerSpin 16s linear infinite;
+  animation: none;
   pointer-events: none;
 }
 
@@ -537,12 +537,12 @@ body::before {
   z-index: 2;
   background: repeating-linear-gradient(
     180deg,
-    rgba(255, 166, 216, 0.02) 0,
-    rgba(255, 166, 216, 0.02) 1px,
+    rgba(255, 166, 216, 0.008) 0,
+    rgba(255, 166, 216, 0.008) 1px,
     transparent 2px,
     transparent 5px
   );
-  animation: scanMove 10s linear infinite;
+  animation: none;
 }
 
 @keyframes scanMove {
@@ -1313,13 +1313,22 @@ html[data-fx-mode="balanced"] #fx-depth-fog,
 html[data-fx-mode="balanced"] #fx-crystal-shards,
 html[data-fx-mode="balanced"] #fx-orbit-lines,
 html[data-fx-mode="balanced"] #fx-neon-comets,
+html[data-fx-mode="balanced"] #fx-showcase,
+html[data-fx-mode="balanced"] #fx-star-field,
+html[data-fx-mode="balanced"] #fx-depth-grid,
 html[data-fx-mode="balanced"] .fx-cursor,
-html[data-fx-mode="balanced"] .fx-cursor-dot {
+html[data-fx-mode="balanced"] .fx-cursor-dot,
+html[data-fx-mode="balanced"] #page-header::after,
+html[data-fx-mode="balanced"] body::before {
   display: none !important;
 }
 
 html[data-fx-mode="balanced"] #fx-particles {
-  opacity: 0.24 !important;
+  opacity: 0.14 !important;
+}
+
+html[data-fx-mode="balanced"] .neon-breathe {
+  animation: none !important;
 }
 
 html[data-fx-mode="balanced"] #recent-posts > .recent-post-item,
