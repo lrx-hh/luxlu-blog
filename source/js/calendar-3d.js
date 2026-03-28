@@ -1,8 +1,8 @@
 (function () {
   const STORAGE_KEY = "luxlu_calendar_events_v1";
   const OWNER_MODE_KEY = "luxlu_calendar_owner_mode";
-  const OWNER_HASH = "9f5a74b0ed93b3ec6bb9dd2cfbe6bc3dfecf5b17ce31a35076bf81ece79fd3f5";
-  // Default passphrase hash is for: luxlu-ctf-2026
+  const OWNER_HASH = "11079afd9b280f41fc114e34f27a50161f7a12e003463802c9a78aea6a57e642";
+  // Default passphrase hash is for: luxlu667
   // Change OWNER_HASH to your own SHA-256 hash for real use.
 
   const monthTitle = document.getElementById("month-title");
