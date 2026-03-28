@@ -161,7 +161,7 @@
       return;
     }
 
-    const input = window.prompt("luxlu有没有给你一个口令呀,, ▬ ω ▬ ,,");
+    const input = window.prompt("luxlu绝密口令");
     if (!input) return;
 
     const hash = await sha256(input.trim());

@@ -96,7 +96,7 @@
       return;
     }
 
-    const input = window.prompt("输入luxlu口令进入编辑模式：");
+    const input = window.prompt("luxlu\u7edd\u5bc6\u53e3\u4ee4");
     if (!input) return;
 
     const hash = await sha256(input.trim());
