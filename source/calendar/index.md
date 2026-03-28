@@ -7,7 +7,7 @@ top_img: /img/black-pink-cover.svg
 description: 访客只读，主人模式可编辑日程与代办
 ---
 
-<link rel="stylesheet" href="/css/calendar-3d.css?v=20260329x">
+<link rel="stylesheet" href="/css/calendar-3d.css?v=20260329y">
 
 <section class="calendar-shell">
   <div class="calendar-glow glow-a"></div>
@@ -16,11 +16,11 @@ description: 访客只读，主人模式可编辑日程与代办
   <header class="calendar-top">
     <div>
       <p class="calendar-eyebrow">LUXLU PRIVATE MODE</p>
-      <h1>训练日历</h1>
-      <p class="calendar-note">支持颜色标签、开始/结束日期时间、代办勾选完成。</p>
+      <h1>luxlu's life</h1>
+      <p class="calendar-note">这里是luxlu的日历 包括节假日 比赛日程 学习内容 如果你想给luxlu加一点事情做 可以问她要一串口令</p>
     </div>
     <div class="calendar-actions">
-      <button id="owner-toggle" class="cal-btn cal-btn-owner" type="button">进入主人模式</button>
+      <button id="owner-toggle" class="cal-btn cal-btn-owner" type="button">进入luxlu的生活</button>
       <button id="today-btn" class="cal-btn" type="button">今天</button>
     </div>
   </header>
@@ -86,4 +86,4 @@ description: 访客只读，主人模式可编辑日程与代办
   </form>
 </dialog>
 
-<script src="/js/calendar-3d.js?v=20260329x"></script>
+<script src="/js/calendar-3d.js?v=20260329y"></script>
