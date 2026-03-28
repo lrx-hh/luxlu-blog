@@ -1,8 +1,22 @@
+.layout:has(.calendar-shell) {
+  max-width: min(96vw, 1580px) !important;
+}
+
+.layout:has(.calendar-shell) #page {
+  width: 100% !important;
+}
+
+.layout:has(.calendar-shell) #page .container {
+  max-width: none !important;
+}
+
 .calendar-shell {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 330px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.95fr);
   gap: 20px;
+  width: min(100%, 1460px);
+  margin: 0 auto;
   padding: 22px;
   border-radius: 22px;
   overflow: hidden;
@@ -403,6 +417,10 @@ dialog#edit-dialog {
 }
 
 @media (max-width: 1080px) {
+  .layout:has(.calendar-shell) {
+    max-width: 98vw !important;
+  }
+
   .calendar-shell {
     grid-template-columns: 1fr;
     transform: none !important;
