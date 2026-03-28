@@ -21,7 +21,7 @@ social:
   fab fa-github: https://github.com/lrx-hh || GitHub || "#ff4fa3"
   fas fa-envelope: mailto:1396343486@qq.com || Email || "#ff79bd"
 
-favicon: /img/avatar.svg
+favicon: /img/sleepy-cat-favicon.jpg
 
 avatar:
   img: /img/avatar.jpg
@@ -39,8 +39,18 @@ subtitle:
   effect: true
   source: false
   sub:
-    - 会一直更新的！( *｀ω´)
-    - ( 𓏼˙ ᴥ ˙𓏼 )Ooo，Ohhh...
+    - 会一直更新的吗？咕咕咕！( *｀ω´)
+    - 谢谢你来看我呀
+
+search:
+  use: local_search
+  placeholder: 搜索一下内容吧
+  button: true
+
+local_search:
+  enable: true
+  preload: true
+  CDN:
 
 aside:
   enable: true
@@ -94,3 +104,4 @@ inject:
     - <link rel="stylesheet" href="/css/custom.css">
   bottom:
     - <script src="/js/site-3d-effects.js"></script>
+    - <script src="/js/tab-title.js?v=20260329a"></script>

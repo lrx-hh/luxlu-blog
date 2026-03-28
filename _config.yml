@@ -1,6 +1,6 @@
-title: "luxlu's blog (〃'▽'〃)"
-subtitle: 黑粉色 CTF Misc 博客
-description: 记录 CTF Misc 题解、取证、隐写与脚本工具
+title: luxlu
+subtitle: ??? CTF Misc ??
+description: ?? CTF Misc ?????????????
 keywords:
   - CTF
   - Misc
@@ -74,6 +74,11 @@ ignore:
 
 theme: butterfly
 
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html
 deploy:
   type: git
   repo: https://github.com/lrx-hh/luxlu-blog.git
