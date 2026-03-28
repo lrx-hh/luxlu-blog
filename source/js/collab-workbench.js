@@ -1,6 +1,7 @@
 (function () {
   const TEAM_POST_DIR = "source/_posts/team";
   const TEAM_UPLOAD_DIR = "source/uploads/team";
+  const PIXEL_UPLOAD_DIR = TEAM_UPLOAD_DIR + "/pixel-art";
 
   const ACCESS_HASH_POOL = {
     admin: ["faa9aa94ef30e64ca0ac64e0d378279ee39007bd6f9bdb4db923c50dde3aac64"],
@@ -27,6 +28,15 @@
     connected: false,
     loadedAdminPath: "",
     loadedAdminSha: ""
+  };
+
+  const pixelEditor = {
+    size: 32,
+    tool: "brush",
+    color: "#ff4fa3",
+    drawing: false,
+    cells: [],
+    hasPaint: false
   };
 
   const refs = {
@@ -56,6 +66,16 @@
     adminEditor: document.getElementById("admin-editor"),
     adminLoadBtn: document.getElementById("admin-load-btn"),
     adminSaveBtn: document.getElementById("admin-save-btn"),
+    pixelGridSize: document.getElementById("pixel-grid-size"),
+    pixelColor: document.getElementById("pixel-color"),
+    pixelFileName: document.getElementById("pixel-file-name"),
+    pixelBrushBtn: document.getElementById("pixel-tool-brush"),
+    pixelEraserBtn: document.getElementById("pixel-tool-eraser"),
+    pixelClearBtn: document.getElementById("pixel-clear-btn"),
+    pixelDownloadBtn: document.getElementById("pixel-download-btn"),
+    pixelSaveBtn: document.getElementById("pixel-save-btn"),
+    pixelCanvas: document.getElementById("pixel-canvas"),
+    pixelResult: document.getElementById("pixel-result"),
     logBox: document.getElementById("collab-log"),
     editorOnly: document.querySelectorAll(".editor-only"),
     adminOnly: document.querySelectorAll(".admin-only")
@@ -69,6 +89,7 @@
     readLocalState();
     renderState();
     bindEvents();
+    initPixelEditor();
     refreshProjects();
     log("ready");
   }
@@ -86,6 +107,21 @@
     refs.uploadForm.addEventListener("submit", uploadTeamFile);
     refs.adminLoadBtn.addEventListener("click", loadAdminFile);
     refs.adminSaveBtn.addEventListener("click", saveAdminFile);
+
+    if (refs.pixelGridSize) refs.pixelGridSize.addEventListener("change", onPixelGridSizeChange);
+    if (refs.pixelColor) refs.pixelColor.addEventListener("change", onPixelColorChange);
+    if (refs.pixelBrushBtn) refs.pixelBrushBtn.addEventListener("click", () => setPixelTool("brush"));
+    if (refs.pixelEraserBtn) refs.pixelEraserBtn.addEventListener("click", () => setPixelTool("eraser"));
+    if (refs.pixelClearBtn) refs.pixelClearBtn.addEventListener("click", clearPixelCanvas);
+    if (refs.pixelDownloadBtn) refs.pixelDownloadBtn.addEventListener("click", downloadPixelCanvas);
+    if (refs.pixelSaveBtn) refs.pixelSaveBtn.addEventListener("click", savePixelCanvasToRepo);
+    if (refs.pixelCanvas) {
+      refs.pixelCanvas.addEventListener("pointerdown", onPixelPointerDown);
+      refs.pixelCanvas.addEventListener("pointermove", onPixelPointerMove);
+      refs.pixelCanvas.addEventListener("pointerup", stopPixelDrawing);
+      refs.pixelCanvas.addEventListener("pointerleave", stopPixelDrawing);
+      refs.pixelCanvas.addEventListener("pointercancel", stopPixelDrawing);
+    }
   }
 
   function readLocalState() {
@@ -335,6 +371,226 @@
       log("admin save failed: " + err.message);
       window.alert("保存失败: " + err.message);
     }
+  }
+
+  function initPixelEditor() {
+    if (!refs.pixelCanvas) return;
+    const size = clampPixelSize(parseInt((refs.pixelGridSize && refs.pixelGridSize.value) || "32", 10));
+    const color = (refs.pixelColor && refs.pixelColor.value) || "#ff4fa3";
+
+    pixelEditor.size = size;
+    pixelEditor.color = color;
+    pixelEditor.cells = new Array(size * size).fill("");
+
+    if (refs.pixelGridSize) refs.pixelGridSize.value = String(size);
+    if (refs.pixelColor) refs.pixelColor.value = color;
+
+    setPixelTool("brush");
+    renderPixelCanvas();
+    setPixelResult("Pixel editor ready.");
+  }
+
+  function onPixelGridSizeChange() {
+    const size = clampPixelSize(parseInt(refs.pixelGridSize.value || "32", 10));
+    pixelEditor.size = size;
+    pixelEditor.cells = new Array(size * size).fill("");
+    if (refs.pixelGridSize) refs.pixelGridSize.value = String(size);
+    renderPixelCanvas();
+    setPixelResult("Grid changed to " + size + " x " + size + ".");
+  }
+
+  function onPixelColorChange() {
+    pixelEditor.color = refs.pixelColor.value || "#ff4fa3";
+    setPixelTool("brush");
+  }
+
+  function setPixelTool(tool) {
+    pixelEditor.tool = tool === "eraser" ? "eraser" : "brush";
+    if (refs.pixelBrushBtn) refs.pixelBrushBtn.classList.toggle("active", pixelEditor.tool === "brush");
+    if (refs.pixelEraserBtn) refs.pixelEraserBtn.classList.toggle("active", pixelEditor.tool === "eraser");
+  }
+
+  function onPixelPointerDown(event) {
+    if (!refs.pixelCanvas) return;
+    event.preventDefault();
+    pixelEditor.drawing = true;
+    if (refs.pixelCanvas.setPointerCapture) refs.pixelCanvas.setPointerCapture(event.pointerId);
+    paintPixelFromEvent(event);
+  }
+
+  function onPixelPointerMove(event) {
+    if (!pixelEditor.drawing) return;
+    event.preventDefault();
+    paintPixelFromEvent(event);
+  }
+
+  function stopPixelDrawing(event) {
+    pixelEditor.drawing = false;
+    if (refs.pixelCanvas && event && refs.pixelCanvas.releasePointerCapture) {
+      try {
+        refs.pixelCanvas.releasePointerCapture(event.pointerId);
+      } catch (err) {
+        // ignore pointer release mismatch
+      }
+    }
+  }
+
+  function paintPixelFromEvent(event) {
+    if (!refs.pixelCanvas) return;
+    const pos = resolvePixelPosition(event);
+    if (!pos) return;
+
+    const index = pos.y * pixelEditor.size + pos.x;
+    const nextColor = pixelEditor.tool === "eraser" ? "" : pixelEditor.color;
+    if (pixelEditor.cells[index] === nextColor) return;
+
+    pixelEditor.cells[index] = nextColor;
+    renderPixelCanvas();
+  }
+
+  function resolvePixelPosition(event) {
+    if (!refs.pixelCanvas) return null;
+    const rect = refs.pixelCanvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+
+    const xRatio = (event.clientX - rect.left) / rect.width;
+    const yRatio = (event.clientY - rect.top) / rect.height;
+    const x = Math.floor(xRatio * pixelEditor.size);
+    const y = Math.floor(yRatio * pixelEditor.size);
+
+    if (x < 0 || y < 0 || x >= pixelEditor.size || y >= pixelEditor.size) return null;
+    return { x: x, y: y };
+  }
+
+  function renderPixelCanvas() {
+    if (!refs.pixelCanvas) return;
+    const ctx = refs.pixelCanvas.getContext("2d");
+    if (!ctx) return;
+
+    const width = refs.pixelCanvas.width;
+    const height = refs.pixelCanvas.height;
+    const cellW = width / pixelEditor.size;
+    const cellH = height / pixelEditor.size;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "rgba(25, 17, 35, 0.95)";
+    ctx.fillRect(0, 0, width, height);
+
+    for (let y = 0; y < pixelEditor.size; y += 1) {
+      for (let x = 0; x < pixelEditor.size; x += 1) {
+        const color = pixelEditor.cells[y * pixelEditor.size + x];
+        if (!color) continue;
+        ctx.fillStyle = color;
+        ctx.fillRect(Math.floor(x * cellW), Math.floor(y * cellH), Math.ceil(cellW), Math.ceil(cellH));
+      }
+    }
+
+    ctx.strokeStyle = "rgba(255, 168, 220, 0.18)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= pixelEditor.size; i += 1) {
+      const px = Math.round(i * cellW) + 0.5;
+      const py = Math.round(i * cellH) + 0.5;
+
+      ctx.beginPath();
+      ctx.moveTo(px, 0);
+      ctx.lineTo(px, height);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(0, py);
+      ctx.lineTo(width, py);
+      ctx.stroke();
+    }
+  }
+
+  function clearPixelCanvas() {
+    if (!refs.pixelCanvas) return;
+    pixelEditor.cells = new Array(pixelEditor.size * pixelEditor.size).fill("");
+    renderPixelCanvas();
+    setPixelResult("Canvas cleared.");
+  }
+
+  function downloadPixelCanvas() {
+    if (!refs.pixelCanvas) return;
+    const exportCanvas = buildPixelExportCanvas();
+    const fileBase = getPixelFileBaseName();
+    const link = document.createElement("a");
+    link.href = exportCanvas.toDataURL("image/png");
+    link.download = fileBase + ".png";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setPixelResult("PNG downloaded: " + fileBase + ".png");
+  }
+
+  async function savePixelCanvasToRepo() {
+    if (state.role !== "admin") {
+      window.alert("Admin role required.");
+      return;
+    }
+    if (!ensureToken()) return;
+
+    const exportCanvas = buildPixelExportCanvas();
+    const fileBase = getPixelFileBaseName();
+    const path = PIXEL_UPLOAD_DIR + "/" + Date.now() + "-" + fileBase + ".png";
+    const base64Content = exportCanvas.toDataURL("image/png").split(",")[1] || "";
+
+    try {
+      await writeFile(path, base64Content, "admin pixel art: " + fileBase, true);
+      const publicPath = "/" + path.replace(/^source\//, "");
+      setPixelResult("Saved: " + publicPath);
+      log("pixel art saved: " + path);
+      window.alert("Pixel art saved: " + publicPath);
+    } catch (err) {
+      setPixelResult("Save failed: " + err.message);
+      log("pixel save failed: " + err.message);
+      window.alert("Pixel save failed: " + err.message);
+    }
+  }
+
+  function buildPixelExportCanvas() {
+    const scale = Math.max(8, Math.floor(768 / pixelEditor.size));
+    const exportCanvas = document.createElement("canvas");
+    exportCanvas.width = pixelEditor.size * scale;
+    exportCanvas.height = pixelEditor.size * scale;
+
+    const ctx = exportCanvas.getContext("2d");
+    if (!ctx) return exportCanvas;
+    ctx.imageSmoothingEnabled = false;
+
+    for (let y = 0; y < pixelEditor.size; y += 1) {
+      for (let x = 0; x < pixelEditor.size; x += 1) {
+        const color = pixelEditor.cells[y * pixelEditor.size + x];
+        if (!color) continue;
+        ctx.fillStyle = color;
+        ctx.fillRect(x * scale, y * scale, scale, scale);
+      }
+    }
+    return exportCanvas;
+  }
+
+  function getPixelFileBaseName() {
+    const raw = (refs.pixelFileName && refs.pixelFileName.value) || "";
+    const cleaned = raw
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9_-]+/g, "-")
+      .replace(/-{2,}/g, "-")
+      .replace(/^-+|-+$/g, "");
+    return cleaned || "pixel-art";
+  }
+
+  function setPixelResult(text) {
+    if (!refs.pixelResult) return;
+    refs.pixelResult.textContent = text;
+  }
+
+  function clampPixelSize(value) {
+    if (!Number.isFinite(value)) return 32;
+    if (value <= 16) return 16;
+    if (value <= 24) return 24;
+    if (value <= 32) return 32;
+    return 48;
   }
 
   function ensureEditorRole() {

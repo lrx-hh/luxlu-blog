@@ -101,8 +101,41 @@ description: 队友协作写作与文件上传工作台
       </div>
     </article>
 
+    <article class="collab-card admin-only hidden">
+      <h2>7) 管理员像素画板（Piskel 风格）</h2>
+      <div class="stack pixel-editor-shell">
+        <div class="row-grid pixel-controls">
+          <label>网格尺寸
+            <select id="pixel-grid-size">
+              <option value="16">16 x 16</option>
+              <option value="24">24 x 24</option>
+              <option value="32" selected>32 x 32</option>
+              <option value="48">48 x 48</option>
+            </select>
+          </label>
+          <label>画笔颜色
+            <input id="pixel-color" type="color" value="#ff4fa3">
+          </label>
+          <label>文件名（不含后缀）
+            <input id="pixel-file-name" value="luxlu-pixel-art" maxlength="60">
+          </label>
+        </div>
+        <div class="btn-row">
+          <button id="pixel-tool-brush" class="collab-btn role-btn active" type="button">画笔</button>
+          <button id="pixel-tool-eraser" class="collab-btn role-btn" type="button">橡皮</button>
+          <button id="pixel-clear-btn" class="collab-btn" type="button">清空画布</button>
+          <button id="pixel-download-btn" class="collab-btn" type="button">下载 PNG</button>
+          <button id="pixel-save-btn" class="collab-btn primary" type="button">保存到仓库</button>
+        </div>
+        <div class="pixel-canvas-wrap">
+          <canvas id="pixel-canvas" width="640" height="640" aria-label="pixel editor"></canvas>
+        </div>
+        <p id="pixel-result" class="small-note">仅管理员可见。保存路径：source/uploads/team/pixel-art/</p>
+      </div>
+    </article>
+
     <article class="collab-card">
-      <h2>7) 操作日志</h2>
+      <h2>8) 操作日志</h2>
       <pre id="collab-log" class="log-box">[ready] wait for action</pre>
     </article>
   </section>
