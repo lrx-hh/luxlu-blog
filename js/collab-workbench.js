@@ -2,12 +2,14 @@
   const TEAM_POST_DIR = "source/_posts/team";
   const TEAM_UPLOAD_DIR = "source/uploads/team";
 
-  const ADMIN_HASH = "fbfb793beaf001e74c576c16ba5b224d4f64126739f01c9476fac696573be8f0";
-  const TEAM_HASH = "c74de3f9fe2af9c42e6849be4a98f0eec35ea070e25c4e80c57b13638cd644e9";
-  // Default passphrases:
-  // admin: luxlu667-admin
-  // team:  luxlu667-team
-  // Replace hashes above if you want new passphrases.
+  const ADMIN_HASHES = ["faa9aa94ef30e64ca0ac64e0d378279ee39007bd6f9bdb4db923c50dde3aac64"];
+  const TEAM_HASHES = [
+    "9f8113302def626ec4f960f141cb8d1737d76376f7bae365cab4e4b76fb0566f",
+    "eac07a9dd545e9ad27c5ef2c5bba0f2bf15ff43b60b6ab7ce9e8b67ce9fbf56b",
+    "497922237c338050bd01d66af506fbd1c3d69191ca3971177f89f4c960bdd3f6"
+  ];
+  // Team passphrases: Cxzzzzz / 小龙软糖 / Baoan_100
+  // Admin passphrase: luakslu
 
   const STORAGE_KEYS = {
     owner: "luxlu_collab_owner_v1",
@@ -125,12 +127,12 @@
       return;
     }
     const hash = await sha256(pass);
-    if (targetRole === "team" && hash === TEAM_HASH) {
+    if (targetRole === "team" && TEAM_HASHES.includes(hash)) {
       setRole("team");
       refs.passInput.value = "";
       return;
     }
-    if (targetRole === "admin" && hash === ADMIN_HASH) {
+    if (targetRole === "admin" && ADMIN_HASHES.includes(hash)) {
       setRole("admin");
       refs.passInput.value = "";
       return;
