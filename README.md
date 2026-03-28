@@ -1,4 +1,4 @@
-# LuxLu Butterfly Blog
+# luxlu Butterfly Blog
 
 `Hexo + Butterfly` 黑粉色 CTF 博客模板，已预设 `luxlu.top`。
 

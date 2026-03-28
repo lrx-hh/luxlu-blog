@@ -5,7 +5,7 @@ type: about
 top_img: /img/black-pink-cover.svg
 ---
 
-你好，我是 LuxLu。
+你好，我是 luxlu。
 
 目前是大一学生，主攻 CTF Misc 方向。
 

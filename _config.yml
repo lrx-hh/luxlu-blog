@@ -1,4 +1,4 @@
-title: LuxLu CTF Lab
+title: luxlu CTF Lab
 subtitle: 黑粉色 CTF Misc 博客
 description: 记录 CTF Misc 题解、取证、隐写与脚本工具
 keywords:
@@ -6,7 +6,7 @@ keywords:
   - Misc
   - Forensics
   - Stego
-author: LuxLu
+author: luxlu
 language: zh-CN
 timezone: Asia/Shanghai
 
