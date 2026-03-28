@@ -1072,3 +1072,236 @@ body::before {
 #fx-particles {
   z-index: 0 !important;
 }
+
+/* ===== GitHub-inspired Butterfly refresh ===== */
+
+/* Better nav readability and depth */
+#nav .menus_items .menus_item .site-page,
+#nav #site-name {
+  border: 1px solid rgba(255, 145, 210, 0.2);
+  background: linear-gradient(140deg, rgba(255, 107, 188, 0.08), rgba(255, 255, 255, 0.02));
+  border-radius: 999px;
+  padding: 6px 12px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+#nav .menus_items .menus_item .site-page:hover,
+#nav #site-name:hover {
+  border-color: rgba(255, 163, 220, 0.42);
+  box-shadow: 0 0 18px rgba(255, 98, 176, 0.2);
+}
+
+/* Home cards: desktop dual-column style */
+@media (min-width: 1100px) {
+  #recent-posts {
+    margin-top: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  #recent-posts > .recent-post-item {
+    width: auto !important;
+    margin-top: 0 !important;
+    height: 100%;
+  }
+
+  #recent-posts > .recent-post-item:nth-child(4n + 1),
+  #recent-posts > .recent-post-item:nth-child(4n + 4) {
+    transform: translateY(-4px);
+  }
+}
+
+#recent-posts > .recent-post-item,
+#aside-content .card-widget,
+div#post,
+div#page,
+div#archive {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px !important;
+  background: linear-gradient(145deg, rgba(16, 10, 23, 0.9), rgba(19, 11, 28, 0.8)) !important;
+  box-shadow:
+    0 12px 34px rgba(4, 2, 10, 0.44),
+    inset 0 0 0 1px rgba(255, 165, 221, 0.06) !important;
+}
+
+#recent-posts > .recent-post-item::before,
+#aside-content .card-widget::before,
+div#post::before,
+div#page::before,
+div#archive::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255, 143, 212, 0.08), transparent 30%),
+    radial-gradient(circle at 88% 94%, rgba(255, 110, 193, 0.08), transparent 26%);
+}
+
+/* New 3D modules */
+#fx-crystal-shards,
+#fx-orbit-lines,
+#fx-neon-comets {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+#fx-crystal-shards {
+  z-index: 1;
+  transform-style: preserve-3d;
+}
+
+#fx-crystal-shards .shard {
+  position: absolute;
+  width: 44px;
+  height: 52px;
+  clip-path: polygon(50% 0%, 100% 36%, 78% 100%, 22% 100%, 0% 36%);
+  border: 1px solid rgba(255, 174, 223, 0.22);
+  background: linear-gradient(145deg, rgba(255, 120, 198, 0.16), rgba(255, 242, 251, 0.03));
+  box-shadow: 0 0 14px rgba(255, 95, 173, 0.16);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0.42;
+  transform-style: preserve-3d;
+  animation: shardFloat linear infinite;
+}
+
+#fx-crystal-shards .shard-1 { transform: rotate(12deg); }
+#fx-crystal-shards .shard-2 { transform: rotate(42deg); }
+#fx-crystal-shards .shard-3 { transform: rotate(72deg); }
+#fx-crystal-shards .shard-4 { transform: rotate(102deg); }
+#fx-crystal-shards .shard-5 { transform: rotate(132deg); }
+#fx-crystal-shards .shard-6 { transform: rotate(162deg); }
+
+@keyframes shardFloat {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0.25;
+  }
+  35% {
+    opacity: 0.55;
+  }
+  65% {
+    transform: translate3d(24px, -16px, var(--depth-z)) rotate(160deg);
+    opacity: 0.34;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(360deg);
+    opacity: 0.25;
+  }
+}
+
+#fx-orbit-lines {
+  z-index: 1;
+  transform-style: preserve-3d;
+  perspective: 1100px;
+}
+
+#fx-orbit-lines .orbit {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 163, 220, 0.2);
+  box-shadow: 0 0 12px rgba(255, 98, 176, 0.12);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+#fx-orbit-lines .orbit.o1 {
+  width: 420px;
+  height: 170px;
+  left: 5%;
+  top: 10%;
+  transform: rotateX(70deg) rotateZ(6deg);
+  animation: orbitSpin1 20s linear infinite;
+}
+
+#fx-orbit-lines .orbit.o2 {
+  width: 520px;
+  height: 190px;
+  right: 10%;
+  top: 62%;
+  transform: rotateX(72deg) rotateZ(-8deg);
+  animation: orbitSpin2 24s linear infinite reverse;
+}
+
+#fx-orbit-lines .orbit.o3 {
+  width: 330px;
+  height: 140px;
+  right: 18%;
+  top: 16%;
+  transform: rotateX(66deg) rotateZ(14deg);
+  animation: orbitSpin3 17s linear infinite;
+}
+
+@keyframes orbitSpin1 {
+  to {
+    transform: rotateX(70deg) rotateZ(366deg);
+  }
+}
+
+@keyframes orbitSpin2 {
+  to {
+    transform: rotateX(72deg) rotateZ(352deg);
+  }
+}
+
+@keyframes orbitSpin3 {
+  to {
+    transform: rotateX(66deg) rotateZ(374deg);
+  }
+}
+
+#fx-neon-comets {
+  z-index: 2;
+  overflow: hidden;
+}
+
+#fx-neon-comets .comet {
+  position: absolute;
+  width: 130px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 166, 219, 0), rgba(255, 166, 219, 0.66), rgba(255, 166, 219, 0));
+  box-shadow: 0 0 14px rgba(255, 110, 192, 0.28);
+  transform: rotate(-14deg);
+  animation: cometFlow linear infinite;
+  opacity: 0;
+}
+
+@keyframes cometFlow {
+  0% {
+    transform: translateX(-18vw) translateY(0) rotate(-14deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.75;
+  }
+  62% {
+    opacity: 0.46;
+  }
+  100% {
+    transform: translateX(126vw) translateY(16px) rotate(-14deg);
+    opacity: 0;
+  }
+}
+
+/* keep text clear over new effects */
+#site-info,
+#page-site-info,
+#post-info,
+#page-header #nav {
+  isolation: isolate;
+}
+
+@media (max-width: 1100px), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  #fx-crystal-shards,
+  #fx-orbit-lines,
+  #fx-neon-comets {
+    display: none !important;
+  }
+}

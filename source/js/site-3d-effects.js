@@ -28,6 +28,9 @@
     initRibbonWave();
     initDepthFog();
     initStarField();
+    initCrystalShards();
+    initOrbitLines();
+    initNeonComets();
 
     initMagneticElements();
     initImageDepth();
@@ -336,6 +339,54 @@
       star.style.animationDelay = Math.random() * 5 + "s";
       star.style.animationDuration = 4 + Math.random() * 5 + "s";
       layer.appendChild(star);
+    }
+
+    document.body.appendChild(layer);
+  }
+
+  function initCrystalShards() {
+    if (document.getElementById("fx-crystal-shards")) return;
+    const layer = document.createElement("div");
+    layer.id = "fx-crystal-shards";
+
+    for (let i = 0; i < 14; i++) {
+      const shard = document.createElement("span");
+      shard.className = "shard shard-" + ((i % 6) + 1);
+      shard.style.left = Math.random() * 100 + "%";
+      shard.style.top = Math.random() * 100 + "%";
+      shard.style.animationDelay = Math.random() * 6 + "s";
+      shard.style.animationDuration = 9 + Math.random() * 7 + "s";
+      shard.style.setProperty("--depth-z", (12 + Math.random() * 48).toFixed(2) + "px");
+      layer.appendChild(shard);
+    }
+
+    document.body.appendChild(layer);
+  }
+
+  function initOrbitLines() {
+    if (document.getElementById("fx-orbit-lines")) return;
+    const layer = document.createElement("div");
+    layer.id = "fx-orbit-lines";
+    layer.innerHTML =
+      "<span class=\"orbit o1\"></span>" +
+      "<span class=\"orbit o2\"></span>" +
+      "<span class=\"orbit o3\"></span>";
+    document.body.appendChild(layer);
+  }
+
+  function initNeonComets() {
+    if (document.getElementById("fx-neon-comets")) return;
+    const layer = document.createElement("div");
+    layer.id = "fx-neon-comets";
+
+    for (let i = 0; i < 10; i++) {
+      const comet = document.createElement("span");
+      comet.className = "comet";
+      comet.style.top = 6 + Math.random() * 88 + "%";
+      comet.style.left = -20 - Math.random() * 10 + "%";
+      comet.style.animationDelay = Math.random() * 9 + "s";
+      comet.style.animationDuration = 8 + Math.random() * 6 + "s";
+      layer.appendChild(comet);
     }
 
     document.body.appendChild(layer);
