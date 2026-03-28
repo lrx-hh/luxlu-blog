@@ -88,7 +88,7 @@
       if (!ev) return;
 
       if (!ownerMode) {
-        window.alert("当前是只读模式。点击“进入主人模式”并输入口令 luxlu667 后才能编辑。");
+        window.alert("当前是只读模式。点击“进入luxlu的生活”并输入口令后才能编辑。");
         return;
       }
 
@@ -161,7 +161,7 @@
       return;
     }
 
-    const input = window.prompt("输入主人口令后可编辑日历：");
+    const input = window.prompt("luxlu有没有给你一个口令呀,, ▬ ω ▬ ,,");
     if (!input) return;
 
     const hash = await sha256(input.trim());
@@ -186,7 +186,7 @@
   }
 
   function renderOwnerState() {
-    refs.ownerBtn.textContent = ownerMode ? "退出主人模式" : "进入主人模式";
+    refs.ownerBtn.textContent = ownerMode ? "退出luxlu的生活" : "进入luxlu的生活";
     refs.addItemBtn.classList.toggle("hidden", !ownerMode);
     if (refs.quickAddBtn) refs.quickAddBtn.classList.remove("hidden");
   }
