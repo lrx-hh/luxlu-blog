@@ -219,54 +219,32 @@
       el.classList.add("tilt-3d", "neon-breathe");
 
       let hoverRafId = null;
-      let targetRx = 0;
-      let targetRy = 0;
-      let currentRx = 0;
-      let currentRy = 0;
-      const maxTilt = 5;
-      const perspective = 1000;
-      const smoothing = 0.24;
-
-      const runTilt = () => {
-        currentRx += (targetRx - currentRx) * smoothing;
-        currentRy += (targetRy - currentRy) * smoothing;
-
-        const nearZero = Math.abs(currentRx) < 0.02 && Math.abs(currentRy) < 0.02 && Math.abs(targetRx) < 0.02 && Math.abs(targetRy) < 0.02;
-        if (nearZero) {
-          el.style.transform = "";
-          hoverRafId = null;
-          return;
-        }
-
-        el.style.transform =
-          "perspective(" +
-          perspective +
-          "px) rotateX(" +
-          currentRx.toFixed(3) +
-          "deg) rotateY(" +
-          currentRy.toFixed(3) +
-          "deg) translateZ(0)";
-        hoverRafId = requestAnimationFrame(runTilt);
-      };
-
-      const kickTilt = () => {
-        if (hoverRafId) return;
-        hoverRafId = requestAnimationFrame(runTilt);
-      };
+      const maxTilt = 3.2;
+      const perspective = 1200;
 
       el.addEventListener("mousemove", (e) => {
-        const rect = el.getBoundingClientRect();
-        const px = (e.clientX - rect.left) / rect.width;
-        const py = (e.clientY - rect.top) / rect.height;
-        targetRy = (px - 0.5) * maxTilt;
-        targetRx = (0.5 - py) * maxTilt;
-        kickTilt();
+        if (hoverRafId) cancelAnimationFrame(hoverRafId);
+        hoverRafId = requestAnimationFrame(() => {
+          const rect = el.getBoundingClientRect();
+          const px = (e.clientX - rect.left) / rect.width;
+          const py = (e.clientY - rect.top) / rect.height;
+          const ry = (px - 0.5) * maxTilt;
+          const rx = (0.5 - py) * maxTilt;
+          el.style.transform =
+            "perspective(" +
+            perspective +
+            "px) rotateX(" +
+            rx.toFixed(3) +
+            "deg) rotateY(" +
+            ry.toFixed(3) +
+            "deg)";
+        });
       });
 
       el.addEventListener("mouseleave", () => {
-        targetRx = 0;
-        targetRy = 0;
-        kickTilt();
+        if (hoverRafId) cancelAnimationFrame(hoverRafId);
+        hoverRafId = null;
+        el.style.transform = "";
       });
     });
   }
@@ -286,49 +264,28 @@
       el.classList.add("code-tilt");
 
       let rafId = null;
-      let targetRx = 0;
-      let targetRy = 0;
-      let currentRx = 0;
-      let currentRy = 0;
-
-      const run = () => {
-        currentRx += (targetRx - currentRx) * 0.2;
-        currentRy += (targetRy - currentRy) * 0.2;
-
-        const nearZero = Math.abs(currentRx) < 0.02 && Math.abs(currentRy) < 0.02 && Math.abs(targetRx) < 0.02 && Math.abs(targetRy) < 0.02;
-        if (nearZero) {
-          el.style.transform = "";
-          rafId = null;
-          return;
-        }
-
-        el.style.transform =
-          "perspective(1100px) rotateX(" +
-          currentRx.toFixed(3) +
-          "deg) rotateY(" +
-          currentRy.toFixed(3) +
-          "deg) translateZ(0)";
-        rafId = requestAnimationFrame(run);
-      };
-
-      const kick = () => {
-        if (rafId) return;
-        rafId = requestAnimationFrame(run);
-      };
 
       el.addEventListener("mousemove", (e) => {
-        const rect = el.getBoundingClientRect();
-        const px = (e.clientX - rect.left) / rect.width;
-        const py = (e.clientY - rect.top) / rect.height;
-        targetRy = (px - 0.5) * 1.6;
-        targetRx = (0.5 - py) * 1.6;
-        kick();
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          const rect = el.getBoundingClientRect();
+          const px = (e.clientX - rect.left) / rect.width;
+          const py = (e.clientY - rect.top) / rect.height;
+          const ry = (px - 0.5) * 1.1;
+          const rx = (0.5 - py) * 1.1;
+          el.style.transform =
+            "perspective(1000px) rotateX(" +
+            rx.toFixed(3) +
+            "deg) rotateY(" +
+            ry.toFixed(3) +
+            "deg)";
+        });
       });
 
       el.addEventListener("mouseleave", () => {
-        targetRx = 0;
-        targetRy = 0;
-        kick();
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = null;
+        el.style.transform = "";
       });
     });
   }

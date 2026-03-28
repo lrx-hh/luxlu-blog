@@ -125,7 +125,7 @@ div#archive {
 .tilt-3d {
   transform-style: preserve-3d;
   will-change: transform;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.1s linear, box-shadow 0.2s ease;
 }
 
 .tilt-3d::after {
@@ -1398,7 +1398,7 @@ div#archive.tilt-3d {
   will-change: transform;
   transform-style: preserve-3d;
   transform-origin: center center;
-  transition: transform 0.22s ease-out, box-shadow 0.3s ease;
+  transition: transform 0.1s linear, box-shadow 0.3s ease;
 }
 
 .code-tilt:hover {
