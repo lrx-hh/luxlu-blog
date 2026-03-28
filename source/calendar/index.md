@@ -41,6 +41,8 @@ description: 访客只读，主人模式可编辑日程与代办
     <ul id="agenda-list"></ul>
     <button id="add-item-btn" class="cal-btn cal-btn-owner hidden" type="button">新增日程</button>
   </aside>
+
+  <button id="quick-add-btn" class="calendar-fab" type="button">+ 新增日程</button>
 </section>
 
 <dialog id="edit-dialog">
