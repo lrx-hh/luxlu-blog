@@ -496,9 +496,9 @@ div#archive {
 }
 
 .reveal-3d {
-  opacity: 0.75;
-  transform: perspective(1000px) rotateX(-10deg) translateY(24px);
-  transition: transform 0.85s cubic-bezier(0.2, 0.6, 0.2, 1), opacity 0.85s ease;
+  opacity: 0.92;
+  transform: perspective(1200px) rotateX(-2deg) translateY(8px);
+  transition: transform 0.55s cubic-bezier(0.2, 0.6, 0.2, 1), opacity 0.55s ease;
 }
 
 .reveal-3d.in-view {
@@ -507,16 +507,16 @@ div#archive {
 }
 
 .neon-breathe {
-  animation: neonBreathe 3.8s ease-in-out infinite;
+  animation: neonBreathe 9s ease-in-out infinite;
 }
 
 @keyframes neonBreathe {
   0%,
   100% {
-    box-shadow: 0 8px 26px rgba(255, 79, 163, 0.16);
+    box-shadow: 0 8px 24px rgba(255, 79, 163, 0.14);
   }
   50% {
-    box-shadow: 0 16px 42px rgba(255, 79, 163, 0.33);
+    box-shadow: 0 11px 28px rgba(255, 79, 163, 0.2);
   }
 }
 
@@ -1331,6 +1331,12 @@ html[data-fx-mode="balanced"] .neon-breathe {
   animation: none !important;
 }
 
+html[data-fx-mode="balanced"] div#post.neon-breathe,
+html[data-fx-mode="balanced"] div#page.neon-breathe,
+html[data-fx-mode="balanced"] div#archive.neon-breathe {
+  animation: neonBreathe 11s ease-in-out infinite !important;
+}
+
 html[data-fx-mode="balanced"] #recent-posts > .recent-post-item,
 html[data-fx-mode="balanced"] #aside-content .card-widget,
 html[data-fx-mode="balanced"] div#post,
@@ -1375,4 +1381,34 @@ html[data-fx-mode="lite"] div#archive {
   box-shadow: 0 10px 20px rgba(4, 2, 10, 0.36) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+
+/* Article/page frame anti-flicker stable mode (keep motion, reduce jitter) */
+div#post.tilt-3d-frame,
+div#page.tilt-3d-frame,
+div#archive.tilt-3d-frame {
+  will-change: transform;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transform-origin: center center;
+  transition: transform 0.32s ease-out, box-shadow 0.55s ease;
+}
+
+div#post.tilt-3d-frame::after,
+div#page.tilt-3d-frame::after,
+div#archive.tilt-3d-frame::after {
+  opacity: 0.04;
+  transition: opacity 0.35s ease;
+}
+
+div#post.tilt-3d-frame:hover::after,
+div#page.tilt-3d-frame:hover::after,
+div#archive.tilt-3d-frame:hover::after {
+  opacity: 0.1;
+}
+
+div#post.tilt-3d-frame.neon-breathe,
+div#page.tilt-3d-frame.neon-breathe,
+div#archive.tilt-3d-frame.neon-breathe {
+  animation-duration: 11s;
 }
