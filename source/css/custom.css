@@ -1305,3 +1305,65 @@ div#archive::before {
     display: none !important;
   }
 }
+
+/* ===== Performance Modes ===== */
+html[data-fx-mode="balanced"] #fx-holo-strips,
+html[data-fx-mode="balanced"] #fx-ribbon-wave,
+html[data-fx-mode="balanced"] #fx-depth-fog,
+html[data-fx-mode="balanced"] #fx-crystal-shards,
+html[data-fx-mode="balanced"] #fx-orbit-lines,
+html[data-fx-mode="balanced"] #fx-neon-comets,
+html[data-fx-mode="balanced"] .fx-cursor,
+html[data-fx-mode="balanced"] .fx-cursor-dot {
+  display: none !important;
+}
+
+html[data-fx-mode="balanced"] #fx-particles {
+  opacity: 0.24 !important;
+}
+
+html[data-fx-mode="balanced"] #recent-posts > .recent-post-item,
+html[data-fx-mode="balanced"] #aside-content .card-widget,
+html[data-fx-mode="balanced"] div#post,
+html[data-fx-mode="balanced"] div#page,
+html[data-fx-mode="balanced"] div#archive {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-fx-mode="lite"] #fx-particles,
+html[data-fx-mode="lite"] #fx-depth-grid,
+html[data-fx-mode="lite"] #fx-cube-field,
+html[data-fx-mode="lite"] #fx-showcase,
+html[data-fx-mode="lite"] #fx-star-field,
+html[data-fx-mode="lite"] #fx-holo-strips,
+html[data-fx-mode="lite"] #fx-ribbon-wave,
+html[data-fx-mode="lite"] #fx-depth-fog,
+html[data-fx-mode="lite"] #fx-crystal-shards,
+html[data-fx-mode="lite"] #fx-orbit-lines,
+html[data-fx-mode="lite"] #fx-neon-comets,
+html[data-fx-mode="lite"] .fx-cursor,
+html[data-fx-mode="lite"] .fx-cursor-dot,
+html[data-fx-mode="lite"] #page-header::after,
+html[data-fx-mode="lite"] body::before {
+  display: none !important;
+}
+
+html[data-fx-mode="lite"] .tilt-3d,
+html[data-fx-mode="lite"] .img-3d,
+html[data-fx-mode="lite"] .magnetic,
+html[data-fx-mode="lite"] #rightside {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+html[data-fx-mode="lite"] #recent-posts > .recent-post-item,
+html[data-fx-mode="lite"] #aside-content .card-widget,
+html[data-fx-mode="lite"] div#post,
+html[data-fx-mode="lite"] div#page,
+html[data-fx-mode="lite"] div#archive {
+  box-shadow: 0 10px 20px rgba(4, 2, 10, 0.36) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
