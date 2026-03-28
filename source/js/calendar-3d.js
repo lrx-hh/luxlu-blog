@@ -86,18 +86,18 @@
       const ev = events.find((item) => item.id === id);
       if (!ev) return;
 
+      if (!ownerMode) {
+        window.alert("当前是只读模式。点击“进入主人模式”并输入口令 luxlu667 后才能编辑。");
+        return;
+      }
+
       if (event.target.classList.contains("agenda-check")) {
-        if (!ownerMode) {
-          event.preventDefault();
-          return;
-        }
         ev.done = !!event.target.checked;
         saveEvents();
         render();
         return;
       }
 
-      if (!ownerMode) return;
       editEventId = id;
       openDialog("编辑日程", ev, true);
     });
@@ -249,7 +249,6 @@
       .map((ev) => {
         const doneClass = ev.done ? " done" : "";
         const checked = ev.done ? " checked" : "";
-        const disabled = ownerMode ? "" : " disabled";
         const desc = ev.desc ? '<div class="agenda-desc">' + escapeHtml(ev.desc) + "</div>" : "";
         const colorDot =
           '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' +
@@ -265,7 +264,6 @@
           '<div class="agenda-top">' +
           '<input class="agenda-check" type="checkbox"' +
           checked +
-          disabled +
           ">" +
           '<span class="agenda-time">' +
           escapeHtml(formatEventTimeRange(ev)) +
