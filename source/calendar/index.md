@@ -2,11 +2,12 @@
 title: 私人日历
 date: 2026-03-28 19:00:00
 comments: false
+aside: false
 top_img: /img/black-pink-cover.svg
 description: 访客只读，主人模式可编辑日程与代办
 ---
 
-<link rel="stylesheet" href="/css/calendar-3d.css?v=20260328c">
+<link rel="stylesheet" href="/css/calendar-3d.css?v=20260329w">
 
 <section class="calendar-shell">
   <div class="calendar-glow glow-a"></div>
@@ -85,4 +86,4 @@ description: 访客只读，主人模式可编辑日程与代办
   </form>
 </dialog>
 
-<script src="/js/calendar-3d.js?v=20260328c"></script>
+<script src="/js/calendar-3d.js?v=20260329w"></script>
