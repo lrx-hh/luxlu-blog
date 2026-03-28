@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const TEAM_POST_DIR = "source/_posts/team";
   const TEAM_UPLOAD_DIR = "source/uploads/team";
   const PIXEL_UPLOAD_DIR = TEAM_UPLOAD_DIR + "/pixel-art";
@@ -25,9 +25,7 @@
     branch: "main",
     token: "",
     role: "visitor",
-    connected: false,
-    loadedAdminPath: "",
-    loadedAdminSha: ""
+    connected: false
   };
 
   const pixelEditor = {
@@ -35,8 +33,7 @@
     tool: "brush",
     color: "#ff4fa3",
     drawing: false,
-    cells: [],
-    hasPaint: false
+    cells: []
   };
 
   const refs = {
@@ -47,25 +44,31 @@
     connectBtn: document.getElementById("repo-connect-btn"),
     refreshBtn: document.getElementById("repo-refresh-btn"),
     status: document.getElementById("collab-status"),
+
     visitorBtn: document.getElementById("role-visitor-btn"),
     teamBtn: document.getElementById("role-team-btn"),
     adminBtn: document.getElementById("role-admin-btn"),
     passInput: document.getElementById("role-passphrase"),
     logoutBtn: document.getElementById("role-logout-btn"),
     roleBadge: document.getElementById("role-badge"),
+
     projectList: document.getElementById("project-list"),
+
     newPostForm: document.getElementById("new-post-form"),
     postTitle: document.getElementById("post-title"),
     postTags: document.getElementById("post-tags"),
     postBody: document.getElementById("post-body"),
+
     uploadForm: document.getElementById("upload-form"),
     uploadSubdir: document.getElementById("upload-subdir"),
     uploadFile: document.getElementById("upload-file"),
     uploadResult: document.getElementById("upload-result"),
+
     adminPath: document.getElementById("admin-path"),
     adminEditor: document.getElementById("admin-editor"),
     adminLoadBtn: document.getElementById("admin-load-btn"),
     adminSaveBtn: document.getElementById("admin-save-btn"),
+
     pixelGridSize: document.getElementById("pixel-grid-size"),
     pixelColor: document.getElementById("pixel-color"),
     pixelFileName: document.getElementById("pixel-file-name"),
@@ -76,6 +79,7 @@
     pixelSaveBtn: document.getElementById("pixel-save-btn"),
     pixelCanvas: document.getElementById("pixel-canvas"),
     pixelResult: document.getElementById("pixel-result"),
+
     logBox: document.getElementById("collab-log"),
     editorOnly: document.querySelectorAll(".editor-only"),
     adminOnly: document.querySelectorAll(".admin-only")
@@ -115,6 +119,7 @@
     if (refs.pixelClearBtn) refs.pixelClearBtn.addEventListener("click", clearPixelCanvas);
     if (refs.pixelDownloadBtn) refs.pixelDownloadBtn.addEventListener("click", downloadPixelCanvas);
     if (refs.pixelSaveBtn) refs.pixelSaveBtn.addEventListener("click", savePixelCanvasToRepo);
+
     if (refs.pixelCanvas) {
       refs.pixelCanvas.addEventListener("pointerdown", onPixelPointerDown);
       refs.pixelCanvas.addEventListener("pointermove", onPixelPointerMove);
@@ -129,7 +134,6 @@
     state.repo = localStorage.getItem(STORAGE_KEYS.repo) || state.repo;
     state.branch = localStorage.getItem(STORAGE_KEYS.branch) || state.branch;
     state.role = "visitor";
-    localStorage.removeItem("luxlu_collab_role_v1");
     state.token = sessionStorage.getItem(STORAGE_KEYS.token) || "";
   }
 
@@ -162,6 +166,7 @@
       window.alert("请输入口令");
       return;
     }
+
     const hash = await sha256(pass);
     if (targetRole === "team" && ACCESS_HASH_POOL.team.includes(hash)) {
       setRole("team");
@@ -173,6 +178,7 @@
       refs.passInput.value = "";
       return;
     }
+
     window.alert("口令错误");
   }
 
@@ -180,10 +186,10 @@
     state.owner = refs.ownerInput.value.trim();
     state.repo = refs.repoInput.value.trim();
     state.branch = refs.branchInput.value.trim();
-    state.token = refs.tokenInput.value.trim();
+    state.token = normalizeTokenInput(refs.tokenInput.value);
 
     if (!state.owner || !state.repo || !state.branch) {
-      window.alert("Owner/Repo/Branch 不能为空");
+      window.alert("Owner / Repo / Branch 不能为空");
       return;
     }
 
@@ -195,21 +201,55 @@
 
     try {
       refs.status.textContent = "状态：连接中...";
-      const res = await fetch(
+
+      const repoUrl =
         "https://api.github.com/repos/" +
-          encodeURIComponent(state.owner) +
-          "/" +
-          encodeURIComponent(state.repo),
-        { headers: apiHeaders(false) }
-      );
+        encodeURIComponent(state.owner) +
+        "/" +
+        encodeURIComponent(state.repo);
+
+      let res = await fetch(repoUrl, { headers: apiHeaders(false) });
+      let fallbackToReadonly = false;
+
+      if (!res.ok && state.token && (res.status === 401 || res.status === 403)) {
+        const retry = await fetch(repoUrl, {
+          headers: { Accept: "application/vnd.github+json" }
+        });
+        if (retry.ok) {
+          fallbackToReadonly = true;
+          res = retry;
+          state.token = "";
+          refs.tokenInput.value = "";
+          sessionStorage.removeItem(STORAGE_KEYS.token);
+          log("token invalid or blocked, fallback to readonly");
+        }
+      }
+
       if (!res.ok) throw new Error(await readError(res));
+
+      const branchRes = await fetch(repoUrl + "/branches/" + encodeURIComponent(state.branch), {
+        headers: apiHeaders(false)
+      });
+      if (!branchRes.ok) throw new Error("Branch not found: " + state.branch);
+
       state.connected = true;
-      refs.status.textContent = "状态：已连接 " + state.owner + "/" + state.repo + "@" + state.branch;
+      refs.status.textContent =
+        "状态：已连接 " +
+        state.owner +
+        "/" +
+        state.repo +
+        "@" +
+        state.branch +
+        (fallbackToReadonly ? "（只读）" : "");
       log("repo connected");
       await refreshProjects();
+
+      if (fallbackToReadonly) {
+        window.alert("Token 无效或被拦截，已切换只读连接。要上传和保存请填正确 PAT。");
+      }
     } catch (err) {
       state.connected = false;
-      refs.status.textContent = "状态：连接失败";
+      refs.status.textContent = "状态：连接失败（" + err.message + "）";
       log("connect failed: " + err.message);
       window.alert("连接失败: " + err.message);
     }
@@ -219,14 +259,15 @@
     refs.projectList.innerHTML = "<li>loading...</li>";
     try {
       const items = await listDirectory(TEAM_POST_DIR);
-      if (!items.length) {
+      const files = items.filter((item) => item.type === "file" && item.name.endsWith(".md"));
+
+      if (!files.length) {
         refs.projectList.innerHTML = "<li>暂无协作文章</li>";
         return;
       }
 
-      items.sort((a, b) => b.name.localeCompare(a.name));
-      refs.projectList.innerHTML = items
-        .filter((item) => item.type === "file" && item.name.endsWith(".md"))
+      files.sort((a, b) => b.name.localeCompare(a.name));
+      refs.projectList.innerHTML = files
         .map((item) => {
           const slug = item.name.replace(/\.md$/, "");
           const postUrl = "/posts/" + encodeURIComponent(slug) + "/";
@@ -236,18 +277,19 @@
             "<strong>" +
             escapeHtml(item.name) +
             "</strong>" +
-            "<div class=\"project-links\">" +
-            "<a href=\"" +
+            '<div class="project-links">' +
+            '<a href="' +
             postUrl +
-            "\" target=\"_blank\" rel=\"noopener\">博客预览</a>" +
-            "<a href=\"" +
+            '" target="_blank" rel="noopener">博客预览</a>' +
+            '<a href="' +
             githubUrl +
-            "\" target=\"_blank\" rel=\"noopener\">仓库文件</a>" +
+            '" target="_blank" rel="noopener">仓库文件</a>' +
             "</div>" +
             "</li>"
           );
         })
         .join("");
+
       log("project list refreshed");
     } catch (err) {
       refs.projectList.innerHTML = "<li>读取失败: " + escapeHtml(err.message) + "</li>";
@@ -263,6 +305,7 @@
     const title = (refs.postTitle.value || "").trim();
     const tagsRaw = (refs.postTags.value || "").trim();
     const body = (refs.postBody.value || "").trim();
+
     if (!title) {
       window.alert("标题不能为空");
       return;
@@ -283,11 +326,11 @@
 
     try {
       await writeFile(path, utf8ToBase64(content), "team post: " + title, allowUpdate);
-      log("post saved: " + path);
       refs.postTitle.value = "";
       refs.postBody.value = "";
       await refreshProjects();
-      window.alert("已提交文章: " + path);
+      log("post saved: " + path);
+      window.alert("文章已提交: " + path);
     } catch (err) {
       log("post failed: " + err.message);
       window.alert("提交失败: " + err.message);
@@ -301,14 +344,13 @@
 
     const file = refs.uploadFile.files && refs.uploadFile.files[0];
     if (!file) {
-      window.alert("先选择文件");
+      window.alert("请先选择文件");
       return;
     }
 
     const subdir = sanitizePath(refs.uploadSubdir.value || "shared");
     const safeName = sanitizeFileName(file.name);
-    const stamp = Date.now();
-    const path = TEAM_UPLOAD_DIR + "/" + subdir + "/" + stamp + "-" + safeName;
+    const path = TEAM_UPLOAD_DIR + "/" + subdir + "/" + Date.now() + "-" + safeName;
     const allowUpdate = state.role === "admin";
 
     try {
@@ -327,7 +369,7 @@
 
   async function loadAdminFile() {
     if (state.role !== "admin") {
-      window.alert("只有管理员可以读取任意文件");
+      window.alert("仅管理员可读取任意文件");
       return;
     }
     if (!ensureToken()) return;
@@ -337,11 +379,10 @@
       window.alert("请输入文件路径");
       return;
     }
+
     try {
       const file = await getFile(path);
       refs.adminEditor.value = base64ToUtf8(file.content || "");
-      state.loadedAdminPath = path;
-      state.loadedAdminSha = file.sha || "";
       log("admin loaded: " + path);
     } catch (err) {
       log("admin load failed: " + err.message);
@@ -351,7 +392,7 @@
 
   async function saveAdminFile() {
     if (state.role !== "admin") {
-      window.alert("只有管理员可以保存任意文件");
+      window.alert("仅管理员可保存任意文件");
       return;
     }
     if (!ensureToken()) return;
@@ -394,7 +435,6 @@
     const size = clampPixelSize(parseInt(refs.pixelGridSize.value || "32", 10));
     pixelEditor.size = size;
     pixelEditor.cells = new Array(size * size).fill("");
-    if (refs.pixelGridSize) refs.pixelGridSize.value = String(size);
     renderPixelCanvas();
     setPixelResult("Grid changed to " + size + " x " + size + ".");
   }
@@ -430,7 +470,7 @@
       try {
         refs.pixelCanvas.releasePointerCapture(event.pointerId);
       } catch (err) {
-        // ignore pointer release mismatch
+        // ignore
       }
     }
   }
@@ -449,7 +489,6 @@
   }
 
   function resolvePixelPosition(event) {
-    if (!refs.pixelCanvas) return null;
     const rect = refs.pixelCanvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return null;
 
@@ -504,7 +543,6 @@
   }
 
   function clearPixelCanvas() {
-    if (!refs.pixelCanvas) return;
     pixelEditor.cells = new Array(pixelEditor.size * pixelEditor.size).fill("");
     renderPixelCanvas();
     setPixelResult("Canvas cleared.");
@@ -514,18 +552,20 @@
     if (!refs.pixelCanvas) return;
     const exportCanvas = buildPixelExportCanvas();
     const fileBase = getPixelFileBaseName();
+
     const link = document.createElement("a");
     link.href = exportCanvas.toDataURL("image/png");
     link.download = fileBase + ".png";
     document.body.appendChild(link);
     link.click();
     link.remove();
+
     setPixelResult("PNG downloaded: " + fileBase + ".png");
   }
 
   async function savePixelCanvasToRepo() {
     if (state.role !== "admin") {
-      window.alert("Admin role required.");
+      window.alert("需要管理员身份");
       return;
     }
     if (!ensureToken()) return;
@@ -540,11 +580,11 @@
       const publicPath = "/" + path.replace(/^source\//, "");
       setPixelResult("Saved: " + publicPath);
       log("pixel art saved: " + path);
-      window.alert("Pixel art saved: " + publicPath);
+      window.alert("像素画已保存: " + publicPath);
     } catch (err) {
       setPixelResult("Save failed: " + err.message);
       log("pixel save failed: " + err.message);
-      window.alert("Pixel save failed: " + err.message);
+      window.alert("保存失败: " + err.message);
     }
   }
 
@@ -601,7 +641,7 @@
 
   function ensureToken() {
     if (state.token) return true;
-    window.alert("请先填写 GitHub Token 并连接仓库");
+    window.alert("请先填入有效 GitHub PAT（Contents: Read and write）并点击连接仓库");
     return false;
   }
 
@@ -626,9 +666,8 @@
 
   async function writeFile(path, base64Content, message, allowUpdate) {
     path = path.replace(/^\/+/, "");
-    const isTeamRole = state.role === "team";
 
-    if (isTeamRole) {
+    if (state.role === "team") {
       const allowedPrefixA = TEAM_POST_DIR + "/";
       const allowedPrefixB = TEAM_UPLOAD_DIR + "/";
       if (!path.startsWith(allowedPrefixA) && !path.startsWith(allowedPrefixB)) {
@@ -659,6 +698,7 @@
       headers: apiHeaders(true),
       body: JSON.stringify(payload)
     });
+
     if (!res.ok) throw new Error(await readError(res));
     return res.json();
   }
@@ -669,6 +709,7 @@
       .filter(Boolean)
       .map((seg) => encodeURIComponent(seg))
       .join("/");
+
     return (
       "https://api.github.com/repos/" +
       encodeURIComponent(state.owner) +
@@ -696,9 +737,7 @@
   }
 
   function apiHeaders(withJson) {
-    const headers = {
-      Accept: "application/vnd.github+json"
-    };
+    const headers = { Accept: "application/vnd.github+json" };
     if (withJson) headers["Content-Type"] = "application/json";
     if (state.token) headers.Authorization = "Bearer " + state.token;
     return headers;
@@ -707,11 +746,33 @@
   async function readError(res) {
     try {
       const data = await res.json();
-      if (data && data.message) return data.message;
+      if (data && data.message) {
+        if (res.status === 403 && data.message.toLowerCase().includes("rate limit")) {
+          return "GitHub API rate limit reached, add PAT to continue";
+        }
+        return data.message;
+      }
       return "HTTP " + res.status;
     } catch (err) {
       return "HTTP " + res.status;
     }
+  }
+
+  function normalizeTokenInput(raw) {
+    const token = String(raw || "").trim();
+    if (!token) return "";
+
+    const lower = token.toLowerCase();
+    if (
+      lower === "github_pat_xxx" ||
+      lower === "github_pat_xxxxx" ||
+      lower === "ghp_xxx" ||
+      lower === "your_token_here" ||
+      lower === "token"
+    ) {
+      return "";
+    }
+    return token;
   }
 
   function renderPost(title, body, tags) {
@@ -747,6 +808,7 @@
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "")
       .replace(/-{2,}/g, "-");
+
     if (!slug) slug = "team-note-" + Date.now();
     return slug;
   }
@@ -768,6 +830,7 @@
       .replace(/[^a-z0-9_-]+/g, "-")
       .replace(/-{2,}/g, "-")
       .replace(/^-+|-+$/g, "");
+
     return base + (ext ? "." + ext : "");
   }
 
@@ -797,12 +860,12 @@
   }
 
   function escapeHtml(text) {
-    return String(text).replace(/[&<>"']/g, function (ch) {
+    return String(text).replace(/[&<>"']/g, (ch) => {
       const map = {
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
-        "\"": "&quot;",
+        '"': "&quot;",
         "'": "&#39;"
       };
       return map[ch];
