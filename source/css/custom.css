@@ -1744,3 +1744,188 @@ div#archive {
     display: none;
   }
 }
+
+/* ===== 2026-03 Signature Rebuild ===== */
+#web_bg {
+  background-position: center calc(46% + var(--luxlu-bg-y)) !important;
+}
+
+#page-header.full_page {
+  min-height: 84vh !important;
+}
+
+#page-header #site-info {
+  padding-top: 16vh;
+}
+
+#page-header #site-title {
+  font-size: clamp(2.8rem, 10vw, 6.8rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.09em !important;
+  line-height: 0.95 !important;
+  text-transform: lowercase;
+}
+
+#page-header #site-subtitle {
+  font-size: clamp(1rem, 2.4vw, 1.35rem) !important;
+  max-width: 840px;
+  margin: 14px auto 0;
+}
+
+#luxlu-signature-hero {
+  --mx: 0px;
+  --my: 0px;
+  position: relative;
+  margin: 0 auto 24px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 170, 221, 0.24);
+  background: linear-gradient(145deg, rgba(16, 9, 24, 0.78), rgba(9, 5, 14, 0.84));
+  box-shadow: 0 26px 55px rgba(4, 2, 9, 0.52), inset 0 0 0 1px rgba(255, 190, 228, 0.06);
+}
+
+#luxlu-signature-hero .luxlu-hero-backdrop {
+  position: absolute;
+  inset: -30% -20%;
+  background:
+    radial-gradient(circle at 22% 30%, rgba(255, 142, 202, 0.24), transparent 35%),
+    radial-gradient(circle at 78% 74%, rgba(255, 97, 175, 0.2), transparent 36%),
+    linear-gradient(135deg, rgba(255, 164, 217, 0.08), rgba(255, 164, 217, 0));
+  transform: translate3d(var(--mx), var(--my), 0);
+  transition: transform 0.18s ease;
+  pointer-events: none;
+}
+
+#luxlu-signature-hero .luxlu-hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.25fr 0.9fr;
+  gap: 18px;
+  padding: clamp(20px, 4vw, 42px);
+}
+
+#luxlu-signature-hero .luxlu-hero-main .eyebrow {
+  margin: 0 0 10px;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: #ffd5ec;
+  opacity: 0.9;
+}
+
+#luxlu-signature-hero .luxlu-hero-main h2 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 4.4rem);
+  line-height: 0.94;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #ffe3f2;
+  text-shadow: 0 12px 30px rgba(255, 109, 184, 0.24);
+}
+
+#luxlu-signature-hero .luxlu-hero-main .desc {
+  margin: 16px 0 0;
+  max-width: 48ch;
+  color: #f5cfe5;
+  font-size: 15px;
+  line-height: 1.78;
+}
+
+#luxlu-signature-hero .cta-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#luxlu-signature-hero .cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 10px 16px;
+  text-decoration: none !important;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+#luxlu-signature-hero .cta.hot {
+  background: linear-gradient(130deg, #ff9ed3, #ff62b1);
+  color: #2a0418;
+}
+
+#luxlu-signature-hero .cta.ghost {
+  border: 1px solid rgba(255, 181, 224, 0.38);
+  color: #ffe3f2;
+  background: rgba(255, 182, 224, 0.08);
+}
+
+#luxlu-signature-hero .luxlu-hero-side {
+  display: grid;
+  gap: 10px;
+  align-content: center;
+}
+
+#luxlu-signature-hero .panel {
+  border: 1px solid rgba(255, 179, 223, 0.28);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: linear-gradient(145deg, rgba(255, 158, 216, 0.09), rgba(255, 158, 216, 0.03));
+}
+
+#luxlu-signature-hero .panel span {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: #ffcde8;
+}
+
+#luxlu-signature-hero .panel strong {
+  display: block;
+  margin-top: 4px;
+  color: #ffe9f6;
+  font-size: 1rem;
+}
+
+#recent-posts {
+  margin-top: 6px !important;
+}
+
+#recent-posts .recent-post-items {
+  display: grid !important;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+}
+
+#recent-posts .recent-post-items > .recent-post-item {
+  grid-column: span 6;
+  min-height: 250px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+#recent-posts .recent-post-items > .recent-post-item:first-child {
+  grid-column: span 12;
+}
+
+#recent-posts .recent-post-items > .recent-post-item:hover {
+  transform: translateY(-4px);
+}
+
+#recent-posts .recent-post-items > .recent-post-item .article-title {
+  font-size: clamp(1.12rem, 2vw, 1.6rem);
+  letter-spacing: 0.01em;
+}
+
+#aside-content .card-widget {
+  border-radius: 16px !important;
+}
+
+@media (max-width: 1100px) {
+  #luxlu-signature-hero .luxlu-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #recent-posts .recent-post-items > .recent-post-item,
+  #recent-posts .recent-post-items > .recent-post-item:first-child {
+    grid-column: span 12;
+  }
+}
