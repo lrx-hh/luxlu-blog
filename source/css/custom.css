@@ -1358,6 +1358,57 @@ div#archive::before {
   box-shadow: 0 8px 20px rgba(255, 79, 163, 0.24);
 }
 
+.about-status {
+  min-height: 20px;
+  margin: 10px 0 0;
+  color: #ffcbe5;
+}
+
+.luxlu-public-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.luxlu-public-item,
+.luxlu-public-empty {
+  border: 1px solid rgba(255, 132, 201, 0.24);
+  border-radius: 10px;
+  background: rgba(26, 17, 37, 0.85);
+  padding: 10px 12px;
+}
+
+.luxlu-public-item .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.luxlu-public-item .name {
+  color: #ffd9ee;
+  font-weight: 700;
+}
+
+.luxlu-public-item time {
+  color: #d2a9c1;
+}
+
+.luxlu-public-item p {
+  margin: 0;
+  color: #f4d5e7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.luxlu-public-empty {
+  color: #e9c7dc;
+}
+
 /* ===== Performance Modes ===== */
 html[data-fx-mode="balanced"] #fx-holo-strips,
 html[data-fx-mode="balanced"] #fx-ribbon-wave,

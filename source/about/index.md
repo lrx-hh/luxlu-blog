@@ -13,26 +13,24 @@ comments: false
 
 <section class="about-luxlu-card">
 <h3>留言框（公开）</h3>
-<p>这里是公开留言，大家都能看到。</p>
-<script src="https://utteranc.es/client.js"
-repo="lrx-hh/luxlu-blog"
-issue-term="pathname"
-label="guestbook"
-theme="github-dark"
-crossorigin="anonymous"
-async>
-</script>
+<p>无需登录，提交后会显示在下方（当前设备）。</p>
+<form id="luxlu-public-form" class="luxlu-whisper-form">
+<label>你的昵称
+<input type="text" name="nickname" maxlength="30" placeholder="怎么称呼你" required>
+</label>
+<label>留言内容
+<textarea name="message" rows="4" maxlength="400" placeholder="给luxlu留一句话吧~" required></textarea>
+</label>
+<button type="submit">发布留言</button>
+</form>
+<p id="luxlu-public-status" class="about-status"></p>
+<ul id="luxlu-public-list" class="luxlu-public-list"></ul>
 </section>
 
 <section class="about-luxlu-card">
 <h3>悄悄话（仅发给luxlu）</h3>
 <p>这条不会公开显示，会单独发给luxlu。</p>
-<form class="luxlu-whisper-form" action="https://formsubmit.co/1396343486@qq.com" method="POST">
-<input type="hidden" name="_subject" value="luxlu blog 悄悄话">
-<input type="hidden" name="_captcha" value="false">
-<input type="hidden" name="_template" value="table">
-<input type="hidden" name="_next" value="https://luxlu.top/about/?sent=1">
-<input type="text" name="_honey" style="display:none">
+<form id="luxlu-whisper-form" class="luxlu-whisper-form">
 <label>你的昵称
 <input type="text" name="nickname" maxlength="30" placeholder="怎么称呼你" required>
 </label>
@@ -41,4 +39,7 @@ async>
 </label>
 <button type="submit">发送悄悄话</button>
 </form>
+<p id="luxlu-whisper-status" class="about-status"></p>
 </section>
+
+<script src="/js/about-page.js?v=20260329a"></script>
