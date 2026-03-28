@@ -64,6 +64,7 @@
     initReveal3D();
     initHeadingDepth();
     initGlobalParallaxBackground();
+    initSignatureHero();
 
     if (fxMode === "lite") return;
 
@@ -97,6 +98,60 @@
       initImageDepth();
       initRightsideGyro();
     }
+  }
+
+  function isHomePage() {
+    const pageType = window.GLOBAL_CONFIG_SITE && window.GLOBAL_CONFIG_SITE.pageType;
+    const path = window.location.pathname || "/";
+    return pageType === "home" || path === "/" || path === "/index.html";
+  }
+
+  function initSignatureHero() {
+    if (!isHomePage()) return;
+    if (document.getElementById("luxlu-signature-hero")) return;
+
+    const feed = document.getElementById("recent-posts");
+    if (!feed || !feed.parentNode) return;
+
+    const hero = document.createElement("section");
+    hero.id = "luxlu-signature-hero";
+    hero.innerHTML =
+      '<div class="luxlu-hero-backdrop"></div>' +
+      '<div class="luxlu-hero-grid">' +
+        '<div class="luxlu-hero-main">' +
+          '<p class="eyebrow">LUXLU DIGITAL ZINE</p>' +
+          '<h2>BLACK<br>PINK<br>ARCHIVE</h2>' +
+          '<p class="desc">把比赛、笔记、日常和灵感塞进同一个宇宙。不是模板站，是有性格的个人刊物。</p>' +
+          '<div class="cta-row">' +
+            '<a href="/calendar/" class="cta hot">看日历</a>' +
+            '<a href="/diary/" class="cta ghost">看日记</a>' +
+          '</div>' +
+        '</div>' +
+        '<div class="luxlu-hero-side">' +
+          '<div class="panel p1"><span>CTF / MISC</span><strong>training + writeup</strong></div>' +
+          '<div class="panel p2"><span>LIFE LOG</span><strong>ongoing updates</strong></div>' +
+          '<div class="panel p3"><span>STYLE</span><strong>noir pink aesthetic</strong></div>' +
+        '</div>' +
+      "</div>";
+
+    feed.parentNode.insertBefore(hero, feed);
+
+    let raf = null;
+    hero.addEventListener("mousemove", (e) => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const rect = hero.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        hero.style.setProperty("--mx", (px * 20).toFixed(2) + "px");
+        hero.style.setProperty("--my", (py * 20).toFixed(2) + "px");
+      });
+    });
+    hero.addEventListener("mouseleave", () => {
+      if (raf) cancelAnimationFrame(raf);
+      hero.style.setProperty("--mx", "0px");
+      hero.style.setProperty("--my", "0px");
+    });
   }
 
   function initGlobalParallaxBackground() {
