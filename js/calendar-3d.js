@@ -210,7 +210,7 @@
       if (key === selectedDateKey) cell.classList.add("active");
       if (key === formatDateKey(today)) cell.classList.add("today");
 
-      const markers = dayEvents.slice(0, 3).map((ev) => renderDayMarker(ev, key)).join("");
+      const markers = dayEvents.slice(0, 3).map((ev) => renderDayMarker(ev)).join("");
       const extra = dayEvents.length > 3 ? '<div class="marker">+' + (dayEvents.length - 3) + " 项</div>" : "";
 
       cell.innerHTML =
@@ -231,8 +231,8 @@
     }
   }
 
-  function renderDayMarker(ev, dateKey) {
-    const text = (ev.done ? "✓ " : "") + getMarkerTimeText(ev, dateKey) + ev.title;
+  function renderDayMarker(ev) {
+    const text = (ev.done ? "✓ " : "") + ev.title;
     const style =
       "background:" + alphaColor(ev.color, 0.22) + ";border-color:" + alphaColor(ev.color, 0.62) + ";";
     const doneClass = ev.done ? " done" : "";
@@ -416,18 +416,6 @@
     const startText = ev.startDate + (ev.startTime ? " " + ev.startTime : "");
     const endText = ev.endDate + (ev.endTime ? " " + ev.endTime : "");
     return startText + " -> " + endText;
-  }
-
-  function getMarkerTimeText(ev, dateKey) {
-    if (ev.startDate === ev.endDate) {
-      if (ev.startTime && ev.endTime) return ev.startTime + " ";
-      if (ev.startTime) return ev.startTime + " ";
-      return "";
-    }
-
-    if (dateKey === ev.startDate && ev.startTime) return ev.startTime + " ";
-    if (dateKey === ev.endDate && ev.endTime) return ev.endTime + " ";
-    return "进行中 ";
   }
 
   function loadEvents() {
