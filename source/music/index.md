@@ -1,39 +1,31 @@
----
-title: 网易云音乐
+﻿---
+title: 网易云歌单
 date: 2026-03-28 21:40:00
 comments: false
 top_img: /img/black-pink-cover.svg
-description: 把网易云歌单放到博客里长期播放
+description: luxlu 的固定网易云歌单页面
 ---
 
-<link rel="stylesheet" href="/css/music-page.css">
+<link rel="stylesheet" href="/css/music-page.css?v=20260329b">
 
-<div id="music-page-shell" class="music-shell">
-  <h2>网易云歌单</h2>
-  <p class="music-tip">支持三种输入：歌单 ID、用户 ID、用户主页链接。</p>
+<div class="music-shell" id="music-page-shell">
+  <h2>luxlu 的歌单</h2>
+  <p class="music-tip">已固定加载歌单 ID：<code>2348551439</code></p>
 
-  <div class="music-controls">
-    <label for="netease-playlist-id">歌单 / 用户输入</label>
-    <input id="netease-playlist-id" type="text" placeholder="例如：2348551439 或 1543650916 或 https://music.163.com/#/user/home?id=1543650916">
-
-    <div class="music-btn-row">
-      <button id="music-load-btn" type="button">加载</button>
-      <button id="music-save-btn" type="button">保存为默认</button>
-    </div>
-
-    <p id="music-status" class="music-status"></p>
+  <div class="music-player-fixed">
+    <iframe
+      title="netease-playlist-2348551439"
+      src="https://music.163.com/outchain/player?type=0&id=2348551439&auto=0&height=430"
+      width="100%"
+      height="520"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      loading="lazy">
+    </iframe>
   </div>
 
-  <div class="music-help">
-    <strong>说明：</strong>
-    <ol>
-      <li>如果填的是用户 ID，会自动转成“我喜欢的音乐”歌单。</li>
-      <li>你的用户 ID <code>1543650916</code> 已内置自动匹配。</li>
-      <li>保存默认后，下次打开会自动加载。</li>
-    </ol>
-  </div>
-
-  <div id="netease-player" class="music-player"></div>
+  <p class="music-open-link">
+    如果播放器加载慢，可直接打开：
+    <a href="https://music.163.com/#/my/m/music/playlist?id=2348551439" target="_blank" rel="noopener">网易云歌单链接</a>
+  </p>
 </div>
-
-<script src="/js/music-page.js"></script>

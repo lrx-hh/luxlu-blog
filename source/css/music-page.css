@@ -82,6 +82,23 @@
   overflow: hidden;
 }
 
+.music-player-fixed {
+  margin-top: 14px;
+  border: 1px solid rgba(255, 145, 210, 0.28);
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(20, 12, 31, 0.92);
+}
+
+.music-player-fixed iframe {
+  display: block;
+}
+
+.music-open-link {
+  margin: 12px 0 0;
+  color: #f4cde3;
+}
+
 @media (max-width: 760px) {
   .music-shell {
     padding: 14px;
@@ -91,4 +108,3 @@
     width: 100%;
   }
 }
-
