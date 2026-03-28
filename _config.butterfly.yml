@@ -1,4 +1,4 @@
-menu:
+﻿menu:
   首页: / || fas fa-house
   日历: /calendar/ || fas fa-calendar-days
   归档: /archives/ || fas fa-box-archive
@@ -8,7 +8,8 @@ menu:
   分类: /categories/ || fas fa-folder-open
   标签: /tags/ || fas fa-tags
   关于: /about/ || fas fa-heart
-
+  MBTI: /mbti/ || fas fa-brain
+  介绍页: /intro/ || fas fa-id-card
 nav:
   logo:
   display_title: true
@@ -37,8 +38,8 @@ subtitle:
   effect: true
   source: false
   sub:
-    - 会一直更新的！( *｀ω´)
-    - ( 𓏼˙ ᴥ ˙𓏼 )Ooo，Ohhh...
+    - 浼氫竴鐩存洿鏂扮殑锛? *锝€蠅麓)
+    - ( 饟徏藱 岽?藱饟徏 )Ooo锛孫hhh...
 
 aside:
   enable: true
@@ -52,7 +53,7 @@ aside:
     category: true
   card_author:
     enable: true
-    description: 大一 CTF 选手，主攻 Misc / 取证 / 隐写
+    description: 澶т竴 CTF 閫夋墜锛屼富鏀?Misc / 鍙栬瘉 / 闅愬啓
     button:
       enable: true
       icon: fab fa-github
@@ -60,7 +61,7 @@ aside:
       link: https://github.com/lrx-hh
   card_announcement:
     enable: true
-    content: 谢谢你来看我^^
+    content: 璋㈣阿浣犳潵鐪嬫垜^^
 
 theme_color:
   enable: true
@@ -92,3 +93,4 @@ inject:
     - <link rel="stylesheet" href="/css/custom.css">
   bottom:
     - <script src="/js/site-3d-effects.js"></script>
+
