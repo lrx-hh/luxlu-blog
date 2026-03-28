@@ -203,23 +203,58 @@
       if (el.dataset.tiltBound === "1") return;
       el.dataset.tiltBound = "1";
       el.classList.add("tilt-3d", "neon-breathe");
+      const isContentFrame = el.id === "post" || el.id === "page" || el.id === "archive";
+      if (isContentFrame) el.classList.add("tilt-3d-frame");
 
       let hoverRafId = null;
+      let targetRx = 0;
+      let targetRy = 0;
+      let currentRx = 0;
+      let currentRy = 0;
+      const maxTilt = isContentFrame ? 1.1 : 5;
+      const perspective = isContentFrame ? 1450 : 1000;
+      const smoothing = isContentFrame ? 0.13 : 0.24;
+
+      const runTilt = () => {
+        currentRx += (targetRx - currentRx) * smoothing;
+        currentRy += (targetRy - currentRy) * smoothing;
+
+        const nearZero = Math.abs(currentRx) < 0.02 && Math.abs(currentRy) < 0.02 && Math.abs(targetRx) < 0.02 && Math.abs(targetRy) < 0.02;
+        if (nearZero) {
+          el.style.transform = "";
+          hoverRafId = null;
+          return;
+        }
+
+        el.style.transform =
+          "perspective(" +
+          perspective +
+          "px) rotateX(" +
+          currentRx.toFixed(3) +
+          "deg) rotateY(" +
+          currentRy.toFixed(3) +
+          "deg) translateZ(0)";
+        hoverRafId = requestAnimationFrame(runTilt);
+      };
+
+      const kickTilt = () => {
+        if (hoverRafId) return;
+        hoverRafId = requestAnimationFrame(runTilt);
+      };
+
       el.addEventListener("mousemove", (e) => {
-        if (hoverRafId) cancelAnimationFrame(hoverRafId);
-        hoverRafId = requestAnimationFrame(() => {
-          const rect = el.getBoundingClientRect();
-          const px = (e.clientX - rect.left) / rect.width;
-          const py = (e.clientY - rect.top) / rect.height;
-          const ry = (px - 0.5) * 5;
-          const rx = (0.5 - py) * 5;
-          el.style.transform = "perspective(1000px) rotateX(" + rx + "deg) rotateY(" + ry + "deg) translateZ(0)";
-        });
+        const rect = el.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width;
+        const py = (e.clientY - rect.top) / rect.height;
+        targetRy = (px - 0.5) * maxTilt;
+        targetRx = (0.5 - py) * maxTilt;
+        kickTilt();
       });
 
       el.addEventListener("mouseleave", () => {
-        if (hoverRafId) cancelAnimationFrame(hoverRafId);
-        el.style.transform = "";
+        targetRx = 0;
+        targetRy = 0;
+        kickTilt();
       });
     });
   }
