@@ -76,5 +76,5 @@ theme: butterfly
 
 deploy:
   type: git
-  repo: https://github.com/<your-github-username>/luxlu-blog.git
+  repo: https://github.com/luxlu/luxlu-blog.git
   branch: gh-pages
