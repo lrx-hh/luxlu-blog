@@ -1,5 +1,6 @@
 .layout:has(.calendar-shell) {
-  max-width: min(96vw, 1580px) !important;
+  max-width: min(99vw, 1900px) !important;
+  width: 99vw !important;
 }
 
 .layout:has(.calendar-shell) #page {
@@ -13,9 +14,9 @@
 .calendar-shell {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.95fr);
-  gap: 20px;
-  width: min(100%, 1460px);
+  grid-template-columns: minmax(0, 1.7fr) minmax(380px, 1fr);
+  gap: 22px;
+  width: min(100%, 1820px);
   margin: 0 auto;
   padding: 22px;
   border-radius: 22px;
@@ -185,7 +186,7 @@
 }
 
 .day-cell {
-  min-height: 108px;
+  min-height: 114px;
   border-radius: 12px;
   border: 1px solid rgba(255, 124, 194, 0.17);
   background: rgba(22, 15, 31, 0.85);
@@ -419,6 +420,7 @@ dialog#edit-dialog {
 @media (max-width: 1080px) {
   .layout:has(.calendar-shell) {
     max-width: 98vw !important;
+    width: 98vw !important;
   }
 
   .calendar-shell {
