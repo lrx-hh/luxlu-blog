@@ -1,6 +1,5 @@
 (function () {
   const STORAGE_KEY = "luxlu_calendar_events_v1";
-  const OWNER_MODE_KEY = "luxlu_calendar_owner_mode";
   const OWNER_HASH = "11079afd9b280f41fc114e34f27a50161f7a12e003463802c9a78aea6a57e642";
   // Default passphrase hash is for: luxlu667
   // Change OWNER_HASH to your own SHA-256 hash for real use.
@@ -32,7 +31,7 @@
   let current = new Date(today.getFullYear(), today.getMonth(), 1);
   let selectedDateKey = formatDateKey(today);
   let editTarget = null;
-  let ownerMode = localStorage.getItem(OWNER_MODE_KEY) === "1";
+  let ownerMode = false;
   let events = loadEvents();
 
   render();
@@ -58,7 +57,6 @@
     ownerBtn.addEventListener("click", async () => {
       if (ownerMode) {
         ownerMode = false;
-        localStorage.removeItem(OWNER_MODE_KEY);
         renderOwnerState();
         return;
       }
@@ -67,7 +65,6 @@
       const hash = await sha256(input.trim());
       if (hash === OWNER_HASH) {
         ownerMode = true;
-        localStorage.setItem(OWNER_MODE_KEY, "1");
         renderOwnerState();
         window.alert("主人模式已开启。");
       } else {

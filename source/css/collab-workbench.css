@@ -1,0 +1,286 @@
+.collab-shell {
+  position: relative;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 26px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 110, 190, 0.25);
+  background: linear-gradient(145deg, rgba(12, 8, 18, 0.94), rgba(18, 10, 28, 0.9));
+  overflow: hidden;
+}
+
+.collab-glow {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+.glow-a {
+  background: rgba(255, 79, 163, 0.26);
+  left: -120px;
+  top: -140px;
+}
+
+.glow-b {
+  background: rgba(255, 133, 201, 0.2);
+  right: -120px;
+  bottom: -140px;
+}
+
+.collab-head,
+.collab-card {
+  position: relative;
+  z-index: 1;
+}
+
+.collab-head {
+  margin-bottom: 16px;
+}
+
+.collab-eyebrow {
+  margin: 0 0 6px;
+  color: #ff9dd0;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+}
+
+.collab-head h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4.6vw, 2.7rem);
+  line-height: 1.15;
+}
+
+.collab-desc {
+  margin: 10px 0 0;
+  color: #e9c4d8;
+}
+
+.collab-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.collab-card {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 130, 202, 0.25);
+  background: rgba(20, 13, 31, 0.88);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.26);
+}
+
+.collab-card h2 {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+}
+
+.row-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stack {
+  display: grid;
+  gap: 10px;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.collab-card label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: #e2bdd2;
+  font-size: 0.95rem;
+}
+
+.collab-card input,
+.collab-card textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 132, 201, 0.35);
+  border-radius: 10px;
+  background: rgba(31, 20, 43, 0.88);
+  color: #ffe9f6;
+  padding: 10px 12px;
+}
+
+.collab-card textarea {
+  resize: vertical;
+  min-height: 132px;
+}
+
+.collab-btn {
+  border: 1px solid rgba(255, 132, 201, 0.36);
+  border-radius: 12px;
+  background: rgba(34, 21, 45, 0.92);
+  color: #ffe4f2;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.collab-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(255, 95, 173, 0.2);
+}
+
+.collab-btn.primary {
+  border-color: transparent;
+  background: linear-gradient(130deg, #ff4fa3, #ff2f94);
+}
+
+.collab-btn.role-btn.active {
+  border-color: transparent;
+  background: linear-gradient(130deg, #ff4fa3, #ff2f94);
+}
+
+.status-line {
+  margin: 4px 0 0;
+  color: #ffc7e3;
+}
+
+.small-note {
+  color: #d4aeca;
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 66px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.badge.visitor {
+  background: rgba(145, 145, 170, 0.24);
+  color: #f2f3ff;
+}
+
+.badge.team {
+  background: rgba(255, 119, 194, 0.24);
+  color: #ffd6ec;
+}
+
+.badge.admin {
+  background: rgba(255, 77, 162, 0.34);
+  color: #ffe6f3;
+}
+
+.project-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.project-list li {
+  border: 1px solid rgba(255, 130, 202, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+  background: rgba(28, 18, 39, 0.9);
+}
+
+.project-links {
+  margin-top: 6px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.project-links a {
+  color: #ff9fd1;
+}
+
+.log-box {
+  margin: 0;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 130, 202, 0.2);
+  background: rgba(14, 9, 20, 0.9);
+  max-height: 240px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 1100px) {
+  .collab-shell {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .collab-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .row-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .collab-shell {
+    padding: 14px;
+  }
+
+  .collab-card {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .row-grid,
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-row {
+    flex-direction: column;
+  }
+
+  .collab-btn {
+    width: 100%;
+  }
+
+  .collab-card input,
+  .collab-card textarea {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .collab-head h1 {
+    font-size: 1.55rem;
+  }
+
+  .collab-desc {
+    font-size: 0.92rem;
+  }
+}
