@@ -211,6 +211,74 @@ div#archive {
   animation: prismFloat 7s ease-in-out infinite alternate;
 }
 
+#fx-showcase {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  transform-style: preserve-3d;
+}
+
+#fx-showcase .shape {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 156, 216, 0.45);
+  background: linear-gradient(135deg, rgba(255, 102, 184, 0.3), rgba(255, 221, 240, 0.08));
+  box-shadow: 0 0 22px rgba(255, 88, 176, 0.35);
+  transform-style: preserve-3d;
+}
+
+.shape-1 { left: 7%; top: 19%; animation: s1 7s ease-in-out infinite; }
+.shape-2 { left: 12%; top: 55%; animation: s2 9s ease-in-out infinite; }
+.shape-3 { left: 26%; top: 14%; animation: s3 8s ease-in-out infinite; }
+.shape-4 { left: 35%; top: 68%; animation: s4 10s ease-in-out infinite; }
+.shape-5 { left: 52%; top: 16%; animation: s5 8.5s ease-in-out infinite; }
+.shape-6 { left: 61%; top: 63%; animation: s6 9.3s ease-in-out infinite; }
+.shape-7 { left: 72%; top: 25%; animation: s7 7.8s ease-in-out infinite; }
+.shape-8 { left: 81%; top: 59%; animation: s8 10.8s ease-in-out infinite; }
+.shape-9 { left: 89%; top: 16%; animation: s9 8.2s ease-in-out infinite; }
+.shape-10 { left: 46%; top: 81%; animation: s10 11s ease-in-out infinite; }
+
+@keyframes s1 { 50% { transform: translate3d(20px,-32px,32px) rotateX(220deg) rotateY(170deg);} }
+@keyframes s2 { 50% { transform: translate3d(-18px,28px,44px) rotateX(180deg) rotateY(250deg);} }
+@keyframes s3 { 50% { transform: translate3d(24px,36px,26px) rotateX(260deg) rotateY(120deg);} }
+@keyframes s4 { 50% { transform: translate3d(28px,-26px,48px) rotateX(210deg) rotateY(310deg);} }
+@keyframes s5 { 50% { transform: translate3d(-32px,24px,40px) rotateX(300deg) rotateY(170deg);} }
+@keyframes s6 { 50% { transform: translate3d(18px,-22px,36px) rotateX(190deg) rotateY(260deg);} }
+@keyframes s7 { 50% { transform: translate3d(-24px,22px,38px) rotateX(320deg) rotateY(200deg);} }
+@keyframes s8 { 50% { transform: translate3d(22px,-30px,42px) rotateX(240deg) rotateY(140deg);} }
+@keyframes s9 { 50% { transform: translate3d(-18px,24px,34px) rotateX(280deg) rotateY(330deg);} }
+@keyframes s10 { 50% { transform: translate3d(26px,-20px,50px) rotateX(360deg) rotateY(180deg);} }
+
+#fx-laser {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+#fx-laser span {
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 120%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 111, 188, 0), rgba(255, 111, 188, 0.85), rgba(255, 111, 188, 0));
+  box-shadow: 0 0 20px rgba(255, 102, 184, 0.75);
+  transform: rotate(-8deg);
+  animation: laserSweep 6.5s linear infinite;
+}
+
+@keyframes laserSweep {
+  0% { transform: translateY(-20vh) rotate(-8deg); opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(120vh) rotate(-8deg); opacity: 0; }
+}
+
 .prism-ring {
   position: absolute;
   inset: 0;
@@ -340,7 +408,9 @@ body::before {
 
 @media (max-width: 900px), (pointer: coarse), (prefers-reduced-motion: reduce) {
   body::before,
-  #fx-prism {
+  #fx-prism,
+  #fx-showcase,
+  #fx-laser {
     display: none;
   }
 

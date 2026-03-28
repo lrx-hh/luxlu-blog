@@ -15,6 +15,8 @@
     initHeaderParallax();
     initParticles();
     initPrismRings();
+    initShowcaseShapes();
+    initLaserSweep();
     initMagneticElements();
     initImageDepth();
     initReveal3D();
@@ -157,6 +159,26 @@
       "<span class=\"prism-ring ring-b\"></span>" +
       "<span class=\"prism-ring ring-c\"></span>";
     document.body.appendChild(prism);
+  }
+
+  function initShowcaseShapes() {
+    if (document.getElementById("fx-showcase")) return;
+    const wrap = document.createElement("div");
+    wrap.id = "fx-showcase";
+    let html = "";
+    for (let i = 1; i <= 10; i++) {
+      html += "<span class=\"shape shape-" + i + "\"></span>";
+    }
+    wrap.innerHTML = html;
+    document.body.appendChild(wrap);
+  }
+
+  function initLaserSweep() {
+    if (document.getElementById("fx-laser")) return;
+    const laser = document.createElement("div");
+    laser.id = "fx-laser";
+    laser.innerHTML = "<span></span>";
+    document.body.appendChild(laser);
   }
 
   function initMagneticElements() {
