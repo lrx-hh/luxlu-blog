@@ -53,6 +53,25 @@
   z-index: 1;
 }
 
+.calendar-fab {
+  position: fixed;
+  right: 22px;
+  bottom: 26px;
+  z-index: 99;
+  border: 1px solid rgba(255, 118, 189, 0.45);
+  border-radius: 999px;
+  background: linear-gradient(130deg, #ff4fa3, #ff2f94);
+  color: #fff3fb;
+  font-weight: 700;
+  padding: 12px 18px;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(255, 69, 162, 0.3);
+}
+
+.calendar-fab.hidden {
+  display: none !important;
+}
+
 .calendar-top {
   grid-column: 1 / -1;
   display: flex;
@@ -412,5 +431,13 @@ dialog#edit-dialog {
   .cal-btn,
   .month-btn {
     width: 100%;
+  }
+
+  .calendar-fab {
+    right: 14px;
+    bottom: 14px;
+    padding: 10px 14px;
+    font-size: 14px;
+    width: auto !important;
   }
 }

@@ -1,6 +1,9 @@
 (function () {
   const STORAGE_KEY = "luxlu_calendar_events_v2";
-  const OWNER_HASH = "11079afd9b280f41fc114e34f27a50161f7a12e003463802c9a78aea6a57e642";
+  const OWNER_HASH_POOL = [
+    "11079afd9b280f41fc114e34f27a50161f7a12e003463802c9a78aea6a57e642", // luxlu667
+    "faa9aa94ef30e64ca0ac64e0d378279ee39007bd6f9bdb4db923c50dde3aac64" // luakslu
+  ];
   const DEFAULT_COLOR = "#ff4fa3";
 
   const refs = {
@@ -13,6 +16,7 @@
     agendaTitle: document.getElementById("agenda-title"),
     agendaList: document.getElementById("agenda-list"),
     addItemBtn: document.getElementById("add-item-btn"),
+    quickAddBtn: document.getElementById("quick-add-btn"),
     shell: document.querySelector(".calendar-shell"),
 
     dialog: document.getElementById("edit-dialog"),
@@ -61,20 +65,17 @@
 
     refs.ownerBtn.addEventListener("click", toggleOwnerMode);
 
-    refs.addItemBtn.addEventListener("click", () => {
-      editEventId = null;
-      openDialog("新增日程", {
-        id: "",
-        title: "",
-        color: DEFAULT_COLOR,
-        startDate: selectedDateKey,
-        startTime: "",
-        endDate: selectedDateKey,
-        endTime: "",
-        desc: "",
-        done: false
+    refs.addItemBtn.addEventListener("click", () => openCreateDialog(selectedDateKey));
+
+    if (refs.quickAddBtn) {
+      refs.quickAddBtn.addEventListener("click", async () => {
+        if (!ownerMode) {
+          await toggleOwnerMode();
+          if (!ownerMode) return;
+        }
+        openCreateDialog(selectedDateKey);
       });
-    });
+    }
 
     refs.agendaList.addEventListener("click", (event) => {
       const row = event.target.closest(".agenda-item");
@@ -162,7 +163,7 @@
     if (!input) return;
 
     const hash = await sha256(input.trim());
-    if (hash !== OWNER_HASH) {
+    if (!OWNER_HASH_POOL.includes(hash)) {
       window.alert("口令错误");
       return;
     }
@@ -185,6 +186,7 @@
   function renderOwnerState() {
     refs.ownerBtn.textContent = ownerMode ? "退出主人模式" : "进入主人模式";
     refs.addItemBtn.classList.toggle("hidden", !ownerMode);
+    if (refs.quickAddBtn) refs.quickAddBtn.classList.toggle("hidden", !ownerMode);
   }
 
   function renderGrid(year, month) {
@@ -292,6 +294,21 @@
     refs.doneInput.checked = !!eventData.done;
     refs.deleteBtn.classList.toggle("hidden", !canDelete);
     refs.dialog.showModal();
+  }
+
+  function openCreateDialog(dateKey) {
+    editEventId = null;
+    openDialog("新增日程", {
+      id: "",
+      title: "",
+      color: DEFAULT_COLOR,
+      startDate: dateKey || selectedDateKey,
+      startTime: "",
+      endDate: dateKey || selectedDateKey,
+      endTime: "",
+      desc: "",
+      done: false
+    });
   }
 
   function collectFormData() {
