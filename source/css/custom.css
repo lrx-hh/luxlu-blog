@@ -166,11 +166,190 @@ div#archive {
 @media (max-width: 900px), (pointer: coarse) {
   #fx-particles,
   .fx-cursor,
-  .fx-cursor-dot {
+  .fx-cursor-dot,
+  #fx-prism {
     display: none;
   }
 
   .tilt-3d {
     transform: none !important;
+  }
+}
+
+/* Extra 3D Pack */
+#fx-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  z-index: 1100;
+  background: rgba(255, 133, 201, 0.12);
+  transform: translateZ(0);
+}
+
+#fx-progress span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #ff4fa3, #ff95cb, #ff4fa3);
+  box-shadow: 0 0 18px rgba(255, 82, 171, 0.8);
+  transform-origin: left center;
+  transform: skewX(-18deg);
+  transition: width 0.15s linear;
+}
+
+#fx-prism {
+  position: fixed;
+  right: 4vw;
+  top: 18vh;
+  width: 250px;
+  height: 250px;
+  pointer-events: none;
+  z-index: 2;
+  transform-style: preserve-3d;
+  animation: prismFloat 7s ease-in-out infinite alternate;
+}
+
+.prism-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 117, 191, 0.38);
+  box-shadow: 0 0 16px rgba(255, 98, 176, 0.25);
+}
+
+.ring-a {
+  transform: rotateX(72deg) rotateY(14deg);
+  animation: spinA 8s linear infinite;
+}
+
+.ring-b {
+  transform: rotateY(72deg) rotateX(18deg);
+  animation: spinB 9s linear infinite reverse;
+}
+
+.ring-c {
+  transform: rotateZ(72deg) rotateX(-20deg);
+  animation: spinC 10s linear infinite;
+}
+
+@keyframes prismFloat {
+  to {
+    transform: translate3d(0, 16px, 24px) rotateY(18deg);
+  }
+}
+
+@keyframes spinA {
+  to {
+    transform: rotateX(72deg) rotateY(374deg);
+  }
+}
+
+@keyframes spinB {
+  to {
+    transform: rotateY(72deg) rotateX(378deg);
+  }
+}
+
+@keyframes spinC {
+  to {
+    transform: rotateZ(432deg) rotateX(340deg);
+  }
+}
+
+.magnetic {
+  will-change: transform;
+  transition: transform 0.18s ease, box-shadow 0.2s ease;
+}
+
+.img-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.img-3d:hover {
+  box-shadow: 0 18px 38px rgba(255, 89, 174, 0.35);
+  filter: saturate(1.08) contrast(1.02);
+}
+
+.reveal-3d {
+  opacity: 0.75;
+  transform: perspective(1000px) rotateX(-10deg) translateY(24px);
+  transition: transform 0.85s cubic-bezier(0.2, 0.6, 0.2, 1), opacity 0.85s ease;
+}
+
+.reveal-3d.in-view {
+  opacity: 1;
+  transform: perspective(1000px) rotateX(0deg) translateY(0);
+}
+
+.neon-breathe {
+  animation: neonBreathe 3.8s ease-in-out infinite;
+}
+
+@keyframes neonBreathe {
+  0%,
+  100% {
+    box-shadow: 0 8px 26px rgba(255, 79, 163, 0.16);
+  }
+  50% {
+    box-shadow: 0 16px 42px rgba(255, 79, 163, 0.33);
+  }
+}
+
+#rightside {
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease;
+}
+
+#rightside button {
+  box-shadow: 0 8px 18px rgba(255, 79, 163, 0.22);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 166, 216, 0.02) 0,
+    rgba(255, 166, 216, 0.02) 1px,
+    transparent 2px,
+    transparent 5px
+  );
+  animation: scanMove 10s linear infinite;
+}
+
+@keyframes scanMove {
+  to {
+    transform: translateY(18px);
+  }
+}
+
+@media (max-width: 1200px) {
+  #fx-prism {
+    right: 1vw;
+    top: 22vh;
+    width: 180px;
+    height: 180px;
+  }
+}
+
+@media (max-width: 900px), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  body::before,
+  #fx-prism {
+    display: none;
+  }
+
+  .reveal-3d {
+    opacity: 1;
+    transform: none;
+  }
+
+  .neon-breathe {
+    animation: none;
   }
 }

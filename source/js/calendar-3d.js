@@ -19,7 +19,8 @@
   const dialog = document.getElementById("edit-dialog");
   const form = document.getElementById("edit-form");
   const dialogTitle = document.getElementById("dialog-title");
-  const timeInput = document.getElementById("item-time");
+  const startTimeInput = document.getElementById("item-start-time");
+  const endTimeInput = document.getElementById("item-end-time");
   const titleInput = document.getElementById("item-title");
   const descInput = document.getElementById("item-desc");
   const deleteBtn = document.getElementById("delete-item-btn");
@@ -76,7 +77,7 @@
 
     addItemBtn.addEventListener("click", () => {
       editTarget = null;
-      openDialog("新增日程", { time: "", title: "", desc: "" });
+      openDialog("新增日程", { startTime: "", endTime: "", title: "", desc: "" });
     });
 
     agendaList.addEventListener("click", (e) => {
@@ -106,8 +107,25 @@
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       if (!ownerMode) return;
+
+      const startTime = (startTimeInput.value || "").trim();
+      const endTime = (endTimeInput.value || "").trim();
+      if (!isTimeFormat(startTime)) {
+        window.alert("开始时间格式应为 HH:mm，例如 20:30。");
+        return;
+      }
+      if (endTime && !isTimeFormat(endTime)) {
+        window.alert("结束时间格式应为 HH:mm，例如 22:00。");
+        return;
+      }
+      if (endTime && endTime < startTime) {
+        window.alert("结束时间不能早于开始时间。");
+        return;
+      }
+
       const payload = {
-        time: (timeInput.value || "").trim(),
+        startTime,
+        endTime,
         title: (titleInput.value || "").trim(),
         desc: (descInput.value || "").trim()
       };
@@ -118,7 +136,7 @@
       const list = events[selectedDateKey] || [];
       if (editTarget === null) list.push(payload);
       else list[editTarget] = payload;
-      list.sort((a, b) => a.time.localeCompare(b.time));
+      list.sort((a, b) => getSortTime(a).localeCompare(getSortTime(b)));
       events[selectedDateKey] = list;
       saveEvents();
       dialog.close();
@@ -173,7 +191,7 @@
       if (key === formatDateKey(today)) cell.classList.add("today");
 
       const markers = (events[key] || []).slice(0, 2).map((it) => {
-        return "<div class=\"marker\">" + escapeHtml((it.time ? it.time + " " : "") + it.title) + "</div>";
+        return "<div class=\"marker\">" + escapeHtml(formatTimeRange(it) + " " + it.title) + "</div>";
       }).join("");
 
       cell.innerHTML = "" +
@@ -197,7 +215,7 @@
       return;
     }
     agendaList.innerHTML = list.map((it, idx) => {
-      const time = it.time ? "<span class=\"agenda-time\">" + escapeHtml(it.time) + "</span>" : "";
+      const time = "<span class=\"agenda-time\">" + escapeHtml(formatTimeRange(it)) + "</span>";
       const desc = it.desc ? "<div>" + escapeHtml(it.desc) + "</div>" : "";
       return "<li class=\"agenda-item\" data-idx=\"" + idx + "\">" + time + "<strong>" + escapeHtml(it.title) + "</strong>" + desc + "</li>";
     }).join("");
@@ -205,7 +223,8 @@
 
   function openDialog(title, data, canDelete) {
     dialogTitle.textContent = title;
-    timeInput.value = data.time || "";
+    startTimeInput.value = data.startTime || data.time || "";
+    endTimeInput.value = data.endTime || "";
     titleInput.value = data.title || "";
     descInput.value = data.desc || "";
     deleteBtn.classList.toggle("hidden", !canDelete);
@@ -222,7 +241,16 @@
   function loadEvents() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : seedEvents();
+      if (!raw) return seedEvents();
+      const parsed = JSON.parse(raw);
+      const normalized = {};
+      Object.keys(parsed || {}).forEach((dateKey) => {
+        normalized[dateKey] = (parsed[dateKey] || [])
+          .map(normalizeEvent)
+          .filter((item) => item.title && item.startTime)
+          .sort((a, b) => getSortTime(a).localeCompare(getSortTime(b)));
+      });
+      return normalized;
     } catch (err) {
       return seedEvents();
     }
@@ -237,13 +265,41 @@
     const d1 = formatDateKey(today);
     const d2 = formatDateKey(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
     base[d1] = [
-      { time: "20:00", title: "复盘 1 道 Misc 题", desc: "按模板写到博客" },
-      { time: "21:30", title: "工具链整理", desc: "更新 CyberChef 快捷流程" }
+      { startTime: "20:00", endTime: "21:00", title: "复盘 1 道 Misc 题", desc: "按模板写到博客" },
+      { startTime: "21:30", endTime: "", title: "工具链整理", desc: "更新 CyberChef 快捷流程" }
     ];
     base[d2] = [
-      { time: "19:30", title: "Forensics 训练", desc: "做 1 份流量包分析" }
+      { startTime: "19:30", endTime: "21:00", title: "Forensics 训练", desc: "做 1 份流量包分析" }
     ];
     return base;
+  }
+
+  function normalizeEvent(item) {
+    if (!item) return { startTime: "", endTime: "", title: "", desc: "" };
+    const startTime = (item.startTime || item.time || "").trim();
+    const endTime = (item.endTime || "").trim();
+    return {
+      startTime,
+      endTime,
+      title: (item.title || "").trim(),
+      desc: (item.desc || "").trim()
+    };
+  }
+
+  function formatTimeRange(item) {
+    const start = (item.startTime || item.time || "").trim();
+    const end = (item.endTime || "").trim();
+    if (!start && !end) return "未设置";
+    if (start && end) return start + " - " + end;
+    return start || end;
+  }
+
+  function getSortTime(item) {
+    return (item.startTime || item.time || "99:99").trim();
+  }
+
+  function isTimeFormat(v) {
+    return /^([01]\d|2[0-3]):([0-5]\d)$/.test(v);
   }
 
   function escapeHtml(str) {

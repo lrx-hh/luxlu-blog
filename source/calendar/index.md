@@ -46,7 +46,8 @@ description: 仅主人可编辑的训练日历页。
 <dialog id="edit-dialog">
   <form method="dialog" id="edit-form">
     <h3 id="dialog-title">编辑日程</h3>
-    <label>时间（如 20:30）<input id="item-time" maxlength="5" placeholder="20:30"></label>
+    <label>开始时间（如 20:30）<input id="item-start-time" maxlength="5" placeholder="20:30"></label>
+    <label>结束时间（可选）<input id="item-end-time" maxlength="5" placeholder="22:00"></label>
     <label>标题<input id="item-title" maxlength="40" placeholder="做 2 道隐写题"></label>
     <label>详情<input id="item-desc" maxlength="80" placeholder="zsteg + stegsolve 复盘"></label>
     <menu>
