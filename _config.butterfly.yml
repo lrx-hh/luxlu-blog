@@ -3,6 +3,7 @@ menu:
   日历: /calendar/ || fas fa-calendar-days
   归档: /archives/ || fas fa-box-archive
   工具箱: /tools/ || fas fa-screwdriver-wrench
+  音乐: /music/ || fas fa-music
   训练计划: /roadmap/ || fas fa-map
   分类: /categories/ || fas fa-folder-open
   标签: /tags/ || fas fa-tags
