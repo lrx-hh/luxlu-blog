@@ -34,7 +34,7 @@
     cancelBtn: document.getElementById("cancel-btn")
   };
 
-  if (!refs.grid) return;
+  if (!refs.grid || !refs.dialog || !refs.form) return;
 
   const today = new Date();
   let current = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -103,13 +103,15 @@
       openDialog("编辑日程", ev, true);
     });
 
-    refs.cancelBtn.addEventListener("click", () => refs.dialog.close());
+    if (refs.cancelBtn) {
+      refs.cancelBtn.addEventListener("click", () => closeDialog());
+    }
 
     refs.deleteBtn.addEventListener("click", () => {
       if (!ownerMode || !editEventId) return;
       events = events.filter((item) => item.id !== editEventId);
       saveEvents();
-      refs.dialog.close();
+      closeDialog();
       render();
     });
 
@@ -130,7 +132,7 @@
 
       events.sort(compareEvents);
       saveEvents();
-      refs.dialog.close();
+      closeDialog();
 
       selectedDateKey = payload.startDate;
       current = new Date(parseInt(payload.startDate.slice(0, 4), 10), parseInt(payload.startDate.slice(5, 7), 10) - 1, 1);
@@ -186,7 +188,7 @@
   function renderOwnerState() {
     refs.ownerBtn.textContent = ownerMode ? "退出主人模式" : "进入主人模式";
     refs.addItemBtn.classList.toggle("hidden", !ownerMode);
-    if (refs.quickAddBtn) refs.quickAddBtn.classList.toggle("hidden", !ownerMode);
+    if (refs.quickAddBtn) refs.quickAddBtn.classList.remove("hidden");
   }
 
   function renderGrid(year, month) {
@@ -293,7 +295,7 @@
     refs.descInput.value = eventData.desc || "";
     refs.doneInput.checked = !!eventData.done;
     refs.deleteBtn.classList.toggle("hidden", !canDelete);
-    refs.dialog.showModal();
+    openDialogModal();
   }
 
   function openCreateDialog(dateKey) {
@@ -309,6 +311,22 @@
       desc: "",
       done: false
     });
+  }
+
+  function openDialogModal() {
+    if (typeof refs.dialog.showModal === "function") {
+      refs.dialog.showModal();
+      return;
+    }
+    refs.dialog.setAttribute("open", "open");
+  }
+
+  function closeDialog() {
+    if (typeof refs.dialog.close === "function") {
+      refs.dialog.close();
+      return;
+    }
+    refs.dialog.removeAttribute("open");
   }
 
   function collectFormData() {
