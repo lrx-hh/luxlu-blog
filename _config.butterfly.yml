@@ -1,0 +1,88 @@
+menu:
+  首页: / || fas fa-house
+  归档: /archives/ || fas fa-box-archive
+  分类: /categories/ || fas fa-folder-open
+  标签: /tags/ || fas fa-tags
+  关于: /about/ || fas fa-heart
+
+nav:
+  logo:
+  display_title: true
+  display_post_title: true
+  fixed: true
+
+social:
+  fab fa-github: https://github.com/<your-github-username> || GitHub || "#ff4fa3"
+  fas fa-envelope: mailto:you@example.com || Email || "#ff79bd"
+
+favicon: /img/avatar.svg
+
+avatar:
+  img: /img/avatar.svg
+  effect: true
+
+index_img: /img/black-pink-cover.svg
+default_top_img: /img/black-pink-cover.svg
+archive_img: /img/black-pink-cover.svg
+tag_img: /img/black-pink-cover.svg
+category_img: /img/black-pink-cover.svg
+footer_img: false
+
+subtitle:
+  enable: true
+  effect: true
+  source: false
+  sub:
+    - CTF Misc / Forensics / Stego
+    - Black x Pink. Learn x Break.
+
+aside:
+  enable: true
+  hide: false
+  button: true
+  mobile: true
+  position: right
+  display:
+    archive: true
+    tag: true
+    category: true
+  card_author:
+    enable: true
+    description: 大一 CTF 选手，主攻 Misc / 取证 / 隐写
+    button:
+      enable: true
+      icon: fab fa-github
+      text: Follow
+      link: https://github.com/<your-github-username>
+  card_announcement:
+    enable: true
+    content: 欢迎来到我的 CTF 黑粉实验室
+
+theme_color:
+  enable: true
+  main: "#ff4fa3"
+  paginator: "#ff2d95"
+  button_hover: "#ff8fc7"
+  text_selection: "#ff2d95"
+  link_color: "#ff71be"
+  meta_color: "#b493ab"
+  hr_color: "#ff5db0"
+  code_foreground: "#ff8ac5"
+  code_background: "rgba(255, 79, 163, .12)"
+  toc_color: "#ff66b6"
+  blockquote_padding_color: "#ff4fa3"
+  blockquote_background_color: "#ff4fa3"
+  scrollbar_color: "#ff4fa3"
+  meta_theme_color_light: "110a16"
+  meta_theme_color_dark: "#09050d"
+
+display_mode: dark
+
+darkmode:
+  enable: true
+  button: true
+  autoChangeMode: false
+
+inject:
+  head:
+    - <link rel="stylesheet" href="/css/custom.css">

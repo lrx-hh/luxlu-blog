@@ -1,8 +1,10 @@
-.DS_Store
-Thumbs.db
-db.json
-*.log
 node_modules/
 public/
-.deploy*/
-_multiconfig.yml
+.deploy_git/
+db.json
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
