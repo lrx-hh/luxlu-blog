@@ -895,6 +895,7 @@
   }
 
   function log(msg) {
+    if (!refs.logBox) return;
     const now = new Date().toLocaleTimeString();
     const line = "[" + now + "] " + msg;
     const old = refs.logBox.textContent ? refs.logBox.textContent.split("\n") : [];
