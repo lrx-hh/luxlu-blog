@@ -63,8 +63,6 @@
     initZipperIntro();
     initReveal3D();
     initHeadingDepth();
-    initGlobalParallaxBackground();
-    initSignatureHero();
 
     if (fxMode === "lite") return;
 
@@ -96,102 +94,9 @@
       initNeonComets(8);
       initMagneticElements();
       initImageDepth();
+      initBackgroundGyro();
       initRightsideGyro();
     }
-  }
-
-  function isHomePage() {
-    const pageType = window.GLOBAL_CONFIG_SITE && window.GLOBAL_CONFIG_SITE.pageType;
-    const path = window.location.pathname || "/";
-    return pageType === "home" || path === "/" || path === "/index.html";
-  }
-
-  function initSignatureHero() {
-    if (!isHomePage()) return;
-    if (document.getElementById("luxlu-signature-hero")) return;
-
-    const feed = document.getElementById("recent-posts");
-    if (!feed || !feed.parentNode) return;
-
-    const hero = document.createElement("section");
-    hero.id = "luxlu-signature-hero";
-    hero.innerHTML =
-      '<div class="luxlu-hero-backdrop"></div>' +
-      '<div class="luxlu-hero-grid">' +
-        '<div class="luxlu-hero-main">' +
-          '<p class="eyebrow">LUXLU DIGITAL ZINE</p>' +
-          '<h2>BLACK<br>PINK<br>ARCHIVE</h2>' +
-          '<p class="desc">把比赛、笔记、日常和灵感塞进同一个宇宙。不是模板站，是有性格的个人刊物。</p>' +
-          '<div class="cta-row">' +
-            '<a href="/calendar/" class="cta hot">看日历</a>' +
-            '<a href="/diary/" class="cta ghost">看日记</a>' +
-          '</div>' +
-        '</div>' +
-        '<div class="luxlu-hero-side">' +
-          '<div class="panel p1"><span>CTF / MISC</span><strong>training + writeup</strong></div>' +
-          '<div class="panel p2"><span>LIFE LOG</span><strong>ongoing updates</strong></div>' +
-          '<div class="panel p3"><span>STYLE</span><strong>noir pink aesthetic</strong></div>' +
-        '</div>' +
-      "</div>";
-
-    feed.parentNode.insertBefore(hero, feed);
-
-    let raf = null;
-    hero.addEventListener("mousemove", (e) => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const rect = hero.getBoundingClientRect();
-        const px = (e.clientX - rect.left) / rect.width - 0.5;
-        const py = (e.clientY - rect.top) / rect.height - 0.5;
-        hero.style.setProperty("--mx", (px * 20).toFixed(2) + "px");
-        hero.style.setProperty("--my", (py * 20).toFixed(2) + "px");
-      });
-    });
-    hero.addEventListener("mouseleave", () => {
-      if (raf) cancelAnimationFrame(raf);
-      hero.style.setProperty("--mx", "0px");
-      hero.style.setProperty("--my", "0px");
-    });
-  }
-
-  function initGlobalParallaxBackground() {
-    const bg = document.getElementById("web_bg");
-    if (!bg || window.__luxluBgParallaxBound) return;
-    window.__luxluBgParallaxBound = true;
-
-    let scrollRaf = 0;
-    let moveRaf = 0;
-
-    const updateScrollParallax = () => {
-      const y = window.scrollY || window.pageYOffset || 0;
-      // Scroll-based parallax: slower than content.
-      const shift = Math.max(-120, Math.min(120, y * -0.14));
-      document.documentElement.style.setProperty("--luxlu-bg-y", shift.toFixed(2) + "px");
-      scrollRaf = 0;
-    };
-
-    const onScroll = () => {
-      if (scrollRaf) return;
-      scrollRaf = requestAnimationFrame(updateScrollParallax);
-    };
-
-    const onMouseMove = (e) => {
-      if (moveRaf) cancelAnimationFrame(moveRaf);
-      moveRaf = requestAnimationFrame(() => {
-        const x = (e.clientX / window.innerWidth) * 100;
-        const y = (e.clientY / window.innerHeight) * 100;
-        document.documentElement.style.setProperty("--luxlu-mx", x.toFixed(2) + "%");
-        document.documentElement.style.setProperty("--luxlu-my", y.toFixed(2) + "%");
-      });
-    };
-
-    updateScrollParallax();
-    document.documentElement.style.setProperty("--luxlu-mx", "50%");
-    document.documentElement.style.setProperty("--luxlu-my", "42%");
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
   }
 
   function cleanupDeprecatedEffects() {
