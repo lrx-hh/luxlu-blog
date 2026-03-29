@@ -31,5 +31,5 @@ description: 访客只读，luxlu可在线编辑的日志页
   <ul class="diary-list" id="diary-list"></ul>
 </section>
 
-<script src="/js/luxlu-cloud-store.js?v=20260329sync1"></script>
+<script src="/js/luxlu-cloud-store.js?v=20260329sync2"></script>
 <script src="/js/diary-owner.js?v=20260329sync1"></script>
