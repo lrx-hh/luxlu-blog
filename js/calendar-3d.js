@@ -594,33 +594,7 @@
   }
 
   function seedEvents() {
-    const d1 = formatDateKey(today);
-    const d2 = formatDateKey(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1));
-
-    return [
-      normalizeEvent({
-        id: generateEventId(),
-        title: "复盘 Misc 题",
-        desc: "把解题思路整理成博客",
-        color: "#ff4fa3",
-        startDate: d1,
-        startTime: "20:00",
-        endDate: d1,
-        endTime: "21:30",
-        done: false
-      }),
-      normalizeEvent({
-        id: generateEventId(),
-        title: "Forensics 训练",
-        desc: "做一份流量包分析",
-        color: "#9bd041",
-        startDate: d2,
-        startTime: "19:30",
-        endDate: d2,
-        endTime: "21:00",
-        done: false
-      })
-    ].filter(Boolean);
+    return [];
   }
 
   function normalizeEvent(item) {

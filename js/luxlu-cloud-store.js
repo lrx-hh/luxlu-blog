@@ -74,6 +74,20 @@
     );
   }
 
+  function jsdelivrUrl(path) {
+    const repo = getRepo();
+    return (
+      "https://cdn.jsdelivr.net/gh/" +
+      encodeURIComponent(repo.owner) +
+      "/" +
+      encodeURIComponent(repo.repo) +
+      "@" +
+      encodeURIComponent(repo.branch) +
+      "/" +
+      path
+    );
+  }
+
   function contentUrl(path) {
     const repo = getRepo();
     const encodedPath = path
@@ -95,15 +109,48 @@
   async function fetchJson(namespace) {
     const path = FILE_MAP[namespace];
     if (!path) throw new Error("unknown namespace");
+    const repo = getRepo();
+    const token = getToken();
+    const errors = [];
 
-    const url = rawUrl(path) + "?t=" + Date.now();
-    const res = await fetch(url, { cache: "no-store" });
-    if (res.status === 404) return null;
-    if (!res.ok) throw new Error("cloud read failed: HTTP " + res.status);
+    try {
+      const apiRes = await fetch(contentUrl(path) + "?ref=" + encodeURIComponent(repo.branch), {
+        headers: apiHeaders(false, token),
+        cache: "no-store"
+      });
 
-    const text = await res.text();
-    if (!text || !text.trim()) return null;
-    return JSON.parse(text);
+      if (apiRes.status === 404) return null;
+      if (apiRes.ok) {
+        const file = await apiRes.json();
+        const content = String(file && file.content ? file.content : "").replace(/\n/g, "");
+        if (!content.trim()) return null;
+        return JSON.parse(base64ToUtf8(content));
+      }
+      errors.push("api:" + (await readError(apiRes)));
+    } catch (err) {
+      errors.push("api:" + getErrMessage(err));
+    }
+
+    const candidates = [rawUrl(path), jsdelivrUrl(path)];
+    for (let i = 0; i < candidates.length; i += 1) {
+      const url = candidates[i] + "?t=" + Date.now();
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (res.status === 404) return null;
+        if (!res.ok) {
+          errors.push("fallback" + i + ":HTTP " + res.status);
+          continue;
+        }
+
+        const text = await res.text();
+        if (!text || !text.trim()) return null;
+        return JSON.parse(text);
+      } catch (err) {
+        errors.push("fallback" + i + ":" + getErrMessage(err));
+      }
+    }
+
+    throw new Error("cloud read failed: " + errors.join(" | "));
   }
 
   async function saveJson(namespace, payload, message) {
@@ -145,12 +192,21 @@
   }
 
   function apiHeaders(withJson, token) {
-    const headers = {
-      Accept: "application/vnd.github+json",
-      Authorization: "Bearer " + token
-    };
+    const headers = { Accept: "application/vnd.github+json" };
+    const safeToken = String(token || "").trim();
+    if (safeToken) headers.Authorization = "Bearer " + safeToken;
     if (withJson) headers["Content-Type"] = "application/json";
     return headers;
+  }
+
+  function base64ToUtf8(text) {
+    const binary = atob(String(text || "").replace(/\s+/g, ""));
+    let escaped = "";
+    for (let i = 0; i < binary.length; i += 1) {
+      const code = binary.charCodeAt(i).toString(16).padStart(2, "0");
+      escaped += "%" + code;
+    }
+    return decodeURIComponent(escaped);
   }
 
   async function readError(res) {
@@ -174,6 +230,12 @@
       }
       return btoa(binary);
     }
+  }
+
+  function getErrMessage(err) {
+    if (!err) return "unknown error";
+    if (typeof err === "string") return err;
+    return err.message || "unknown error";
   }
 
   window.luxluCloudStore = {
