@@ -152,6 +152,11 @@
   background: linear-gradient(130deg, #ff4fa3, #ff2f94);
 }
 
+.collab-btn.danger {
+  border-color: rgba(255, 140, 180, 0.45);
+  background: rgba(123, 26, 71, 0.5);
+}
+
 .collab-btn.role-btn.active {
   border-color: transparent;
   background: linear-gradient(130deg, #ff4fa3, #ff2f94);
@@ -314,6 +319,14 @@
   color: #ca9fbc;
   font-size: 0.76rem;
   margin-top: 4px;
+}
+
+.pixel-gallery-actions {
+  padding: 0 10px 10px;
+}
+
+.pixel-gallery-actions .pixel-del-btn {
+  width: 100%;
 }
 
 .pixel-gallery-empty {
