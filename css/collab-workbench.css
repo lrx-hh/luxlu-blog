@@ -74,6 +74,10 @@
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.26);
 }
 
+.collab-span-full {
+  grid-column: 1 / -1;
+}
+
 .collab-card h2 {
   margin: 0 0 12px;
   font-size: 1.05rem;
@@ -261,6 +265,62 @@
 
 #pixel-result {
   min-height: 20px;
+}
+
+.pixel-gallery-list {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.pixel-gallery-item {
+  border: 1px solid rgba(255, 130, 202, 0.24);
+  border-radius: 12px;
+  background: rgba(18, 12, 28, 0.9);
+  overflow: hidden;
+}
+
+.pixel-gallery-item a {
+  display: block;
+  text-decoration: none;
+}
+
+.pixel-gallery-item img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  image-rendering: pixelated;
+  background: rgba(14, 9, 22, 0.9);
+}
+
+.pixel-gallery-meta {
+  padding: 8px 10px;
+  border-top: 1px solid rgba(255, 130, 202, 0.2);
+}
+
+.pixel-gallery-meta .name {
+  display: block;
+  color: #ffd8ec;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pixel-gallery-meta .time {
+  display: block;
+  color: #ca9fbc;
+  font-size: 0.76rem;
+  margin-top: 4px;
+}
+
+.pixel-gallery-empty {
+  border: 1px dashed rgba(255, 130, 202, 0.26);
+  border-radius: 12px;
+  padding: 14px;
+  color: #d7b0c9;
 }
 
 @media (max-width: 1100px) {
