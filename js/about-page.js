@@ -47,7 +47,7 @@
   }
 
   async function sendMail(subject, nickname, message) {
-    return fetch("https://formsubmit.co/ajax/" + EMAIL, {
+    const res = await fetch("https://formsubmit.co/ajax/" + EMAIL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -60,6 +60,22 @@
         _captcha: "false"
       })
     });
+
+    let data = {};
+    try {
+      data = await res.json();
+    } catch (_) {
+      data = {};
+    }
+
+    const success = data && (data.success === true || data.success === "true");
+    const messageText = (data && data.message) ? String(data.message) : "";
+
+    return {
+      ok: Boolean(res.ok && success),
+      message: messageText,
+      status: res.status
+    };
   }
 
   function nowText() {
@@ -97,7 +113,14 @@
       if (publicStatus) publicStatus.textContent = "留言已发布。";
 
       try {
-        await sendMail("luxlu blog 公开留言", nickname, message);
+        const result = await sendMail("luxlu blog 公开留言", nickname, message);
+        if (!result.ok && publicStatus) {
+          if (/Activation/i.test(result.message)) {
+            publicStatus.textContent = "留言已发布；邮箱通知尚未激活（请先激活 FormSubmit）。";
+          } else if (result.message) {
+            publicStatus.textContent = "留言已发布；邮件通知失败：" + result.message;
+          }
+        }
       } catch (_) {
         // ignore network errors for non-blocking UX
       }
@@ -112,12 +135,25 @@
 
       if (whisperStatus) whisperStatus.textContent = "发送中...";
       try {
-        const res = await sendMail("luxlu blog 悄悄话", nickname, message);
-        if (!res.ok) throw new Error("bad");
+        const result = await sendMail("luxlu blog 悄悄话", nickname, message);
+        if (!result.ok) {
+          if (/Activation/i.test(result.message)) {
+            throw new Error("activation");
+          }
+          throw new Error(result.message || "bad");
+        }
         whisperForm.reset();
         if (whisperStatus) whisperStatus.textContent = "悄悄话发送成功。";
-      } catch (_) {
-        if (whisperStatus) whisperStatus.textContent = "发送失败，请稍后再试。";
+      } catch (err) {
+        if (!whisperStatus) return;
+        const text = String((err && err.message) || "");
+        if (text === "activation") {
+          whisperStatus.textContent = "邮箱通知未激活，请先去 1396343486@qq.com 点开 FormSubmit 的 Activate Form 邮件。";
+        } else if (text && text !== "bad") {
+          whisperStatus.textContent = "发送失败：" + text;
+        } else {
+          whisperStatus.textContent = "发送失败，请稍后再试。";
+        }
       }
     });
   }
