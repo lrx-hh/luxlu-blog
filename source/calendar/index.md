@@ -86,5 +86,5 @@ description: 访客只读，主人模式可编辑日程与代办
   </form>
 </dialog>
 
-<script src="/js/luxlu-cloud-store.js?v=20260329sync2"></script>
-<script src="/js/calendar-3d.js?v=20260329sync2"></script>
+<script src="/js/luxlu-cloud-store.js?v=20260329sync3"></script>
+<script src="/js/calendar-3d.js?v=20260329sync3"></script>

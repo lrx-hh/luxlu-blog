@@ -161,34 +161,58 @@
     if (!token) throw new Error("missing github token");
 
     const repo = getRepo();
-    let sha = "";
+    const content = utf8ToBase64(JSON.stringify(payload, null, 2) + "\n");
+    let lastError = "cloud write failed";
 
-    const getRes = await fetch(contentUrl(path) + "?ref=" + encodeURIComponent(repo.branch), {
-      headers: apiHeaders(false, token)
-    });
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const sha = await fetchFileSha(path, repo.branch, token);
 
-    if (getRes.ok) {
-      const file = await getRes.json();
-      sha = file.sha || "";
-    } else if (getRes.status !== 404) {
-      throw new Error(await readError(getRes));
+      const body = {
+        message: message || ("sync " + namespace + " data"),
+        content: content,
+        branch: repo.branch
+      };
+      if (sha) body.sha = sha;
+
+      const putRes = await fetch(contentUrl(path), {
+        method: "PUT",
+        headers: apiHeaders(true, token),
+        body: JSON.stringify(body)
+      });
+
+      if (putRes.ok) return putRes.json();
+
+      const errMsg = await readError(putRes);
+      lastError = errMsg;
+      if (isShaConflict(putRes.status, errMsg) && attempt < 2) {
+        await sleep(250 + attempt * 300);
+        continue;
+      }
+      throw new Error(errMsg);
     }
 
-    const body = {
-      message: message || ("sync " + namespace + " data"),
-      content: utf8ToBase64(JSON.stringify(payload, null, 2) + "\n"),
-      branch: repo.branch
-    };
-    if (sha) body.sha = sha;
+    throw new Error(lastError);
+  }
 
-    const putRes = await fetch(contentUrl(path), {
-      method: "PUT",
-      headers: apiHeaders(true, token),
-      body: JSON.stringify(body)
+  async function fetchFileSha(path, branch, token) {
+    const getRes = await fetch(contentUrl(path) + "?ref=" + encodeURIComponent(branch), {
+      headers: apiHeaders(false, token),
+      cache: "no-store"
     });
+    if (getRes.status === 404) return "";
+    if (!getRes.ok) throw new Error(await readError(getRes));
+    const file = await getRes.json();
+    return String(file && file.sha ? file.sha : "");
+  }
 
-    if (!putRes.ok) throw new Error(await readError(putRes));
-    return putRes.json();
+  function isShaConflict(status, message) {
+    if (status === 409) return true;
+    if (status === 422) return /sha|does not match|update is not a fast forward/i.test(String(message || ""));
+    return /sha|does not match/i.test(String(message || ""));
+  }
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   function apiHeaders(withJson, token) {
