@@ -1606,11 +1606,55 @@ div#archive.tilt-3d {
   #page-header #nav {
     padding-left: 8px;
     padding-right: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 1200;
+    background: rgba(10, 6, 16, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   #nav .site-page {
     padding: 0 12px !important;
     font-size: 0.92rem;
+  }
+
+  #nav #menus {
+    display: flex !important;
+    align-items: center;
+    min-width: 0;
+    width: 100%;
+    gap: 6px;
+  }
+
+  #nav #search-button {
+    display: none !important;
+  }
+
+  #nav #toggle-menu {
+    display: none !important;
+  }
+
+  #nav .menus_items {
+    display: flex !important;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 6px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding-bottom: 3px;
+    scrollbar-width: none;
+  }
+
+  #nav .menus_items::-webkit-scrollbar {
+    display: none;
+  }
+
+  #nav .menus_items .menus_item {
+    flex: 0 0 auto;
+    padding-left: 0;
   }
 
   #site-info {
