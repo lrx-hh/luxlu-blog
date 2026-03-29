@@ -22,7 +22,6 @@ description: 安知鱼风格介绍页
 <dt>昵称</dt><dd>luxlu</dd>
 <dt>方向</dt><dd>CTF Misc / 取证 / 隐写</dd>
 <dt>身份</dt><dd>大一学生</dd>
-<dt>目标</dt><dd>稳定输出高质量题解与工具链</dd>
 </dl>
 </article>
 

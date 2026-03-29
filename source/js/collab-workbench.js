@@ -130,6 +130,7 @@
     if (refs.pixelDownloadBtn) refs.pixelDownloadBtn.addEventListener("click", downloadPixelCanvas);
     if (refs.pixelSaveBtn) refs.pixelSaveBtn.addEventListener("click", savePixelCanvasToRepo);
     if (refs.pixelGalleryRefreshBtn) refs.pixelGalleryRefreshBtn.addEventListener("click", refreshPixelGallery);
+    if (refs.pixelGalleryList) refs.pixelGalleryList.addEventListener("click", onPixelGalleryAction);
 
     if (refs.pixelCanvas) {
       refs.pixelCanvas.addEventListener("pointerdown", onPixelPointerDown);
@@ -168,6 +169,7 @@
   function setRole(nextRole) {
     state.role = nextRole;
     renderState();
+    refreshPixelGallery();
     log("role => " + nextRole);
   }
 
@@ -344,6 +346,16 @@
           const blobUrl = toGithubBlobUrl(item.path);
           const name = item.name || "";
           const timeText = formatPixelTimestamp(name);
+          const canDelete = state.role === "admin";
+          const deleteHtml = canDelete
+            ? '<div class="pixel-gallery-actions"><button class="collab-btn danger pixel-del-btn" type="button" data-pixel-del="' +
+              escapeHtml(item.path || "") +
+              '" data-pixel-sha="' +
+              escapeHtml(item.sha || "") +
+              '" data-pixel-name="' +
+              escapeHtml(name) +
+              '">删除</button></div>'
+            : "";
 
           return (
             '<article class="pixel-gallery-item">' +
@@ -364,6 +376,7 @@
             escapeHtml(timeText || "未标注时间") +
             "</span>" +
             "</div>" +
+            deleteHtml +
             "</article>"
           );
         })
@@ -373,6 +386,43 @@
     } catch (err) {
       refs.pixelGalleryList.innerHTML = '<div class="pixel-gallery-empty">读取失败: ' + escapeHtml(err.message) + "</div>";
       log("pixel gallery failed: " + err.message);
+    }
+  }
+
+  async function onPixelGalleryAction(event) {
+    const btn = event.target.closest("button[data-pixel-del]");
+    if (!btn) return;
+
+    if (state.role !== "admin") {
+      window.alert("仅管理员可删除像素画");
+      return;
+    }
+    if (!ensureToken()) return;
+
+    const path = (btn.getAttribute("data-pixel-del") || "").trim();
+    if (!path) return;
+
+    const name = (btn.getAttribute("data-pixel-name") || path.split("/").pop() || "").trim();
+    const ok = window.confirm("确认删除这张像素画？\n" + name);
+    if (!ok) return;
+
+    btn.disabled = true;
+    try {
+      let sha = (btn.getAttribute("data-pixel-sha") || "").trim();
+      if (!sha) {
+        const file = await getFile(path);
+        sha = file.sha || "";
+      }
+      if (!sha) throw new Error("缺少文件 SHA，无法删除");
+
+      await deleteFile(path, sha, "admin delete pixel art: " + name);
+      log("pixel art deleted: " + path);
+      setPixelResult("Deleted: " + name);
+      await refreshPixelGallery();
+    } catch (err) {
+      log("pixel delete failed: " + err.message);
+      window.alert("删除失败: " + err.message);
+      btn.disabled = false;
     }
   }
 
@@ -775,6 +825,28 @@
 
     const res = await fetch(contentUrl(path), {
       method: "PUT",
+      headers: apiHeaders(true),
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) throw new Error(await readError(res));
+    return res.json();
+  }
+
+  async function deleteFile(path, sha, message) {
+    const safePath = String(path || "").replace(/^\/+/, "");
+    const safeSha = String(sha || "").trim();
+    if (!safePath) throw new Error("文件路径为空");
+    if (!safeSha) throw new Error("缺少文件 SHA");
+
+    const payload = {
+      message: message || ("delete file: " + safePath),
+      sha: safeSha,
+      branch: state.branch
+    };
+
+    const res = await fetch(contentUrl(safePath), {
+      method: "DELETE",
       headers: apiHeaders(true),
       body: JSON.stringify(payload)
     });
