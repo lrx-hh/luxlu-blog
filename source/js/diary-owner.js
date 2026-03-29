@@ -1,5 +1,6 @@
 ﻿(function () {
   const STORAGE_KEY = "luxlu_diary_entries_v1";
+  const CLOUD_NAMESPACE = "diary";
   const OWNER_HASH = "11079afd9b280f41fc114e34f27a50161f7a12e003463802c9a78aea6a57e642"; // luxlu667
   const AUTH_POLICY = {
     maxFails: 5,
@@ -7,6 +8,7 @@
     sessionMs: 30 * 60 * 1000
   };
   const AUTH_GUARD_KEY = "luxlu_diary_auth_guard_v1";
+  const CLOUD_ERROR_ALERT_GAP_MS = 6000;
 
   const refs = {
     ownerBtn: document.getElementById("diary-owner-toggle"),
@@ -25,14 +27,16 @@
   let editingId = "";
   let entries = loadEntries();
   let authGuard = loadAuthGuard();
+  let lastCloudErrorAt = 0;
 
   bindEvents();
   render();
+  hydrateFromCloud(false);
 
   function bindEvents() {
     refs.ownerBtn.addEventListener("click", toggleOwnerMode);
 
-    refs.saveBtn.addEventListener("click", () => {
+    refs.saveBtn.addEventListener("click", async () => {
       if (!ownerMode) return;
       if (!ensureOwnerSessionActive()) return;
       const text = (refs.input.value || "").trim();
@@ -57,7 +61,7 @@
       }
 
       touchOwnerSession();
-      saveEntries();
+      await persistEntries("diary: upsert entry");
       resetEditor();
       render();
     });
@@ -68,7 +72,7 @@
       renderOwnerState();
     });
 
-    refs.list.addEventListener("click", (e) => {
+    refs.list.addEventListener("click", async (e) => {
       const editBtn = e.target.closest("button[data-edit]");
       if (editBtn) {
         if (!ownerMode) return;
@@ -93,7 +97,7 @@
         const ok = window.confirm("确认删除这条留言吗？");
         if (!ok) return;
         entries = entries.filter((x) => x.id !== id);
-        saveEntries();
+        await persistEntries("diary: delete entry");
         if (editingId === id) resetEditor();
         render();
       }
@@ -129,9 +133,15 @@
       return;
     }
 
+    const cloudOk = await ensureCloudWriteReady();
+    if (!cloudOk) {
+      return;
+    }
+
     resetAuthGuard();
     ownerMode = true;
     ownerLastAuthAt = Date.now();
+    await hydrateFromCloud(true);
     render();
     window.alert("编辑模式已开启");
   }
@@ -158,7 +168,7 @@
 
   function renderList() {
     if (!entries.length) {
-      refs.list.innerHTML = '<li class="diary-empty">还没有留言。</li>';
+      refs.list.innerHTML = '<li class="diary-empty">你想做第一个人吗^^</li>';
       return;
     }
 
@@ -196,20 +206,109 @@
       const arr = raw ? JSON.parse(raw) : [];
       if (!Array.isArray(arr)) return [];
       return arr
-        .map((x) => ({
-          id: String(x.id || ""),
-          content: String(x.content || "").trim(),
-          createdAt: String(x.createdAt || nowText()),
-          updatedAt: String(x.updatedAt || "")
-        }))
-        .filter((x) => x.id && x.content);
+        .map((x) => normalizeEntry(x))
+        .filter(Boolean);
     } catch (_) {
       return [];
     }
   }
 
-  function saveEntries() {
+  function normalizeEntry(x) {
+    if (!x) return null;
+    const entry = {
+      id: String(x.id || "").trim(),
+      content: String(x.content || "").trim(),
+      createdAt: String(x.createdAt || nowText()).trim(),
+      updatedAt: String(x.updatedAt || "").trim()
+    };
+    if (!entry.id || !entry.content) return null;
+    return entry;
+  }
+
+  function saveEntriesLocal() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  }
+
+  async function persistEntries(message) {
+    saveEntriesLocal();
+    await saveEntriesToCloud(message);
+  }
+
+  async function hydrateFromCloud(forceOverride) {
+    const store = getCloudStore();
+    if (!store) return;
+
+    try {
+      const remote = await store.fetchJson(CLOUD_NAMESPACE);
+      if (!Array.isArray(remote)) return;
+
+      const normalized = remote.map((x) => normalizeEntry(x)).filter(Boolean);
+      if (!forceOverride && normalized.length === 0 && entries.length > 0) {
+        await tryBootstrapCloud();
+        return;
+      }
+
+      entries = normalized;
+      saveEntriesLocal();
+      render();
+    } catch (err) {
+      console.warn("[diary] cloud read failed", err);
+    }
+  }
+
+  async function saveEntriesToCloud(message) {
+    const store = getCloudStore();
+    if (!store) return;
+
+    try {
+      await store.saveJson(CLOUD_NAMESPACE, entries, message || "diary update");
+    } catch (err) {
+      console.warn("[diary] cloud write failed", err);
+      const now = Date.now();
+      if (now - lastCloudErrorAt > CLOUD_ERROR_ALERT_GAP_MS) {
+        lastCloudErrorAt = now;
+        window.alert("已保存到当前设备，但云端同步失败：" + getErrMessage(err));
+      }
+    }
+  }
+
+  async function ensureCloudWriteReady() {
+    const store = getCloudStore();
+    if (!store || typeof store.ensureToken !== "function") return true;
+
+    const ok = await store.ensureToken();
+    if (!ok) {
+      window.alert("需要先输入 GitHub Token，才能在所有设备同步日记。\n你可以在协作页先连接仓库，再回来编辑。");
+      return false;
+    }
+
+    return true;
+  }
+
+  async function tryBootstrapCloud() {
+    const store = getCloudStore();
+    if (!store || !entries.length) return;
+    if (typeof store.hasToken !== "function" || !store.hasToken()) return;
+
+    try {
+      await store.saveJson(CLOUD_NAMESPACE, entries, "bootstrap diary data");
+    } catch (err) {
+      console.warn("[diary] cloud bootstrap failed", err);
+    }
+  }
+
+  function getCloudStore() {
+    const store = window.luxluCloudStore;
+    if (!store) return null;
+    if (typeof store.fetchJson !== "function") return null;
+    if (typeof store.saveJson !== "function") return null;
+    return store;
+  }
+
+  function getErrMessage(err) {
+    if (!err) return "unknown error";
+    if (typeof err === "string") return err;
+    return err.message || "unknown error";
   }
 
   function nowText() {
