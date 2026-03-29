@@ -1,0 +1,684 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>命令行美化教程（全文AI生成） | luxlu</title><meta name="author" content="luxlu"><meta name="copyright" content="luxlu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#09050d"><meta name="description" content="?????https:&#x2F;&#x2F;www.cnblogs.com&#x2F;luxlu&#x2F;p&#x2F;19775744  命令行美化完整教程  适用系统：Windows 11 &#x2F; Windows 10 涉及工具：Windows Terminal + PowerShell + Oh My Posh + Nerd Fonts   目录  安装 Windows Terminal 安装 PowerShell 7 安装 Nerd F">
+<meta property="og:type" content="article">
+<meta property="og:title" content="命令行美化教程（全文AI生成）">
+<meta property="og:url" content="https://luxlu.top/posts/cnblogs-19775744/">
+<meta property="og:site_name" content="luxlu">
+<meta property="og:description" content="?????https:&#x2F;&#x2F;www.cnblogs.com&#x2F;luxlu&#x2F;p&#x2F;19775744  命令行美化完整教程  适用系统：Windows 11 &#x2F; Windows 10 涉及工具：Windows Terminal + PowerShell + Oh My Posh + Nerd Fonts   目录  安装 Windows Terminal 安装 PowerShell 7 安装 Nerd F">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luxlu.top/img/avatar.jpg">
+<meta property="article:published_time" content="2026-03-26T05:46:00.000Z">
+<meta property="article:modified_time" content="2026-03-29T04:09:56.133Z">
+<meta property="article:author" content="luxlu">
+<meta property="article:tag" content="???">
+<meta property="article:tag" content="??">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luxlu.top/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "命令行美化教程（全文AI生成）",
+  "url": "https://luxlu.top/posts/cnblogs-19775744/",
+  "image": "https://luxlu.top/img/avatar.jpg",
+  "datePublished": "2026-03-26T05:46:00.000Z",
+  "dateModified": "2026-03-29T04:09:56.133Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "luxlu",
+      "url": "https://luxlu.top"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/sleepy-cat-favicon.jpg"><link rel="canonical" href="https://luxlu.top/posts/cnblogs-19775744/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#09050d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '110a16')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '命令行美化教程（全文AI生成）',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css?v=20260329bg5"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-house"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/calendar/"><i class="fa-fw fas fa-calendar-days"></i><span> 日历</span></a></div><div class="menus_item"><a class="site-page" href="/diary/"><i class="fa-fw fas fa-book-open"></i><span> 日记</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-box-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-screwdriver-wrench"></i><span> 工具箱</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/intro/"><i class="fa-fw fas fa-id-card"></i><span> 介绍页</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/bg.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">luxlu</span></a><a class="nav-page-title" href="/"><span class="site-name">命令行美化教程（全文AI生成）</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-house"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/calendar/"><i class="fa-fw fas fa-calendar-days"></i><span> 日历</span></a></div><div class="menus_item"><a class="site-page" href="/diary/"><i class="fa-fw fas fa-book-open"></i><span> 日记</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-box-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-screwdriver-wrench"></i><span> 工具箱</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/intro/"><i class="fa-fw fas fa-id-card"></i><span> 介绍页</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">命令行美化教程（全文AI生成）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-26T05:46:00.000Z" title="发表于 2026-03-26 13:46:00">2026-03-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-29T04:09:56.133Z" title="更新于 2026-03-29 12:09:56">2026-03-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/">?????</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>?????<a target="_blank" rel="noopener" href="https://www.cnblogs.com/luxlu/p/19775744">https://www.cnblogs.com/luxlu/p/19775744</a></p>
+</blockquote>
+<h1 id="命令行美化完整教程">命令行美化完整教程</h1>
+<blockquote>
+<p>适用系统：Windows 11 / Windows 10<br>
+涉及工具：Windows Terminal + PowerShell + Oh My Posh + Nerd Fonts</p>
+</blockquote>
+<hr>
+<h2 id="目录">目录</h2>
+<ol>
+<li><a href="#1-%E5%AE%89%E8%A3%85-windows-terminal" rel="noopener nofollow">安装 Windows Terminal</a></li>
+<li><a href="#2-%E5%AE%89%E8%A3%85-powershell-7" rel="noopener nofollow">安装 PowerShell 7</a></li>
+<li><a href="#3-%E5%AE%89%E8%A3%85-nerd-fonts-%E5%AD%97%E4%BD%93" rel="noopener nofollow">安装 Nerd Fonts 字体</a></li>
+<li><a href="#4-%E5%AE%89%E8%A3%85-oh-my-posh" rel="noopener nofollow">安装 Oh My Posh</a></li>
+<li><a href="#5-%E9%85%8D%E7%BD%AE%E4%B8%BB%E9%A2%98" rel="noopener nofollow">配置主题</a></li>
+<li><a href="#6-%E5%AE%89%E8%A3%85%E5%B8%B8%E7%94%A8-powershell-%E6%A8%A1%E5%9D%97" rel="noopener nofollow">安装常用 PowerShell 模块</a></li>
+<li><a href="#7-%E7%BE%8E%E5%8C%96-windows-terminal-%E5%A4%96%E8%A7%82" rel="noopener nofollow">美化 Windows Terminal 外观</a></li>
+<li><a href="#8-%E5%AE%8C%E6%95%B4-profile-%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83" rel="noopener nofollow">完整 Profile 配置参考</a></li>
+<li><a href="#9-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98" rel="noopener nofollow">常见问题</a></li>
+</ol>
+<hr>
+<h2 id="1-安装-windows-terminal">1. 安装 Windows Terminal</h2>
+<h3 id="方法一microsoft-store推荐">方法一：Microsoft Store（推荐）</h3>
+<p>在 Microsoft Store 搜索 <strong>Windows Terminal</strong> 安装即可。</p>
+<h3 id="方法二命令行安装">方法二：命令行安装</h3>
+<pre><code class="language-powershell">winget install Microsoft.WindowsTerminal
+</code></pre>
+<hr>
+<h2 id="2-安装-powershell-7">2. 安装 PowerShell 7</h2>
+<p>Windows 自带的是 PowerShell 5，建议升级到最新的 PowerShell 7。</p>
+<pre><code class="language-powershell">winget install Microsoft.PowerShell
+</code></pre>
+<p>安装完成后，在 Windows Terminal 中将 PowerShell 7 设为默认终端：</p>
+<ol>
+<li>打开 Windows Terminal</li>
+<li>按 <code>Ctrl + ,</code> 打开设置</li>
+<li>左侧点击 <strong>启动</strong></li>
+<li>默认配置文件改为 <strong>PowerShell</strong>（不是 Windows PowerShell）</li>
+</ol>
+<hr>
+<h2 id="3-安装-nerd-fonts-字体">3. 安装 Nerd Fonts 字体</h2>
+<p>Oh My Posh 的图标需要特殊字体支持，推荐以下几款：</p>
+<table>
+<thead>
+<tr>
+<th>字体名称</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MesloLGS NF</strong></td>
+<td>最常用，兼容性好</td>
+</tr>
+<tr>
+<td><strong>CaskaydiaCove NF</strong></td>
+<td>微软 Cascadia Code 的 Nerd 版</td>
+</tr>
+<tr>
+<td><strong>JetBrainsMono NF</strong></td>
+<td>JetBrains 出品，清晰易读</td>
+</tr>
+<tr>
+<td><strong>FiraCode NF</strong></td>
+<td>支持连字符，代码美观</td>
+</tr>
+</tbody>
+</table>
+<h3 id="安装步骤">安装步骤</h3>
+<p><strong>方法一：手动下载</strong></p>
+<ol>
+<li>访问 <a href="https://www.nerdfonts.com/font-downloads" target="_blank" rel="noopener nofollow">https://www.nerdfonts.com/font-downloads</a></li>
+<li>下载喜欢的字体压缩包</li>
+<li>解压后全选 <code>.ttf</code> 文件，右键 → <strong>为所有用户安装</strong></li>
+</ol>
+<p><strong>方法二：命令行安装（使用 oh-my-posh）</strong></p>
+<pre><code class="language-powershell">oh-my-posh font install meslo
+</code></pre>
+<h3 id="在-windows-terminal-中设置字体">在 Windows Terminal 中设置字体</h3>
+<ol>
+<li>按 <code>Ctrl + ,</code> 打开设置</li>
+<li>选择对应的配置文件（如 PowerShell）</li>
+<li>点击 <strong>外观</strong></li>
+<li>字体更改为已安装的 Nerd Font（如 <code>MesloLGS NF</code>）</li>
+</ol>
+<hr>
+<h2 id="4-安装-oh-my-posh">4. 安装 Oh My Posh</h2>
+<p>Oh My Posh 是一个跨平台的提示符美化工具。</p>
+<h3 id="安装">安装</h3>
+<pre><code class="language-powershell">winget install JanDeDobbeleer.OhMyPosh -s winget
+</code></pre>
+<p>安装完成后<strong>重启终端</strong>，然后验证安装：</p>
+<pre><code class="language-powershell">oh-my-posh version
+</code></pre>
+<hr>
+<h2 id="5-配置主题">5. 配置主题</h2>
+<h3 id="查看所有内置主题">查看所有内置主题</h3>
+<pre><code class="language-powershell">Get-PoshThemes
+</code></pre>
+<p>这会在终端中展示所有主题的预览效果。</p>
+<h3 id="常用推荐主题">常用推荐主题</h3>
+<table>
+<thead>
+<tr>
+<th>主题名称</th>
+<th>风格描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>atomic</code></td>
+<td>简洁，双行显示</td>
+</tr>
+<tr>
+<td><code>catppuccin</code></td>
+<td>柔和配色，现代感强</td>
+</tr>
+<tr>
+<td><code>dracula</code></td>
+<td>暗色系经典主题</td>
+</tr>
+<tr>
+<td><code>jandedobbeleer</code></td>
+<td>作者自用主题，信息丰富</td>
+</tr>
+<tr>
+<td><code>night-owl</code></td>
+<td>深蓝夜视风格</td>
+</tr>
+<tr>
+<td><code>powerlevel10k_rainbow</code></td>
+<td>彩虹配色，信息量大</td>
+</tr>
+<tr>
+<td><code>agnoster</code></td>
+<td>经典箭头风格</td>
+</tr>
+</tbody>
+</table>
+<h3 id="临时预览某个主题">临时预览某个主题</h3>
+<pre><code class="language-powershell">oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\atomic.omp.json" | Invoke-Expression
+</code></pre>
+<h3 id="永久设置主题写入-profile">永久设置主题（写入 Profile）</h3>
+<p><strong>第一步：打开 Profile 文件</strong></p>
+<pre><code class="language-powershell">notepad $PROFILE
+</code></pre>
+<p>如果提示文件不存在，先创建：</p>
+<pre><code class="language-powershell">New-Item -Path $PROFILE -Type File -Force
+</code></pre>
+<p><strong>第二步：添加以下内容</strong></p>
+<pre><code class="language-powershell">oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\atomic.omp.json" | Invoke-Expression
+</code></pre>
+<p>将 <code>atomic</code> 替换为你喜欢的主题名称。</p>
+<p><strong>第三步：重载 Profile</strong></p>
+<pre><code class="language-powershell">. $PROFILE
+</code></pre>
+<h3 id="使用自定义主题">使用自定义主题</h3>
+<p>你可以下载或自己编写 <code>.omp.json</code> 主题文件：</p>
+<pre><code class="language-powershell"># 将主题文件放在某个目录，比如：
+oh-my-posh init pwsh --config "C:\Users\hp\mytheme.omp.json" | Invoke-Expression
+</code></pre>
+<hr>
+<h2 id="6-安装常用-powershell-模块">6. 安装常用 PowerShell 模块</h2>
+<h3 id="61-psreadline命令行增强">6.1 PSReadLine（命令行增强）</h3>
+<p>提供语法高亮、历史搜索、智能补全等功能。</p>
+<pre><code class="language-powershell">Install-Module PSReadLine -Force -SkipPublisherCheck
+</code></pre>
+<p>在 Profile 中添加配置：</p>
+<pre><code class="language-powershell"># 语法高亮
+Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -PredictionViewStyle ListView
+
+<h1 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h1><p>Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete<br>Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward<br>Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward<br></code></pre></p>
+<blockquote>
+<p>⚠️ 注意：<code>-PredictionSource</code> 和 <code>-PredictionViewStyle</code> 需要 PSReadLine <strong>2.2+</strong> 版本才支持。</p>
+</blockquote>
+<h3 id="62-terminal-icons文件图标">6.2 Terminal-Icons（文件图标）</h3>
+<p>在 <code>ls</code> / <code>dir</code> 命令时显示文件类型图标。</p>
+<pre><code class="language-powershell">Install-Module -Name Terminal-Icons -Repository PSGallery -Force
+</code></pre>
+<p>在 Profile 中添加：</p>
+<pre><code class="language-powershell">Import-Module -Name Terminal-Icons
+</code></pre>
+<p>效果对比：</p>
+<pre><code># 未安装
+README.md
+src/
+package.json
+
+<h1 id="安装后"><a href="#安装后" class="headerlink" title="安装后"></a>安装后</h1><p> README.md<br> src&#x2F;<br> package.json<br></code></pre></p>
+<h3 id="63-z目录快速跳转">6.3 Z（目录快速跳转）</h3>
+<p>记录访问历史，快速跳转到常用目录。</p>
+<pre><code class="language-powershell">Install-Module z -Force
+</code></pre>
+<p>使用示例：</p>
+<pre><code class="language-powershell">z Desktop    # 跳转到 Desktop
+z pro        # 模糊匹配跳转到最近访问的含 pro 的目录
+</code></pre>
+<h3 id="64-posh-gitgit-状态显示">6.4 posh-git（Git 状态显示）</h3>
+<p>在提示符中显示 Git 分支和状态信息。</p>
+<pre><code class="language-powershell">Install-Module posh-git -Scope CurrentUser -Force
+</code></pre>
+<p>在 Profile 中添加：</p>
+<pre><code class="language-powershell">Import-Module posh-git
+</code></pre>
+<hr>
+<h2 id="7-美化-windows-terminal-外观">7. 美化 Windows Terminal 外观</h2>
+<h3 id="71-设置背景图片">7.1 设置背景图片</h3>
+<ol>
+<li>打开设置 <code>Ctrl + ,</code></li>
+<li>选择配置文件 → <strong>外观</strong></li>
+<li><strong>背景图像</strong> → 选择一张图片</li>
+<li>调整 <strong>背景图像不透明度</strong>（建议 0.1 ~ 0.2）</li>
+</ol>
+<h3 id="72-设置亚克力效果毛玻璃">7.2 设置亚克力效果（毛玻璃）</h3>
+<p>在设置 → 外观中开启 <strong>亚克力材料</strong>，并调整透明度。</p>
+<p>或者在 <code>settings.json</code> 中配置：</p>
+<pre><code class="language-json">&#123;
+    "profiles": &#123;
+        "defaults": &#123;
+            "useAcrylic": true,
+            "acrylicOpacity": 0.85
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h3 id="73-配色方案推荐">7.3 配色方案推荐</h3>
+<p>打开 <code>settings.json</code>（设置页面右下角有入口），在 <code>schemes</code> 中添加：</p>
+<p><strong>Catppuccin Mocha（推荐）</strong></p>
+<pre><code class="language-json">&#123;
+    "name": "Catppuccin Mocha",
+    "background": "#1E1E2E",
+    "foreground": "#CDD6F4",
+    "black": "#45475A",
+    "red": "#F38BA8",
+    "green": "#A6E3A1",
+    "yellow": "#F9E2AF",
+    "blue": "#89B4FA",
+    "purple": "#CBA6F7",
+    "cyan": "#94E2D5",
+    "white": "#BAC2DE",
+    "brightBlack": "#585B70",
+    "brightRed": "#F38BA8",
+    "brightGreen": "#A6E3A1",
+    "brightYellow": "#F9E2AF",
+    "brightBlue": "#89B4FA",
+    "brightPurple": "#CBA6F7",
+    "brightCyan": "#94E2D5",
+    "brightWhite": "#A6ADC8",
+    "cursorColor": "#F5E0DC",
+    "selectionBackground": "#585B70"
+&#125;
+</code></pre>
+<p><strong>Dracula</strong></p>
+<pre><code class="language-json">&#123;
+    "name": "Dracula",
+    "background": "#282A36",
+    "foreground": "#F8F8F2",
+    "black": "#21222C",
+    "red": "#FF5555",
+    "green": "#50FA7B",
+    "yellow": "#F1FA8C",
+    "blue": "#BD93F9",
+    "purple": "#FF79C6",
+    "cyan": "#8BE9FD",
+    "white": "#F8F8F2",
+    "brightBlack": "#6272A4",
+    "brightRed": "#FF6E6E",
+    "brightGreen": "#69FF94",
+    "brightYellow": "#FFFFA5",
+    "brightBlue": "#D6ACFF",
+    "brightPurple": "#FF92DF",
+    "brightCyan": "#A4FFFF",
+    "brightWhite": "#FFFFFF",
+    "cursorColor": "#F8F8F2",
+    "selectionBackground": "#44475A"
+&#125;
+</code></pre>
+<p>添加后在配置文件的外观中选择对应配色方案即可。</p>
+<h3 id="74-调整字体大小和行距">7.4 调整字体大小和行距</h3>
+<pre><code class="language-json">&#123;
+    "profiles": &#123;
+        "defaults": &#123;
+            "font": &#123;
+                "face": "MesloLGS NF",
+                "size": 12,
+                "weight": "normal"
+            &#125;,
+            "padding": "8, 8, 8, 8"
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<hr>
+<h2 id="8-完整-profile-配置参考">8. 完整 Profile 配置参考</h2>
+<p>运行 <code>notepad $PROFILE</code> 打开，将以下内容替换或追加进去：</p>
+<pre><code class="language-powershell"># ============================================
+# PowerShell Profile 配置
+# ============================================
+
+<h1 id="Oh-My-Posh-主题（修改-atomic-为你喜欢的主题）"><a href="#Oh-My-Posh-主题（修改-atomic-为你喜欢的主题）" class="headerlink" title="Oh My Posh 主题（修改 atomic 为你喜欢的主题）"></a>Oh My Posh 主题（修改 atomic 为你喜欢的主题）</h1><p>oh-my-posh init pwsh –config “$env:POSH_THEMES_PATH\atomic.omp.json” | Invoke-Expression</p>
+<h1 id="Terminal-Icons（文件图标）"><a href="#Terminal-Icons（文件图标）" class="headerlink" title="Terminal Icons（文件图标）"></a>Terminal Icons（文件图标）</h1><p>Import-Module -Name Terminal-Icons</p>
+<h1 id="posh-git（Git-状态）"><a href="#posh-git（Git-状态）" class="headerlink" title="posh-git（Git 状态）"></a>posh-git（Git 状态）</h1><p>Import-Module posh-git</p>
+<h1 id="Z-目录跳转"><a href="#Z-目录跳转" class="headerlink" title="Z 目录跳转"></a>Z 目录跳转</h1><p>Import-Module z</p>
+<h1 id="PSReadLine-配置"><a href="#PSReadLine-配置" class="headerlink" title="PSReadLine 配置"></a>PSReadLine 配置</h1><p>Set-PSReadLineOption -PredictionSource History<br>Set-PSReadLineOption -PredictionViewStyle ListView<br>Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete<br>Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward<br>Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward</p>
+<h1 id="常用别名"><a href="#常用别名" class="headerlink" title="常用别名"></a>常用别名</h1><p>Set-Alias ll ls<br>Set-Alias vim nvim</p>
+<h1 id="自定义函数：快速进入常用目录"><a href="#自定义函数：快速进入常用目录" class="headerlink" title="自定义函数：快速进入常用目录"></a>自定义函数：快速进入常用目录</h1><p>function desk &#123; Set-Location “$env:USERPROFILE\Desktop” &#125;<br>function docs &#123; Set-Location “$env:USERPROFILE\Documents” &#125;</p>
+<h1 id="显示欢迎信息"><a href="#显示欢迎信息" class="headerlink" title="显示欢迎信息"></a>显示欢迎信息</h1><p>Write-Host “Welcome back, $env:USERNAME!” -ForegroundColor Cyan<br></code></pre></p>
+<p>保存后运行：</p>
+<pre><code class="language-powershell">. $PROFILE
+</code></pre>
+<hr>
+<h2 id="9-常见问题">9. 常见问题</h2>
+<h3 id="q1提示无法加载文件因为在此系统上禁止运行脚本">Q1：提示"无法加载文件，因为在此系统上禁止运行脚本"</h3>
+<pre><code class="language-powershell">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+</code></pre>
+<h3 id="q2图标显示为乱码或方块">Q2：图标显示为乱码或方块</h3>
+<p>原因是字体未正确设置。检查：</p>
+<ol>
+<li>是否安装了 Nerd Font</li>
+<li>Windows Terminal 中是否选择了对应字体</li>
+</ol>
+<h3 id="q3oh-my-posh-提示符变慢">Q3：Oh My Posh 提示符变慢</h3>
+<p>某些主题信息较多会影响速度，可以：</p>
+<ol>
+<li>换用更轻量的主题（如 <code>pure</code>、<code>minimal</code>）</li>
+<li>在主题 JSON 中关闭不需要的 segment</li>
+</ol>
+<h3 id="q4predictionsource-参数报错">Q4：<code>PredictionSource</code> 参数报错</h3>
+<p>说明 PSReadLine 版本过低，运行以下命令升级：</p>
+<pre><code class="language-powershell">Install-Module PSReadLine -Force -SkipPublisherCheck
+</code></pre>
+<p>然后<strong>重启终端</strong>即可。</p>
+<h3 id="q5如何找到-settingsjson-的位置">Q5：如何找到 settings.json 的位置</h3>
+<pre><code class="language-powershell"># Windows Terminal settings.json 路径
+"$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+</code></pre>
+<p>或在 Windows Terminal 设置页面左下角点击 <strong>打开 JSON 文件</strong>。</p>
+<hr>
+<h2 id="参考资源">参考资源</h2>
+<ul>
+<li><a href="https://ohmyposh.dev/" target="_blank" rel="noopener nofollow">Oh My Posh 官方文档</a></li>
+<li><a href="https://www.nerdfonts.com/" target="_blank" rel="noopener nofollow">Nerd Fonts 官网</a></li>
+<li><a href="https://docs.microsoft.com/zh-cn/windows/terminal/" target="_blank" rel="noopener nofollow">Windows Terminal 官方文档</a></li>
+<li><a href="https://github.com/PowerShell/PSReadLine" target="_blank" rel="noopener nofollow">PSReadLine GitHub</a></li>
+<li><a href="https://github.com/devblackops/Terminal-Icons" target="_blank" rel="noopener nofollow">Terminal-Icons GitHub</a></li>
+<li><a href="https://github.com/catppuccin/windows-terminal" target="_blank" rel="noopener nofollow">Catppuccin 主题</a></li>
+</ul>
+<p>---全文AI生成</p>
+<p><em>最后更新：2026-03-26</em></p>
+
+
+</div>
+<div class="clear"></div>
+<div id="blog_post_info_block" role="contentinfo" class="post-meta-container">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-26 13:46">2026-03-26 13:46</span>&nbsp;
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/luxlu">luakslu</a>&nbsp;
+阅读(<span id="post_view_count">24</span>)&nbsp;
+评论(<span id="post_comment_count">0</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19775744);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19775744', targetLink: 'https://www.cnblogs.com/luxlu/p/19775744', title: '命令行美化教程（全文AI生成）' })">举报</a>
+</div>
+        </div>
+        
+        
+<pre><code>&lt;/div&gt;&lt;!--end: topics 文章、评论容器--&gt;
+</code></pre>
+</div>
+<script>
+    var cb_entryId = 19775744, cb_entryCreatedDate = '2026-03-26 13:46', cb_postType = 1, cb_postTitle = '命令行美化教程（全文AI生成）';
+    var allowComments = true, cb_blogId = 858433, cb_blogApp = 'luxlu', cb_blogUserGuid = '60dc8a14-0bf1-489f-ec73-08de15cf43c9';
+    mermaidRender.render()
+    markdown_highlight()
+    zoomManager.apply("#cnblogs_post_body img:not(.code_img_closed):not(.code_img_opened)");    
+</script>
+<a id="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav">
+        <div class="comment-nav-right">
+            <span id="span_refresh_tips"></span><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a>
+        </div>
+    </div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+        <div id="cnblogs_ch"></div>
+    <div id="opt_under_post"></div>
+        <div id="blog_c1" class="under-post-card below-post-card">
+            <a href="https://www.cnblogs.com/cmt/p/19735235" rel="nofollow" target="_blank" onclick="countCreativeClicks('C1-youclaw')">
+                <img src="https://img2024.cnblogs.com/blog/35695/202603/35695-20260320185348610-340218167.webp" onload="countCreativeImpressions('C1-youclaw')" alt="" style="width:300px!important;height:250px!important;min-width:300px!important;max-width:300px!important;" />
+                <span id="c1_impression" style="display:none"></span>
+            </a>
+        </div>
+    <div id="under_post_card1"></div>
+    <div id="related_posts_card"></div>
+    <div id="under_post_card2"></div>
+    <div id="HistoryToday" class="under-post-card below-post-card"></div>
+    <script type="text/javascript">
+        var commentManager = new blogCommentManager();
+        commentManager.renderComments(0);
+        fixPostBody();
+        window.footnoteTipManager.generateFootnoteTips();
+
+<pre><code>        window.tocManager.displayDisableTocTips = false;
+        window.tocManager.generateToc();
+        
+        setTimeout(function() &#123; countViews(cb_blogId, cb_entryId); &#125;, 50);
+        
+        deliverT2();
+        deliverC1C2();
+        loadNewsAndKb();
+        
+        LoadPostCategoriesTags(cb_blogId, cb_entryId);
+        
+        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+            &lt;/script&gt;
+</code></pre>
+</div>
+
+<pre><code>&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&quot;sideBar&quot;&gt;
+    &lt;div id=&quot;sideBarMain&quot;&gt;
+        &lt;div id=&quot;sidebar_news&quot; class=&quot;newsItem&quot;&gt;
+&lt;h3 class=&quot;catListTitle&quot;&gt;公告&lt;/h3&gt;
+</code></pre>
+<div id="blog-news" class="sidebar-news">
+    <div id="sidebar_news_container">
+    </div>
+</div>
+<script>loadBlogNews();</script>
+
+
+</div>
+            <div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>			
+            <div id="leftcontentcontainer">
+                <div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn()</script>
+            </div>			
+        </div>
+    </div>
+    <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+    <div id="footer">
+        <a target="_blank" rel="noopener" href="https://www.cnblogs.com/" id="footer_site_link" class="footer-brand">博客园</a>
+<span class="footer-copyright"> &nbsp;&copy;&nbsp; 2004-2026</span>
+<br /><span class="footer-icp">
+    <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33010602011771"><img src="//assets.cnblogs.com/images/ghs.png" />浙公网安备 33010602011771号</a>
+    <a href="https://beian.miit.gov.cn" target="_blank">浙ICP备2021040463号-3</a>
+</span>
+
+
+
+<pre><code>&lt;/div&gt;
+</code></pre>
+</div>
+
+
+
+<pre><code>&lt;div id=&quot;page_end_html&quot;&gt;
+    &lt;!-- 底部小鱼动效 --&gt;
+</code></pre>
+<div id="jsi-flying-fish-container" class="container"></div>
+<script src='https://blog-static.cnblogs.com/files/elkyo/fish.js'></script>
+<style>
+    @media only screen and (max-width: 767px){
+        #sidebar_search_box input[type=text]{width:calc(100% - 24px)}
+    }
+    #jsi-flying-fish-container{height: 220px; width: 100%}
+</style>
+
+<!-- 鼠标点击粒子特效 -->
+<p><canvas width="1777" height="841" style="position: fixed; left: 0px; top: 0px; z-index: 2147483647; pointer-events: none;"></canvas></p>
+<script src="https://blog-static.cnblogs.com/files/elkyo/mouse-click.js"></script>
+
+<!-- Emoji支持 -->
+<script src='https://blog-static.cnblogs.com/files/blogs/680427/emojify.min.js'></script>
+<script>
+    emojify.setConfig({
+        emojify_tag_type : 'div',
+        only_crawl_id    : null,
+        img_dir          : 'http://www.emoji-cheat-sheet.com/graphics/emojis',
+        ignored_tags     : {'SCRIPT':1,'TEXTAREA':1,'A':1,'PRE':1,'CODE':1}
+    });
+    emojify.run();
+</script>
+<style>.emoji{width:22px;height:22px;vertical-align:middle}</style>
+<script>
+    window.onload = function () {
+        var tbCommentBody = document.getElementById("tbCommentBody");
+        tbCommentBody.placeholder="支持 Markdown 语法，支持 Emoji 代码(www.emoji-cheat-sheet.com)"
+    }
+</script>
+<pre><code>&lt;/div&gt;
+
+&lt;input type=&quot;hidden&quot; id=&quot;antiforgery_token&quot; value=&quot;CfDJ8E2WNf1AXE5GolAm9rsxlHAgKiyhK649n_dIZPvDAfHaMy_7w1mK6d6qrgJLfq84lj8BzDlBzu8fnDQGFSqHE-0Kg2iteEk_xuIUHOwQ2gnkPxH_7MdVrnKlXr1lfoLyC8-Qw8jJAqI2W37nz9Av80k&quot; /&gt;
+&lt;script async src=&quot;https://www.googletagmanager.com/gtag/js?id=G-M95P3TTWJZ&quot;&gt;&lt;/script&gt;
+</code></pre>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-M95P3TTWJZ');
+</script>
+<script defer src="https://hm.baidu.com/hm.js?866c9be12d4a814454792b1fd0fed295"></script>
+</body>
+</html>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://luxlu.top">luxlu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://luxlu.top/posts/cnblogs-19775744/">https://luxlu.top/posts/cnblogs-19775744/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://luxlu.top" target="_blank">luxlu</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/">???</a><a class="post-meta__tags" href="/tags/">??</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/posts/usb-keyboard-mouse-traffic/" title="USB协议 键盘流量 鼠标流量"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">USB协议 键盘流量 鼠标流量</div></div><div class="info-2"><div class="info-item-1">捋一下知识点一、USB 协议基础概念   概念 说明    Host 主机（PC），发起请求的一方   USB Device 客户端设备（如键盘、鼠标、U盘）   Endpoint 设备上的通信端点，分为 IN（设备→主机）和 OUT（主机→设备）   Interface Class 设备类型，常见有：   HID：Human Interface Device（键盘&#x2F;鼠标）   Mass Storage：U盘&#x2F;移动硬盘   Printer：打印机   二、USB HID报文结构一个典型的HID键盘报告是8字节的数据包 123Byte 0: Modifier Keys (Ctrl, Shift,Alt...)Byte 1: ReservedBytes 2-7: Key Codes (最多 6 个按键)  100 00 04 00 00 00 00 00  Byte 0: 0x00 → 无修饰键 Byte 1: 0x00 → 保留位 Byte 2: 0x04 → 按下 ‘A’ 键（键码） Bytes 3~7: 全 0 → 表示只按了一个键 只有当字节不为 0 时才...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19722235/" title="部分OtterCTF2018"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">部分OtterCTF2018</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19722235  关于内存取证 什么是内存镜像（.vmem）？ .vmem 是 VMware 虚拟机运行时的内存快照文件，相当于把电脑 RAM 里的所有内容完整保存成一个文件。通过分析它，我们可以还原出案发时系统的几乎所有状态：运行的程序、网络连接、注册表、甚至密码。 内存取证工具Volatility Volatility 是内存取证领域最主流的开源工具，能从内存镜像中提取各类信息。 使用 Volatility 3（命令为 vol.exe）即可 [OtterCTF 2018]What the password? :::warning 你获取了 Rick 的电脑内存镜像，能否从中提取出他的用户密码？ flag格式：NSSCTF&#123;Rick的密码&#125; ::: Windows 系统若配置了自动登录，密码会以明文存储在 LSA Secrets（DefaultPassword）中，可直接从内存提取。 Step1:确认镜像系统信息 vol.exe -f OtterCTF.vmem windows.i...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/posts/cnblogs-19586281/" title="2026.1.24SpringCTF"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-06</div><div class="info-item-2">2026.1.24SpringCTF</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19586281/SpringCTF20260124  队伍信息 队伍名：luxlu ID:luxlu 总排名：19 校内排名：1 得分：1405 解题数：12 解题情况： Misc方向解出：7题+问卷 Crypto方向解出：1题 Web方向解出：2题 Pwn方向解出：1题 Reserve方向解出：0题 一血：0题 二血：1题 三血：1题 Misc ez_signin  补一下定位点   扫描获得Fcevat&#123;J3yp0zr_7b_5ceVatPGS2B26!!!&#125; Rot13解码:Spring&#123;W3lc0me_7o_5prIngCTF2O26!!!&#125; 看图猜flag  Spring&#123;Oh_Y0u_f1nd_my_s3cre7_a9e21c07&#125; 奇怪的曲线 from PIL import Image from tqdm import tqdm   def peano(n):    “””生成第 n 阶 Peano 曲线的坐标序列（从 (0,0)...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19722235/" title="部分OtterCTF2018"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-15</div><div class="info-item-2">部分OtterCTF2018</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19722235  关于内存取证 什么是内存镜像（.vmem）？ .vmem 是 VMware 虚拟机运行时的内存快照文件，相当于把电脑 RAM 里的所有内容完整保存成一个文件。通过分析它，我们可以还原出案发时系统的几乎所有状态：运行的程序、网络连接、注册表、甚至密码。 内存取证工具Volatility Volatility 是内存取证领域最主流的开源工具，能从内存镜像中提取各类信息。 使用 Volatility 3（命令为 vol.exe）即可 [OtterCTF 2018]What the password? :::warning 你获取了 Rick 的电脑内存镜像，能否从中提取出他的用户密码？ flag格式：NSSCTF&#123;Rick的密码&#125; ::: Windows 系统若配置了自动登录，密码会以明文存储在 LSA Secrets（DefaultPassword）中，可直接从内存提取。 Step1:确认镜像系统信息 vol.exe -f OtterCTF.vmem windows.i...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19606190/" title="攻防世界[中等]QR1"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-11</div><div class="info-item-2">攻防世界[中等]QR1</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19606190/gfsj  [中等] QR1 010打开 没问题 没有文件隐藏 是图片本身的隐写 仔细看有很多黑色像素点 法1 不是扫描全能王的暗广       法2 微小的黑点构成二维码，但太细看不清。让黑点变粗，就像 PS 里描边一样 原始图（白底+细黑点）        ↓ 二值化 → 纯白底 + 纯黑点        ↓ 反转   → 黑底 + 白点        ↓ 膨胀   → 黑底 + 变粗的白点 ← 描边效果        ↓ 反转   → 白底 + 变粗的黑点        ↓ 保存 → 清晰二维码  import cv2 import numpy as np  img &#x3D; cv2.imread(“enc.png”, 0)               # 读灰度图_, binary &#x3D; cv2.threshold(img, 0, 255, cv2.THRESH_OTSU)kernel &#x3D; np.ones((10, 10), np.uint8)       ...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19592265/" title="音视频隐写"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-08</div><div class="info-item-2">音视频隐写</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19592265/wav-mp4    波形图隐写  频谱图隐写  高低频提取  音频差分  曼切斯特编码  音频倒放  帧提取  DTMF  SSTV  MP3隐写  DeepSound  电话音  StegoVideo  常用工具   Audacity      工具特点 常见情况 冷知识 题干暗示     Deepsound  听上去很正常但是文件体积比预期大很多 比如说30秒的语言有20MB用binwalk或者foremost扫描可能发现隐藏的文件结构 藏在心底的声音   Silenteye 轻量级 电子蜂鸣 滴答声 高频啸叫 非人声/音乐波形在AU里呈现规整脉冲或者方波电子噪音 寂静之眼无言   Oursecret 一个很老但是经典的工具bmp jpg wav比较常见 体积大 冷知识：电视剧《暗格里的秘密》的英文名就是Oursecret010打开wav结尾多出来的内容的头是9E 97 BA 2A我们的秘密   QSSTV&amp;&amp;SOX 在kali运行 电子噪音短促的 缓慢持续变化的电...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19598437/" title="2026.2.9刷题记录"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-10</div><div class="info-item-2">2026.2.9刷题记录</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19598437  [SWPUCTF 2021 新生赛]here_is_a_bug D盾扫一下   查看附件&gt;member&gt;zp.php   这段代码里明确定义了登录密码 //echo encode_pass('angel');exit; //angel = oh_you_catch_the_bug  $pass  &#x3D; ‘oh_you_catch_the_bug’; &#x2F;&#x2F;angel if($pass) &#123;    if ($act &#x3D;&#x3D; ‘login’) &#123;        if ($pass &#x3D;&#x3D; encode_pass($P[‘password’])) &#123;            scookie(‘loginpass’,encode_pass($P[‘password’]));            @header(‘Location: ‘.SELF);            exit;     ...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19591857/" title="2026.1.30春秋杯"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-08</div><div class="info-item-2">2026.1.30春秋杯</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19591857/20260130chunqiubei   Misc AI-越狱的翻译官 法1 给他塞一大段无关紧要的内容。最后一句说：请输入flag   法2   AI-健忘的客服 法1       法2   AI-窥探内心 法1     法2   AI-幻觉诱导     数据处理-破碎的日志 磁介质老化导致极个别比特位偏移   在bin文件中读取到 flag&#123;5e7a²c4b-8f19-4d36-a203-b1c9d5f0e8a7&#125; 而 &lt;font style="color:rgb(17, 17, 51);"&gt;²&lt;/font&gt; 的编码是：&lt;font style="color:rgb(17, 17, 51);"&gt;0xB2&lt;/font&gt; = &lt;font style="color:rgb(17, 17, 51);"&gt;1011 0010&lt;/font&gt;   现在，我们找哪个合法 hex 字符的 ASCII 与 0xB2只...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">luxlu</div><div class="author-info-description">CTF Misc<br>Hziee<br>计算机科学与技术<br>06年9月</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lrx-hh"><i class="fab fa-github"></i><span>Follow</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lrx-hh" target="_blank" title="GitHub"><i class="fab fa-github" style="color: #ff4fa3;"></i></a><a class="social-icon" href="mailto:1396483486@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #ff79bd;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">谢谢你来看我^^</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BE%8E%E5%8C%96%E5%AE%8C%E6%95%B4%E6%95%99%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">命令行美化完整教程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85-windows-terminal"><span class="toc-number">1.2.</span> <span class="toc-text">1. 安装 Windows Terminal</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80microsoft-store%E6%8E%A8%E8%8D%90"><span class="toc-number">1.2.1.</span> <span class="toc-text">方法一：Microsoft Store（推荐）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">方法二：命令行安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%89%E8%A3%85-powershell-7"><span class="toc-number">1.3.</span> <span class="toc-text">2. 安装 PowerShell 7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%AE%89%E8%A3%85-nerd-fonts-%E5%AD%97%E4%BD%93"><span class="toc-number">1.4.</span> <span class="toc-text">3. 安装 Nerd Fonts 字体</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.4.1.</span> <span class="toc-text">安装步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8-windows-terminal-%E4%B8%AD%E8%AE%BE%E7%BD%AE%E5%AD%97%E4%BD%93"><span class="toc-number">1.4.2.</span> <span class="toc-text">在 Windows Terminal 中设置字体</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%89%E8%A3%85-oh-my-posh"><span class="toc-number">1.5.</span> <span class="toc-text">4. 安装 Oh My Posh</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">1.5.1.</span> <span class="toc-text">安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%85%8D%E7%BD%AE%E4%B8%BB%E9%A2%98"><span class="toc-number">1.6.</span> <span class="toc-text">5. 配置主题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E5%86%85%E7%BD%AE%E4%B8%BB%E9%A2%98"><span class="toc-number">1.6.1.</span> <span class="toc-text">查看所有内置主题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%8E%A8%E8%8D%90%E4%B8%BB%E9%A2%98"><span class="toc-number">1.6.2.</span> <span class="toc-text">常用推荐主题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%B4%E6%97%B6%E9%A2%84%E8%A7%88%E6%9F%90%E4%B8%AA%E4%B8%BB%E9%A2%98"><span class="toc-number">1.6.3.</span> <span class="toc-text">临时预览某个主题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B0%B8%E4%B9%85%E8%AE%BE%E7%BD%AE%E4%B8%BB%E9%A2%98%E5%86%99%E5%85%A5-profile"><span class="toc-number">1.6.4.</span> <span class="toc-text">永久设置主题（写入 Profile）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%BB%E9%A2%98"><span class="toc-number">1.6.5.</span> <span class="toc-text">使用自定义主题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%AE%89%E8%A3%85%E5%B8%B8%E7%94%A8-powershell-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.7.</span> <span class="toc-text">6. 安装常用 PowerShell 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#61-psreadline%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%A2%9E%E5%BC%BA"><span class="toc-number">1.7.1.</span> <span class="toc-text">6.1 PSReadLine（命令行增强）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="toc-number">2.</span> <span class="toc-text">快捷键</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#62-terminal-icons%E6%96%87%E4%BB%B6%E5%9B%BE%E6%A0%87"><span class="toc-number">2.0.1.</span> <span class="toc-text">6.2 Terminal-Icons（文件图标）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E5%90%8E"><span class="toc-number">3.</span> <span class="toc-text">安装后</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#63-z%E7%9B%AE%E5%BD%95%E5%BF%AB%E9%80%9F%E8%B7%B3%E8%BD%AC"><span class="toc-number">3.0.1.</span> <span class="toc-text">6.3 Z（目录快速跳转）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#64-posh-gitgit-%E7%8A%B6%E6%80%81%E6%98%BE%E7%A4%BA"><span class="toc-number">3.0.2.</span> <span class="toc-text">6.4 posh-git（Git 状态显示）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E7%BE%8E%E5%8C%96-windows-terminal-%E5%A4%96%E8%A7%82"><span class="toc-number">3.1.</span> <span class="toc-text">7. 美化 Windows Terminal 外观</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#71-%E8%AE%BE%E7%BD%AE%E8%83%8C%E6%99%AF%E5%9B%BE%E7%89%87"><span class="toc-number">3.1.1.</span> <span class="toc-text">7.1 设置背景图片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#72-%E8%AE%BE%E7%BD%AE%E4%BA%9A%E5%85%8B%E5%8A%9B%E6%95%88%E6%9E%9C%E6%AF%9B%E7%8E%BB%E7%92%83"><span class="toc-number">3.1.2.</span> <span class="toc-text">7.2 设置亚克力效果（毛玻璃）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#73-%E9%85%8D%E8%89%B2%E6%96%B9%E6%A1%88%E6%8E%A8%E8%8D%90"><span class="toc-number">3.1.3.</span> <span class="toc-text">7.3 配色方案推荐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#74-%E8%B0%83%E6%95%B4%E5%AD%97%E4%BD%93%E5%A4%A7%E5%B0%8F%E5%92%8C%E8%A1%8C%E8%B7%9D"><span class="toc-number">3.1.4.</span> <span class="toc-text">7.4 调整字体大小和行距</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%AE%8C%E6%95%B4-profile-%E9%85%8D%E7%BD%AE%E5%8F%82%E8%80%83"><span class="toc-number">3.2.</span> <span class="toc-text">8. 完整 Profile 配置参考</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Oh-My-Posh-%E4%B8%BB%E9%A2%98%EF%BC%88%E4%BF%AE%E6%94%B9-atomic-%E4%B8%BA%E4%BD%A0%E5%96%9C%E6%AC%A2%E7%9A%84%E4%B8%BB%E9%A2%98%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">Oh My Posh 主题（修改 atomic 为你喜欢的主题）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Terminal-Icons%EF%BC%88%E6%96%87%E4%BB%B6%E5%9B%BE%E6%A0%87%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">Terminal Icons（文件图标）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#posh-git%EF%BC%88Git-%E7%8A%B6%E6%80%81%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">posh-git（Git 状态）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Z-%E7%9B%AE%E5%BD%95%E8%B7%B3%E8%BD%AC"><span class="toc-number">7.</span> <span class="toc-text">Z 目录跳转</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PSReadLine-%E9%85%8D%E7%BD%AE"><span class="toc-number">8.</span> <span class="toc-text">PSReadLine 配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%88%AB%E5%90%8D"><span class="toc-number">9.</span> <span class="toc-text">常用别名</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0%EF%BC%9A%E5%BF%AB%E9%80%9F%E8%BF%9B%E5%85%A5%E5%B8%B8%E7%94%A8%E7%9B%AE%E5%BD%95"><span class="toc-number">10.</span> <span class="toc-text">自定义函数：快速进入常用目录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%98%BE%E7%A4%BA%E6%AC%A2%E8%BF%8E%E4%BF%A1%E6%81%AF"><span class="toc-number">11.</span> <span class="toc-text">显示欢迎信息</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">11.1.</span> <span class="toc-text">9. 常见问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#q1%E6%8F%90%E7%A4%BA%E6%97%A0%E6%B3%95%E5%8A%A0%E8%BD%BD%E6%96%87%E4%BB%B6%E5%9B%A0%E4%B8%BA%E5%9C%A8%E6%AD%A4%E7%B3%BB%E7%BB%9F%E4%B8%8A%E7%A6%81%E6%AD%A2%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC"><span class="toc-number">11.1.1.</span> <span class="toc-text">Q1：提示&quot;无法加载文件，因为在此系统上禁止运行脚本&quot;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#q2%E5%9B%BE%E6%A0%87%E6%98%BE%E7%A4%BA%E4%B8%BA%E4%B9%B1%E7%A0%81%E6%88%96%E6%96%B9%E5%9D%97"><span class="toc-number">11.1.2.</span> <span class="toc-text">Q2：图标显示为乱码或方块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#q3oh-my-posh-%E6%8F%90%E7%A4%BA%E7%AC%A6%E5%8F%98%E6%85%A2"><span class="toc-number">11.1.3.</span> <span class="toc-text">Q3：Oh My Posh 提示符变慢</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#q4predictionsource-%E5%8F%82%E6%95%B0%E6%8A%A5%E9%94%99"><span class="toc-number">11.1.4.</span> <span class="toc-text">Q4：PredictionSource 参数报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#q5%E5%A6%82%E4%BD%95%E6%89%BE%E5%88%B0-settingsjson-%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-number">11.1.5.</span> <span class="toc-text">Q5：如何找到 settings.json 的位置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%BA%90"><span class="toc-number">11.2.</span> <span class="toc-text">参考资源</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/usb-keyboard-mouse-traffic/" title="USB协议 键盘流量 鼠标流量">USB协议 键盘流量 鼠标流量</a><time datetime="2026-03-28T13:00:00.000Z" title="发表于 2026-03-28 21:00:00">2026-03-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cnblogs-19775744/" title="命令行美化教程（全文AI生成）">命令行美化教程（全文AI生成）</a><time datetime="2026-03-26T05:46:00.000Z" title="发表于 2026-03-26 13:46:00">2026-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cnblogs-19722235/" title="部分OtterCTF2018">部分OtterCTF2018</a><time datetime="2026-03-15T13:54:00.000Z" title="发表于 2026-03-15 21:54:00">2026-03-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cnblogs-19606190/" title="攻防世界[中等]QR1">攻防世界[中等]QR1</a><time datetime="2026-02-11T15:22:00.000Z" title="发表于 2026-02-11 23:22:00">2026-02-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cnblogs-19600108/" title="AI逃逸">AI逃逸</a><time datetime="2026-02-10T07:30:00.000Z" title="发表于 2026-02-10 15:30:00">2026-02-10</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By luxlu</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script src="/js/site-3d-effects.js?v=20260329s1"></script><script src="/js/tab-title.js?v=20260329a"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索一下内容吧" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>

@@ -1,0 +1,1018 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>部分OtterCTF2018 | luxlu</title><meta name="author" content="luxlu"><meta name="copyright" content="luxlu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#09050d"><meta name="description" content="?????https:&#x2F;&#x2F;www.cnblogs.com&#x2F;luxlu&#x2F;p&#x2F;19722235  关于内存取证 什么是内存镜像（.vmem）？ .vmem 是 VMware 虚拟机运行时的内存快照文件，相当于把电脑 RAM 里的所有内容完整保存成一个文件。通过分析它，我们可以还原出案发时系统的几乎所有状态：运行的程序、网络连接、注册表、甚至密码。 内存取证工具Volatility Volatilit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="部分OtterCTF2018">
+<meta property="og:url" content="https://luxlu.top/posts/cnblogs-19722235/">
+<meta property="og:site_name" content="luxlu">
+<meta property="og:description" content="?????https:&#x2F;&#x2F;www.cnblogs.com&#x2F;luxlu&#x2F;p&#x2F;19722235  关于内存取证 什么是内存镜像（.vmem）？ .vmem 是 VMware 虚拟机运行时的内存快照文件，相当于把电脑 RAM 里的所有内容完整保存成一个文件。通过分析它，我们可以还原出案发时系统的几乎所有状态：运行的程序、网络连接、注册表、甚至密码。 内存取证工具Volatility Volatilit">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luxlu.top/img/avatar.jpg">
+<meta property="article:published_time" content="2026-03-15T13:54:00.000Z">
+<meta property="article:modified_time" content="2026-03-29T04:10:01.532Z">
+<meta property="article:author" content="luxlu">
+<meta property="article:tag" content="???">
+<meta property="article:tag" content="??">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luxlu.top/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "部分OtterCTF2018",
+  "url": "https://luxlu.top/posts/cnblogs-19722235/",
+  "image": "https://luxlu.top/img/avatar.jpg",
+  "datePublished": "2026-03-15T13:54:00.000Z",
+  "dateModified": "2026-03-29T04:10:01.532Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "luxlu",
+      "url": "https://luxlu.top"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/sleepy-cat-favicon.jpg"><link rel="canonical" href="https://luxlu.top/posts/cnblogs-19722235/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#09050d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '110a16')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '部分OtterCTF2018',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css?v=20260329bg5"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-house"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/calendar/"><i class="fa-fw fas fa-calendar-days"></i><span> 日历</span></a></div><div class="menus_item"><a class="site-page" href="/diary/"><i class="fa-fw fas fa-book-open"></i><span> 日记</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-box-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-screwdriver-wrench"></i><span> 工具箱</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/intro/"><i class="fa-fw fas fa-id-card"></i><span> 介绍页</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(/img/bg.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">luxlu</span></a><a class="nav-page-title" href="/"><span class="site-name">部分OtterCTF2018</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-house"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/calendar/"><i class="fa-fw fas fa-calendar-days"></i><span> 日历</span></a></div><div class="menus_item"><a class="site-page" href="/diary/"><i class="fa-fw fas fa-book-open"></i><span> 日记</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-box-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tools/"><i class="fa-fw fas fa-screwdriver-wrench"></i><span> 工具箱</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/intro/"><i class="fa-fw fas fa-id-card"></i><span> 介绍页</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">部分OtterCTF2018</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-15T13:54:00.000Z" title="发表于 2026-03-15 21:54:00">2026-03-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-29T04:10:01.532Z" title="更新于 2026-03-29 12:10:01">2026-03-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/">?????</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>?????<a target="_blank" rel="noopener" href="https://www.cnblogs.com/luxlu/p/19722235">https://www.cnblogs.com/luxlu/p/19722235</a></p>
+</blockquote>
+<h1 id="关于内存取证">关于内存取证</h1>
+<h3 id="什么是内存镜像vmem">什么是内存镜像（.vmem）？</h3>
+<p><code>.vmem</code> 是 VMware 虚拟机运行时的内存快照文件，相当于把电脑 RAM 里的所有内容完整保存成一个文件。通过分析它，我们可以还原出案发时系统的几乎所有状态：运行的程序、网络连接、注册表、甚至密码。</p>
+<h3 id="内存取证工具volatility">内存取证工具Volatility</h3>
+<p>Volatility 是内存取证领域最主流的开源工具，能从内存镜像中提取各类信息。</p>
+<p>使用 Volatility 3（命令为 <code>vol.exe</code>）即可</p>
+<h1 id="otterctf-2018what-the-password">[OtterCTF 2018]What the password?</h1>
+<p>:::warning<br>
+你获取了 Rick 的电脑内存镜像，能否从中提取出他的用户密码？</p>
+<p>flag格式：<code>NSSCTF&#123;Rick的密码&#125;</code></p>
+<p>:::</p>
+<p>Windows 系统若配置了自动登录，密码会以明文存储在 LSA Secrets（<code>DefaultPassword</code>）中，可直接从内存提取。</p>
+<h3 id="step1确认镜像系统信息">Step1:确认镜像系统信息</h3>
+<pre><code class="language-bash">vol.exe -f OtterCTF.vmem windows.info
+</code></pre>
+<pre><code class="language-bash">Volatility 3 Framework 2.26.2
+WARNING  volatility3.framework.layers.vmware: No metadata file found alongside VMEM file. A VMSS or VMSN file may be required to correctly process a VMEM file. These should be placed in the same directory with the same file name, e.g. OtterCTF.vmem and OtterCTF.vmss.
+Progress:  100.00               PDB scanning finished
+Variable        Value
+
+<p>Kernel Base     0xf80002a52000<br>DTB     0x187000<br>Symbols file:&#x2F;&#x2F;&#x2F;C:&#x2F;Users&#x2F;13964&#x2F;AppData&#x2F;Local&#x2F;Programs&#x2F;Python&#x2F;Python311&#x2F;Lib&#x2F;site-packages&#x2F;volatility3&#x2F;symbols&#x2F;windows&#x2F;ntkrnlmp.pdb&#x2F;3844DBB920174967BE7AA4A2C20430FA-2.json.xz<br>Is64Bit True<br>IsPAE   False<br>layer_name      0 WindowsIntel32e<br>memory_layer    1 FileLayer<br>KdDebuggerDataBlock     0xf80002c430a0<br>NTBuildLab      7601.17514.amd64fre.win7sp1_rtm.<br>CSDVersion      1<br>KdVersionBlock  0xf80002c43068<br>Major&#x2F;Minor     15.7601<br>MachineType     34404<br>KeNumberProcessors      2<br>SystemTime      2018-08-04 19:34:22+00:00<br>NtSystemRoot    C:\Windows<br>NtProductType   NtProductWinNt<br>NtMajorVersion  6<br>NtMinorVersion  1<br>PE MajorOperatingSystemVersion  6<br>PE MinorOperatingSystemVersion  1<br>PE Machine      34404<br>PE TimeDateStamp        Sat Nov 20 09:30:02 2010<br>PS C:\Users\13964\Desktop\OtterCTF&gt;<br></code></pre></p>
+<h3 id="step2提取-lsa-secrets">Step2:提取 LSA Secrets</h3>
+<pre><code class="language-bash">vol.exe -f OtterCTF.vmem windows.registry.lsadump
+</code></pre>
+<pre><code class="language-r">Volatility 3 Framework 2.26.2
+WARNING  volatility3.framework.layers.vmware: No metadata file found alongside VMEM file. A VMSS or VMSN file may be required to correctly process a VMEM file. These should be placed in the same directory with the same file name, e.g. OtterCTF.vmem and OtterCTF.vmss.
+Progress:  100.00               PDB scanning finished
+Key     Secret  Hex
+
+<p>DefaultPassword<br>28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 (……………<br>4d 00 6f 00 72 00 74 00 79 00 49 00 73 00 52 00 M.o.r.t.y.I.s.R.<br>65 00 61 00 6c 00 6c 00 79 00 41 00 6e 00 4f 00 e.a.l.l.y.A.n.O.<br>74 00 74 00 65 00 72 00 00 00 00 00 00 00 00 00 t.t.e.r………        28 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4d 00 6f 00 72 00 74 00 79 00 49 00 73 00 52 00 65 00 61 00 6c 00 6c 00 79 00 41 00 6e 00 4f 00 74 00 74 00 65 00 72 00 00 00 00 00 00 00 00 00<br>DPAPI_SYSTEM<br>2c 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ,……………<br>01 00 00 00 36 9b ba a9 55 e1 92 82 09 e0 63 4c ….6…U…..cL<br>20 74 63 14 9e d8 a0 4b 45 87 5a e4 bc f2 77 a5  tc….KE.Z…w.<br>25 3f 47 12 0b e5 4d a5 c8 35 cf dc 00 00 00 00 %?G…M..5……        2c 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 36 9b ba a9 55 e1 92 82 09 e0 63 4c 20 74 63 14 9e d8 a0 4b 45 87 5a e4 bc f2 77 a5 25 3f 47 12 0b e5 4d a5 c8 35 cf dc 00 00 00 00<br>PS C:\Users\13964\Desktop\OtterCTF&gt;<br></code></pre></p>
+<p>获得明文密码</p>
+<pre><code class="language-plain">MortyIsReallyAnOtter
+</code></pre>
+<p><code>DefaultPassword</code> 是 Windows 自动登录功能所用的密码字段，存储于注册表 <code>HKLM\SECURITY\Policy\Secrets\DefaultPassword</code>，Volatility 可直接解密读取。</p>
+<p>:::color5<br>
+<code>NSSCTF&#123;MortyIsReallyAnOtter&#125;</code></p>
+<p>:::</p>
+<h1 id="otterctf-2018general-info">[OtterCTF 2018]General Info</h1>
+<p>:::warning<br>
+让我们从简单的开始——这台电脑的名称（PC名）和 IP 地址是什么？</p>
+<p>flag格式:<code>NSSCTF&#123;PC名-IP地址&#125;</code></p>
+<p>:::</p>
+<h3 id="pc-名和-ip-存在哪里">PC 名和 IP 存在哪里？</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">信息</th>
+<th style="text-align: left">存储位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left">PC 名（计算机名）<br>（personal computer）</td>
+<td style="text-align: left">注册表 <br><code>HKLM\SYSTEM\ControlSet001\Control\ComputerName\ComputerName</code></td>
+</tr>
+<tr>
+<td style="text-align: left">IP 地址<br>(Internet Protocol)</td>
+<td style="text-align: left">系统网络连接状态（可通过 <code>netstat</code>插件读取）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="step1确认镜像可用">Step1:确认镜像可用</h3>
+<p>拿到内存镜像后，第一步永远是确认它是什么系统，用的什么架构，后续所有分析都依赖这个信息。</p>
+<pre><code class="language-bash">vol.exe -f OtterCTF.vmem windows.info
+# 确认镜像系统信息
+</code></pre>
+<pre><code class="language-yaml">Volatility 3 Framework 2.26.2
+WARNING  volatility3.framework.layers.vmware: No metadata file found alongside VMEM file. A VMSS or VMSN file may be required to correctly process a VMEM file. These should be placed in the same directory with the same file name, e.g. OtterCTF.vmem and OtterCTF.vmss.
+Progress:  100.00               PDB scanning finished
+Variable        Value
+
+<p>Kernel Base     0xf80002a52000<br>DTB     0x187000<br>Symbols file:&#x2F;&#x2F;&#x2F;C:&#x2F;Users&#x2F;13964&#x2F;AppData&#x2F;Local&#x2F;Programs&#x2F;Python&#x2F;Python311&#x2F;Lib&#x2F;site-packages&#x2F;volatility3&#x2F;symbols&#x2F;windows&#x2F;ntkrnlmp.pdb&#x2F;3844DBB920174967BE7AA4A2C20430FA-2.json.xz<br>Is64Bit True</p>
+<h1 id="64位系统"><a href="#64位系统" class="headerlink" title="64位系统"></a>64位系统</h1><p>IsPAE   False<br>layer_name      0 WindowsIntel32e<br>memory_layer    1 FileLayer<br>KdDebuggerDataBlock     0xf80002c430a0<br>NTBuildLab      7601.17514.amd64fre.win7sp1_rtm.</p>
+<h1 id="Windows-7-SP1"><a href="#Windows-7-SP1" class="headerlink" title="Windows 7 SP1"></a>Windows 7 SP1</h1><p>CSDVersion      1<br>KdVersionBlock  0xf80002c43068<br>Major&#x2F;Minor     15.7601<br>MachineType     34404<br>KeNumberProcessors      2<br>SystemTime      2018-08-04 19:34:22+00:00</p>
+<h1 id="内存快照捕获时间"><a href="#内存快照捕获时间" class="headerlink" title="内存快照捕获时间"></a>内存快照捕获时间</h1><p>NtSystemRoot    C:\Windows<br>NtProductType   NtProductWinNt<br>NtMajorVersion  6<br>NtMinorVersion  1<br>PE MajorOperatingSystemVersion  6<br>PE MinorOperatingSystemVersion  1<br>PE Machine      34404<br>PE TimeDateStamp        Sat Nov 20 09:30:02 2010<br>PS C:\Users\13964\Desktop\OtterCTF&gt;<br></code></pre></p>
+<h3 id="step2获取-ip-地址">Step2:获取 IP 地址</h3>
+<p>IP 地址最直接的来源是网络连接状态，相当于在被取证的系统上执行了 <code>netstat</code> 命令。</p>
+<pre><code class="language-bash">vol.exe -f OtterCTF.vmem windows.netstat
+# 获取网络连接状态
+</code></pre>
+<pre><code class="language-yaml">Volatility 3 Framework 2.26.2
+WARNING  volatility3.framework.layers.vmware: No metadata file found alongside VMEM file. A VMSS or VMSN file may be required to correctly process a VMEM file. These should be placed in the same directory with the same file name, e.g. OtterCTF.vmem and OtterCTF.vmss.
+Progress:  100.00               PDB scanning finished
+Offset  Proto   LocalAddr       LocalPort       ForeignAddr     ForeignPort     State   PID     Owner   Created
+
+<p>0xfa801abf6010  TCPv4   0.0.0.0 135     0.0.0.0 0       LISTENING       712     svchost.exe     -<br>0xfa801abf6010  TCPv6   ::      135     ::      0       LISTENING       712     svchost.exe     -<br>0xfa801abf8ef0  TCPv4   0.0.0.0 135     0.0.0.0 0       LISTENING       712     svchost.exe     -<br>0xfa801af71010  TCPv4   0.0.0.0 445     0.0.0.0 0       LISTENING       4       System  -<br>0xfa801af71010  TCPv6   ::      445     ::      0       LISTENING       4       System  -<br>0xfa801b3a9240  TCPv4   0.0.0.0 8733    0.0.0.0 0       LISTENING       4       System  -<br>0xfa801b3a9240  TCPv6   ::      8733    ::      0       LISTENING       4       System  -<br>0xfa801b2bb390  TCPv4   0.0.0.0 9008    0.0.0.0 0       LISTENING       4       System  -<br>0xfa801b2bb390  TCPv6   ::      9008    ::      0       LISTENING       4       System  -<br>0xfa801b3e19e0  TCPv4   0.0.0.0 20830   0.0.0.0 0       LISTENING       2836    BitTorrent.exe  -<br>0xfa801b3e19e0  TCPv6   ::      20830   ::      0       LISTENING       2836    BitTorrent.exe  -<br>0xfa801b3e1c90  TCPv4   0.0.0.0 20830   0.0.0.0 0       LISTENING       2836    BitTorrent.exe  -<br>0xfa801ac09c30  TCPv4   0.0.0.0 49152   0.0.0.0 0       LISTENING       396     wininit.exe     -<br>0xfa801ac09c30  TCPv6   ::      49152   ::      0       LISTENING       396     wininit.exe     -<br>0xfa801ac0d7b0  TCPv4   0.0.0.0 49152   0.0.0.0 0       LISTENING       396     wininit.exe     -<br>0xfa801ac45ef0  TCPv4   0.0.0.0 49153   0.0.0.0 0       LISTENING       808     svchost.exe     -<br>0xfa801ac45ef0  TCPv6   ::      49153   ::      0       LISTENING       808     svchost.exe     -<br>0xfa801ac424e0  TCPv4   0.0.0.0 49153   0.0.0.0 0       LISTENING       808     svchost.exe     -<br>0xfa801ad3eef0  TCPv4   0.0.0.0 49154   0.0.0.0 0       LISTENING       868     svchost.exe     -<br>0xfa801ad3eef0  TCPv6   ::      49154   ::      0       LISTENING       868     svchost.exe     -<br>0xfa801ad3d270  TCPv4   0.0.0.0 49154   0.0.0.0 0       LISTENING       868     svchost.exe     -<br>0xfa801ae4ad30  TCPv4   0.0.0.0 49155   0.0.0.0 0       LISTENING       500     lsass.exe       -<br>0xfa801ae4ad30  TCPv6   ::      49155   ::      0       LISTENING       500     lsass.exe       -<br>0xfa801ae4b370  TCPv4   0.0.0.0 49155   0.0.0.0 0       LISTENING       500     lsass.exe       -<br>0xfa801afcbc00  TCPv4   0.0.0.0 49156   0.0.0.0 0       LISTENING       492     services.exe    -<br>0xfa801afcbc00  TCPv6   ::      49156   ::      0       LISTENING       492     services.exe    -<br>0xfa801afca6b0  TCPv4   0.0.0.0 49156   0.0.0.0 0       LISTENING       492     services.exe    -<br>0xfa801b569af0  TCPv4   0.0.0.0 49229   0.0.0.0 0       LISTENING       -       -       -<br>0xfa801ab2fcf0  TCPv4   0.0.0.0 50211   0.0.0.0 0       LISTENING       -       -       -<br>0xfa801a4c2350  TCPv4   0.0.0.0 50217   0.0.0.0 0       LISTENING       -       -       -<br>0xfa801ab5b750  TCPv4   0.0.0.0 50228   0.0.0.0 0       LISTENING       -       -       -<br>0xfa801a511500  TCPv4   0.0.0.0 50238   0.0.0.0 0       LISTENING       -       -       -<br>0xfa801ad6bcf0  TCPv4   0.0.0.0 50341   0.0.0.0 0       LISTENING       -       -       -<br>0xfa8019fddae0  TCPv4   0.0.0.0 50363   0.0.0.0 0       LISTENING       -       -       -<br>0xfa801b1a2cf0  TCPv4   0.0.0.0 50365   0.0.0.0 0       LISTENING       -       -       -<br>0xfa801a7dc3b0  UDPv6   fe80::b06b:a531:ec88:457f       546     *       0               808     svchost.exe     2018-08-04 19:33:28.000000 UTC<br>0xfa801a68d9c0  UDPv6   fe80::b06b:a531:ec88:457f       1900    *       0               164     svchost.exe     2018-08-04 19:28:42.000000 UTC<br>0xfa801b4b4250  UDPv6   ::1     1900    *       0               164     svchost.exe     2018-08-04 19:28:42.000000 UTC<br>0xfa801919cec0  UDPv4   192.168.202.131 1900    *       0               164     svchost.exe     2018-08-04 19:28:42.000000 UTC<br>0xfa801a6ad870  UDPv4   127.0.0.1       1900    *       0               164     svchost.exe     2018-08-04 19:28:42.000000 UTC<br>0xfa801b40f010  UDPv4   0.0.0.0 1900    *       0               2836    BitTorrent.exe  2018-08-04 19:27:17.000000 UTC<br>0xfa801a59f3f0  UDPv4   0.0.0.0 5353    *       0               4076    chrome.exe      2018-08-04 19:29:35.000000 UTC<br>0xfa801a5a0ec0  UDPv4   0.0.0.0 5353    *       0               4076    chrome.exe      2018-08-04 19:29:35.000000 UTC<br>0xfa801a5a0ec0  UDPv6   ::      5353    *       0               4076    chrome.exe      2018-08-04 19:29:35.000000 UTC<br>0xfa801ae83810  UDPv4   0.0.0.0 5355    *       0               620     svchost.exe     2018-08-04 19:34:22.000000 UTC<br>0xfa801ae83810  UDPv6   ::      5355    *       0               620     svchost.exe     2018-08-04 19:34:22.000000 UTC<br>0xfa801b4ed650  UDPv4   0.0.0.0 5355    *       0               620     svchost.exe     2018-08-04 19:34:22.000000 UTC<br>0xfa801b42b3f0  UDPv4   192.168.202.131 6771    *       0               2836    BitTorrent.exe  2018-08-04 19:27:22.000000 UTC<br>0xfa801b4e3230  UDPv4   127.0.0.1       6771    *       0               2836    BitTorrent.exe  2018-08-04 19:27:22.000000 UTC<br>0xfa801b3f8cb0  UDPv4   0.0.0.0 20830   *       0               2836    BitTorrent.exe  2018-08-04 19:27:15.000000 UTC<br>0xfa801b3f8cb0  UDPv6   ::      20830   *       0               2836    BitTorrent.exe  2018-08-04 19:27:15.000000 UTC<br>0xfa801b3e8b50  UDPv4   0.0.0.0 20830   *       0               2836    BitTorrent.exe  2018-08-04 19:27:15.000000 UTC<br>0xfa801b589b50  UDPv4   0.0.0.0 50523   *       0               620     svchost.exe     2018-08-04 19:34:22.000000 UTC<br>0xfa801b589b50  UDPv6   ::      50523   *       0               620     svchost.exe     2018-08-04 19:34:22.000000 UTC<br>0xfa801b5602c0  UDPv4   127.0.0.1       52846   *       0               2308    bittorrentie.e  2018-08-04 19:27:24.000000 UTC<br>0xfa801b54a390  UDPv4   127.0.0.1       52847   *       0               2624    bittorrentie.e  2018-08-04 19:27:24.000000 UTC<br>0xfa801ad5f010  UDPv4   0.0.0.0 55175   *       0               620     svchost.exe     2018-08-04 19:34:22.000000 UTC<br>0xfa801a5dd010  UDPv6   ::1     58340   *       0               164     svchost.exe     2018-08-04 19:28:42.000000 UTC<br>0xfa801919d430  UDPv4   127.0.0.1       58341   *       0               164     svchost.exe     2018-08-04 19:28:42.000000 UTC<br>0xfa801adab010  UDPv4   0.0.0.0 58383   *       0               620     svchost.exe     2018-08-04 19:34:22.000000 UTC<br>0xfa801adab010  UDPv6   ::      58383   *       0               620     svchost.exe     2018-08-04 19:34:22.000000 UTC<br>0xfa801a711bb0  UDPv4   0.0.0.0 60005   *       0               620     svchost.exe     2018-08-04 19:34:22.000000 UTC<br>0xfa801b42f920  UDPv4   192.168.202.131 62306   *       0               2836    BitTorrent.exe  2018-08-04 19:27:17.000000 UTC<br>0xfa801b42f4c0  UDPv4   127.0.0.1       62307   *       0               2836    BitTorrent.exe  2018-08-04 19:27:17.000000 UTC<br>PS C:\Users\13964\Desktop\OtterCTF&gt;<br></code></pre></p>
+<pre><code class="language-yaml">Proto   LocalAddr           LocalPort   ForeignAddr   ForeignPort   State     PID    Owner
+TCPv4   0.0.0.0             135         0.0.0.0       0             LISTENING 712    svchost.exe
+TCPv4   0.0.0.0             20830       0.0.0.0       0             LISTENING 2836   BitTorrent.exe
+UDPv4   192.168.202.131     1900        *             0                       164    svchost.exe
+UDPv4   192.168.202.131     6771        *             0                       2836   BitTorrent.exe
+</code></pre>
+<p>要看<code>LocalAddr</code> 列，找绑定到具体IP（不是 <code>0.0.0.0</code>）的条目，就是本机真实 IP</p>
+<ul>
+<li><code>svchost.exe</code> 和 <code>BitTorrent.exe</code> 都绑定到了 <code>192.168.202.131</code></li>
+<li><code>0.0.0.0</code> 表示监听所有网卡，不代表具体 IP</li>
+</ul>
+<p>所以本机 IP = <code>192.168.202.131</code></p>
+<h3 id="step3获取-pc-名">Step3:获取 PC 名</h3>
+<p>Windows 的计算机名存储在注册表的固定路径下：</p>
+<pre><code class="language-sql">HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\ComputerName\ComputerName
+</code></pre>
+<p>Windows 注册表是一个层级数据库，存储系统和软件的几乎所有配置。</p>
+<p><code>ControlSet001</code> 是活跃的控制集（类似"当前配置"）</p>
+<p>:::color1<br>
+Windows 的注册表（Registry）是一个树形数据库，<code>HKEY_LOCAL_MACHINE\SYSTEM</code> 分支下保存着操作系统级别的配置。计算机名这类"机器身份"信息由系统在安装时写入，后续可以通过"系统属性"界面修改，修改后依然写回到这个注册表路径。</p>
+<p>Volatility 的 <code>printkey</code> 插件直接从内存中解析注册表蜂巢（hive）文件的内存映射，因此即使没有硬盘镜像，只要内存里有注册表的缓存，就能读出这些值。</p>
+<p>:::</p>
+<p>Volatility 3 的 <code>windows.registry.printkey</code> 插件可以直接读取注册表内容：</p>
+<pre><code class="language-bash">vol.exe -f OtterCTF.vmem windows.registry.printkey --key "ControlSet001\Control\ComputerName\ComputerName"
+# 读取注册表
+</code></pre>
+<pre><code class="language-sql">Volatility 3 Framework 2.26.2
+WARNING  volatility3.framework.layers.vmware: No metadata file found alongside VMEM file. A VMSS or VMSN file may be required to correctly process a VMEM file. These should be placed in the same directory with the same file name, e.g. OtterCTF.vmem and OtterCTF.vmss.
+Progress:  100.00               PDB scanning finished
+Last Write Time Hive Offset     Type    Key     Name    Data    Volatile
+
+<ul>
+<li><pre><code>  0xf8a00000f010  Key     [NONAME]\ControlSet001\Control\ComputerName\ComputerName        -       -       -
+</code></pre>
+</li>
+</ul>
+<p>2018-06-02 19:23:00.000000 UTC  0xf8a000024010  REG_SZ  \REGISTRY\MACHINE\SYSTEM\ControlSet001\Control\ComputerName\ComputerName        (Default)       mnmsrvc False<br>2018-06-02 19:23:00.000000 UTC  0xf8a000024010  REG_SZ  \REGISTRY\MACHINE\SYSTEM\ControlSet001\Control\ComputerName\ComputerName        ComputerName    WIN-LO6FAF3DTFE False</p>
+<ul>
+<li><pre><code>  0xf8a000053320  Key     \REGISTRY\MACHINE\HARDWARE\ControlSet001\Control\ComputerName\ComputerName      -      --
+</code></pre>
+</li>
+<li><pre><code>  0xf8a000109410  Key     \SystemRoot\System32\Config\SECURITY\ControlSet001\Control\ComputerName\ComputerName   --       -
+</code></pre>
+</li>
+<li><pre><code>  0xf8a00033d410  Key     \Device\HarddiskVolume1\Boot\BCD\ControlSet001\Control\ComputerName\ComputerName       --       -
+</code></pre>
+</li>
+<li><pre><code>  0xf8a0005d5010  Key     \SystemRoot\System32\Config\SOFTWARE\ControlSet001\Control\ComputerName\ComputerName   --       -
+</code></pre>
+</li>
+<li><pre><code>  0xf8a001495010  Key     \SystemRoot\System32\Config\DEFAULT\ControlSet001\Control\ComputerName\ComputerName    --       -
+</code></pre>
+</li>
+<li><pre><code>  0xf8a0016d4010  Key     \SystemRoot\System32\Config\SAM\ControlSet001\Control\ComputerName\ComputerName -      --
+</code></pre>
+</li>
+<li><pre><code>  0xf8a00175b010  Key     \??\C:\Windows\ServiceProfiles\NetworkService\NTUSER.DAT\ControlSet001\Control\ComputerName\ComputerName        -       -       -
+</code></pre>
+</li>
+<li><pre><code>  0xf8a00176e410  Key     \??\C:\Windows\ServiceProfiles\LocalService\NTUSER.DAT\ControlSet001\Control\ComputerName\ComputerName  -       -       -
+</code></pre>
+</li>
+<li><pre><code>  0xf8a002090010  Key     \??\C:\Users\Rick\ntuser.dat\ControlSet001\Control\ComputerName\ComputerName    -      --
+</code></pre>
+</li>
+<li><pre><code>  0xf8a0020ad410  Key     \??\C:\Users\Rick\AppData\Local\Microsoft\Windows\UsrClass.dat\ControlSet001\Control\ComputerName\ComputerName  -       -       -
+</code></pre>
+</li>
+<li><pre><code>  0xf8a00377d2d0  Key     \??\C:\System Volume Information\Syscache.hve\ControlSet001\Control\ComputerName\ComputerName   -       -       -
+</code></pre>
+</li>
+</ul>
+<p>PS C:\Users\13964\Desktop\OtterCTF&gt;<br></code></pre></p>
+<pre><code class="language-yaml">Last Write Time              Hive Offset      Type     Key                                                                        Name          Data
+2018-06-02 19:23:00 UTC      0xf8a000024010   REG_SZ   \REGISTRY\MACHINE\SYSTEM\ControlSet001\Control\ComputerName\ComputerName   (Default)     mnmsrvc
+2018-06-02 19:23:00 UTC      0xf8a000024010   REG_SZ   \REGISTRY\MACHINE\SYSTEM\ControlSet001\Control\ComputerName\ComputerName   ComputerName  WIN-LO6FAF3DTFE
+</code></pre>
+<p><code>Type</code>的<code>REG_SZ</code>指的是字符串类型的注册表值</p>
+<p><code>Name</code>是<code>Computername</code>也就是计算机名这个键</p>
+<p><code>Data</code>是<code>WIN-LO6FAF3DTFE</code>注册表<code>ComputerName</code>的键值，就是PC的名字</p>
+<p>第一行的 <code>(Default)</code> 是默认值，<code>mnmsrvc</code> 是远程桌面服务的服务名，不是计算机名，忽略它</p>
+<p>所以PC 名就是<code>WIN-LO6FAF3DTFE</code></p>
+<p>:::color5<br>
+<code>NSSCTF&#123;WIN-LO6FAF3DTFE-192.168.202.131&#125;</code></p>
+<p>:::</p>
+<h1 id="otterctf-2018play-time">[OtterCTF 2018]Play Time</h1>
+<p>:::warning<br>
+Rick就喜欢玩一些经典的老游戏。你能说出他正在玩哪款游戏吗？以及游戏服务器的 IP 地址是多少？</p>
+<p>flag格式：<code>NSSCTF&#123;游戏名-服务器ip&#125;</code></p>
+<p>:::</p>
+<p>flag包含两部分</p>
+<ol>
+<li>游戏名称 → 从进程列表里找正在运行的游戏程序</li>
+<li>服务器 IP → 从网络连接里找该游戏进程连接的远端地址</li>
+</ol>
+<h3 id="插件windowspstreenetscannetstat">插件<code>windows.pstree/netscan/netstat</code></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">插件</th>
+<th style="text-align: left">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left"><code>windows.pstree</code></td>
+<td style="text-align: left">查看所有运行中的进程（像任务管理器）</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>windows.netscan</code></td>
+<td style="text-align: left">池扫描（Pool Scanning），在内存中搜索网络对象的特征标记<br>扫描内存中的网络连接结构体，包括已关闭的连接<br>已关闭（CLOSED）的连接大多数也能找到<br>速度较慢，但是扫描的相对比较全面</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>windows.netstat</code></td>
+<td style="text-align: left">遍历系统维护的活跃连接链表<br>只显示活跃连接<br>已关闭（CLOSED）的连接可能遗漏<br>速度很快，但是有很多遗漏</td>
+</tr>
+</tbody>
+</table>
+<p>为什么用 <code>netscan</code> 而不是 <code>netstat</code>？<br>
+<code>netstat</code>只显示当前活跃连接，游戏连接可能已断开（状态为 CLOSED）<br>
+<code>netscan</code>会扫描内存中所有残留的连接结构体，能找到更多历史连接记录</p>
+<h3 id="step1查进程树-找运行游戏">Step1:查进程树 找运行游戏</h3>
+<pre><code class="language-bash">vol.exe -f OtterCTF.vmem windows.pstree
+</code></pre>
+<pre><code class="language-bash">Volatility 3 Framework 2.26.2
+WARNING  volatility3.framework.layers.vmware: No metadata file found alongside VMEM file. A VMSS or VMSN file may be required to correctly process a VMEM file. These should be placed in the same directory with the same file name, e.g. OtterCTF.vmem and OtterCTF.vmss.
+Progress:  100.00               PDB scanning finished
+PID     PPID    ImageFileName   Offset(V)       Threads Handles SessionId       Wow64   CreateTime      ExitTime       Audit    Cmd     Path
+
+<p>4       0       System  0xfa8018d44740  95      411     N&#x2F;A     False   2018-08-04 19:26:03.000000 UTC  N&#x2F;A     -      –</p>
+<ul>
+<li>260   4       smss.exe        0xfa801947e4d0  2       30      N&#x2F;A     False   2018-08-04 19:26:03.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\smss.exe        \SystemRoot\System32\smss.exe   \SystemRoot\System32\smss.exe<br>348     336     csrss.exe       0xfa801a0c8380  9       563     0       False   2018-08-04 19:26:10.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\csrss.exe       %SystemRoot%\system32\csrss.exe ObjectDirectory&#x3D;\Windows SharedSection&#x3D;1024,20480,768 Windows&#x3D;On SubSystemType&#x3D;Windows ServerDll&#x3D;basesrv,1 ServerDll&#x3D;winsrv:UserServerDllInitialization,3 ServerDll&#x3D;winsrv:ConServerDllInitialization,2 ServerDll&#x3D;sxssrv,4 ProfileControl&#x3D;Off MaxRequestThreads&#x3D;16      C:\Windows\system32\csrss.exe</li>
+<li>2420  348     conhost.exe     0xfa801a6643d0  0       30      0       False   2018-08-04 19:34:22.000000 UTC  2018-08-04 19:34:22.000000 UTC  \Device\HarddiskVolume1\Windows\System32\conhost.exe    ??\C:\Windows\system32\conhost.exe    C:\Windows\system32\conhost.exe<br>388     380     csrss.exe       0xfa80198d3b30  11      460     1       False   2018-08-04 19:26:11.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\csrss.exe       %SystemRoot%\system32\csrss.exe ObjectDirectory&#x3D;\Windows SharedSection&#x3D;1024,20480,768 Windows&#x3D;On SubSystemType&#x3D;Windows ServerDll&#x3D;basesrv,1 ServerDll&#x3D;winsrv:UserServerDllInitialization,3 ServerDll&#x3D;winsrv:ConServerDllInitialization,2 ServerDll&#x3D;sxssrv,4 ProfileControl&#x3D;Off MaxRequestThreads&#x3D;16      C:\Windows\system32\csrss.exe<br>396     336     wininit.exe     0xfa801a2ed060  3       78      0       False   2018-08-04 19:26:11.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\wininit.exe     wininit.exe     C:\Windows\system32\wininit.exe</li>
+<li>508   396     lsm.exe 0xfa801ab461a0  10      148     0       False   2018-08-04 19:26:12.000000 UTC  N&#x2F;A     \Device\HarddiskVolume1\Windows\System32\lsm.exe        C:\Windows\system32\lsm.exe     C:\Windows\system32\lsm.exe</li>
+<li>492   396     services.exe    0xfa801ab377c0  11      242     0       False   2018-08-04 19:26:12.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\services.exe    C:\Windows\system32\services.exe        C:\Windows\system32\services.exe<br>** 1164 492     svchost.exe     0xfa801ad718a0  18      312     0       False   2018-08-04 19:26:23.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\system32\svchost.exe -k LocalServiceNoNetwork       C:\Windows\system32\svchost.exe<br>** 1428 492     vmtoolsd.exe    0xfa801ae92920  9       313     0       False   2018-08-04 19:26:27.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files\VMware\VMware Tools\vmtoolsd.exe   “C:\Program Files\VMware\VMware Tools\vmtoolsd.exe”     C:\Program Files\VMware\VMware Tools\vmtoolsd.exe<br>*** 3916        1428    cmd.exe 0xfa801a572b30  0       -       0       False   2018-08-04 19:34:22.000000 UTC  2018-08-04 19:34:22.000000 UTC  \Device\HarddiskVolume1\Windows\System32\cmd.exe        -       -<br>** 1948 492     svchost.exe     0xfa801afe7800  6       96      0       False   2018-08-04 19:26:42.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\system32\svchost.exe -k bthsvcs      C:\Windows\system32\svchost.exe<br>** 1436 492     msdtc.exe       0xfa801aff3b30  14      155     0       False   2018-08-04 19:26:43.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\msdtc.exe       C:\Windows\System32\msdtc.exe   C:\Windows\System32\msdtc.exe<br>** 668  492     vmacthlp.exe    0xfa801abbdb30  3       56      0       False   2018-08-04 19:26:16.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files\VMware\VMware Tools\vmacthlp.exe   “C:\Program Files\VMware\VMware Tools\vmacthlp.exe”     C:\Program Files\VMware\VMware Tools\vmacthlp.exe<br>** 412  492     mscorsvw.exe    0xfa801b603610  7       86      0       True    2018-08-04 19:28:42.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\Microsoft.NET\Framework\v4.0.30319\mscorsvw.exe  C:\Windows\Microsoft.NET\Framework\v4.0.30319\mscorsvw.exe      C:\Windows\Microsoft.NET\Framework\v4.0.30319\mscorsvw.exe<br>** 164  492     svchost.exe     0xfa801a6af9f0  12      147     0       False   2018-08-04 19:28:42.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\system32\svchost.exe -k LocalServiceAndNoImpersonation       C:\Windows\system32\svchost.exe<br>** 808  492     svchost.exe     0xfa801ac2e9e0  22      508     0       False   2018-08-04 19:26:18.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\System32\svchost.exe -k LocalServiceNetworkRestrictedC:\Windows\System32\svchost.exe<br>*** 960 808     audiodg.exe     0xfa801ac753a0  7       151     0       False   2018-08-04 19:26:19.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\audiodg.exe     C:\Windows\system32\AUDIODG.EXE 0x2fc   C:\Windows\system32\AUDIODG.EXE<br>** 2344 492     taskhost.exe    0xfa801b1e9b30  8       193     1       False   2018-08-04 19:26:57.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\taskhost.exe    “taskhost.exe”  C:\Windows\system32\taskhost.exe<br>** 3496 492     Lavasoft.WCAss  0xfa801aad1060  14      473     0       False   2018-08-04 19:33:49.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Lavasoft\Web Companion\Application\Lavasoft.WCAssistant.WinService.exe      “C:\Program Files (x86)\Lavasoft\Web Companion\Application\Lavasoft.WCAssistant.WinService.exe”  C:\Program Files (x86)\Lavasoft\Web Companion\Application\Lavasoft.WCAssistant.WinService.exe<br>** 1324 492     dllhost.exe     0xfa801ae7f630  15      207     0       False   2018-08-04 19:26:42.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\dllhost.exe     C:\Windows\system32\dllhost.exe &#x2F;Processid:&#123;02D4B3F1-FD88-11D1-960D-00805FC79235&#125;       C:\Windows\system32\dllhost.exe<br>** 3124 492     mscorsvw.exe    0xfa801a6c2700  7       77      0       False   2018-08-04 19:28:43.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe        C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe    C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe<br>** 2500 492     sppsvc.exe      0xfa801b232060  4       149     0       False   2018-08-04 19:26:58.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\sppsvc.exe      C:\Windows\system32\sppsvc.exe  C:\Windows\system32\sppsvc.exe<br>** 712  492     svchost.exe     0xfa801abebb30  8       301     0       False   2018-08-04 19:26:17.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\system32\svchost.exe -k RPCSS        C:\Windows\system32\svchost.exe<br>** 844  492     svchost.exe     0xfa801ac31b30  17      396     0       False   2018-08-04 19:26:18.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\System32\svchost.exe -k LocalSystemNetworkRestrictedC:\Windows\System32\svchost.exe<br>*** 2704        844     dwm.exe 0xfa801b1fab30  4       97      1       False   2018-08-04 19:27:04.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\dwm.exe “C:\Windows\system32\Dwm.exe”   C:\Windows\system32\Dwm.exe<br>** 1356 492     VGAuthService.  0xfa801ae0f630  3       85      0       False   2018-08-04 19:26:25.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files\VMware\VMware Tools\VMware VGAuth\VGAuthService.exe        “C:\Program Files\VMware\VMware Tools\VMware VGAuth\VGAuthService.exe”  C:\Program Files\VMware\VMware Tools\VMware VGAuth\VGAuthService.exe<br>** 724  492     PresentationFo  0xfa801988c2d0  6       148     0       False   2018-08-04 19:27:52.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\Microsoft.NET\Framework64\v3.0\WPF\PresentationFontCache.exe     C:\Windows\Microsoft.Net\Framework64\v3.0\WPF\PresentationFontCache.exe C:\Windows\Microsoft.Net\Framework64\v3.0\WPF\PresentationFontCache.exe<br>** 604  492     svchost.exe     0xfa8018e3c890  11      376     0       False   2018-08-04 19:26:16.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\system32\svchost.exe -k DcomLaunch   C:\Windows\system32\svchost.exe<br>*** 1800        604     WmiPrvSE.exe    0xfa8019124b30  9       222     0       False   2018-08-04 19:26:39.000000 UTC N&#x2F;A      \Device\HarddiskVolume1\Windows\System32\wbem\WmiPrvSE.exe      C:\Windows\system32\wbem\wmiprvse.exe   C:\Windows\system32\wbem\wmiprvse.exe<br>*** 2136        604     WmiPrvSE.exe    0xfa801b112060  12      324     0       False   2018-08-04 19:26:51.000000 UTC N&#x2F;A      \Device\HarddiskVolume1\Windows\System32\wbem\WmiPrvSE.exe      C:\Windows\system32\wbem\wmiprvse.exe   C:\Windows\system32\wbem\wmiprvse.exe<br>** 1120 492     spoolsv.exe     0xfa801ad5ab30  14      346     0       False   2018-08-04 19:26:22.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\spoolsv.exe     C:\Windows\System32\spoolsv.exe C:\Windows\System32\spoolsv.exe<br>** 868  492     svchost.exe     0xfa801ac4db30  45      1114    0       False   2018-08-04 19:26:18.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\system32\svchost.exe -k netsvcs      C:\Windows\system32\svchost.exe<br>** 620  492     svchost.exe     0xfa801acd37e0  19      415     0       False   2018-08-04 19:26:21.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\system32\svchost.exe -k NetworkService       C:\Windows\system32\svchost.exe<br>** 1012 492     svchost.exe     0xfa801ac97060  12      554     0       False   2018-08-04 19:26:20.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\system32\svchost.exe -k LocalService C:\Windows\system32\svchost.exe<br>** 3064 492     SearchIndexer.  0xfa801b3aab30  11      610     0       False   2018-08-04 19:27:14.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\SearchIndexer.exe       C:\Windows\system32\SearchIndexer.exe &#x2F;Embedding       C:\Windows\system32\SearchIndexer.exe<br>** 3196 492     svchost.exe     0xfa801a6e4b30  14      352     0       False   2018-08-04 19:28:44.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\svchost.exe     C:\Windows\System32\svchost.exe -k secsvcs      C:\Windows\System32\svchost.exe</li>
+<li>500   396     lsass.exe       0xfa801ab3f060  7       610     0       False   2018-08-04 19:26:12.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\lsass.exe       C:\Windows\system32\lsass.exe   C:\Windows\system32\lsass.exe<br>432     380     winlogon.exe    0xfa801aaf4060  3       113     1       False   2018-08-04 19:26:11.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\winlogon.exe    winlogon.exe    C:\Windows\system32\winlogon.exe<br>2728    2696    explorer.exe    0xfa801b27e060  33      854     1       False   2018-08-04 19:27:04.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\explorer.exe     C:\Windows\Explorer.EXE C:\Windows\Explorer.EXE</li>
+<li>708   2728    LunarMS.exe     0xfa801b5cb740  18      346     1       True    2018-08-04 19:27:39.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Nexon\MapleStory\LunarMS.exe     “C:\Nexon\MapleStory\LunarMS.exe”       C:\Nexon\MapleStory\LunarMS.exe</li>
+<li>4076  2728    chrome.exe      0xfa801a4e3870  44      1160    1       False   2018-08-04 19:29:30.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Google\Chrome\Application\chrome.exe “C:\Program Files (x86)\Google\Chrome\Application\chrome.exe”   C:\Program Files (x86)\Google\Chrome\Application\chrome.exe<br>** 576  4076    chrome.exe      0xfa801a502b30  2       58      1       False   2018-08-04 19:29:31.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Google\Chrome\Application\chrome.exe “C:\Program Files (x86)\Google\Chrome\Application\chrome.exe” –type&#x3D;watcher –main-thread-id&#x3D;4080 –on-initialized-event-handle&#x3D;304 –parent-handle&#x3D;308 &#x2F;prefetch:6    C:\Program Files (x86)\Google\Chrome\Application\chrome.exe<br>** 3648 4076    chrome.exe      0xfa801a635240  16      207     1       False   2018-08-04 19:33:38.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Google\Chrome\Application\chrome.exe “C:\Program Files (x86)\Google\Chrome\Application\chrome.exe” –type&#x3D;renderer –field-trial-handle&#x3D;984,15358569600588498425,3475374789430647391,131072 –service-pipe-token&#x3D;66BB0CC3FE10242BC701AB87A5940738 –lang&#x3D;en-US –enable-offline-auto-reload –enable-offline-auto-reload-visible-only –device-scale-factor&#x3D;1 –num-raster-threads&#x3D;1 –service-request-channel-token&#x3D;66BB0CC3FE10242BC701AB87A5940738 –renderer-client-id&#x3D;30 –mojo-platform-channel-handle&#x3D;4516 &#x2F;prefetch:1        C:\Program Files (x86)\Google\Chrome\Application\chrome.exe<br>** 1796 4076    chrome.exe      0xfa801a5ef1f0  15      170     1       False   2018-08-04 19:33:41.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Google\Chrome\Application\chrome.exe “C:\Program Files (x86)\Google\Chrome\Application\chrome.exe” –type&#x3D;renderer –field-trial-handle&#x3D;984,15358569600588498425,3475374789430647391,131072 –service-pipe-token&#x3D;86C637812F74263DD98834CC0FE01CE7 –lang&#x3D;en-US –enable-offline-auto-reload –enable-offline-auto-reload-visible-only –device-scale-factor&#x3D;1 –num-raster-threads&#x3D;1 –service-request-channel-token&#x3D;86C637812F74263DD98834CC0FE01CE7 –renderer-client-id&#x3D;31 –mojo-platform-channel-handle&#x3D;4412 &#x2F;prefetch:1        C:\Program Files (x86)\Google\Chrome\Application\chrome.exe<br>** 1808 4076    chrome.exe      0xfa801a4f7b30  13      229     1       False   2018-08-04 19:29:32.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Google\Chrome\Application\chrome.exe “C:\Program Files (x86)\Google\Chrome\Application\chrome.exe” –type&#x3D;gpu-process –field-trial-handle&#x3D;984,15358569600588498425,3475374789430647391,131072 –gpu-preferences&#x3D;KAAAAAAAAACAAwBAAQAAAAAAAAAAAGAAEAAAAAAAAAAAAAAAAAAAACgAAAAEAAAAIAAAAAAAAAAoAAAAAAAAADAAAAAAAAAAOAAAAAAAAAAQAAAAAAAAAAAAAAAKAAAAEAAAAAAAAAAAAAAACwAAABAAAAAAAAAAAQAAAAoAAAAQAAAAAAAAAAEAAAALAAAA –service-request-channel-token&#x3D;4939AD179421E7F7FF934CA7C25FCD34 –mojo-platform-channel-handle&#x3D;1004 –ignored&#x3D;” –type&#x3D;renderer “ &#x2F;prefetch:2     C:\Program Files (x86)\Google\Chrome\Application\chrome.exe<br>** 4084 4076    chrome.exe      0xfa801a4eab30  8       86      1       False   2018-08-04 19:29:30.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Google\Chrome\Application\chrome.exe “C:\Program Files (x86)\Google\Chrome\Application\chrome.exe” –type&#x3D;crashpad-handler “–user-data-dir&#x3D;C:\Users\Rick\AppData\Local\Google\Chrome\User Data” &#x2F;prefetch:7 –monitor-self-annotation&#x3D;ptype&#x3D;crashpad-handler “–database&#x3D;C:\Users\Rick\AppData\Local\Google\Chrome\User Data\Crashpad” “–metrics-dir&#x3D;C:\Users\Rick\AppData\Local\Google\Chrome\User Data” –url&#x3D;<a target="_blank" rel="noopener" href="https://clients2.google.com/cr/report">https://clients2.google.com/cr/report</a> –annotation&#x3D;channel&#x3D; –annotation&#x3D;plat&#x3D;Win64 –annotation&#x3D;prod&#x3D;Chrome –annotation&#x3D;ver&#x3D;68.0.3440.84 –initial-client-data&#x3D;0x7c,0x80,0x84,0x78,0x88,0x7feeb3324d0,0x7feeb3324e0,0x7feeb3324f0        C:\Program Files (x86)\Google\Chrome\Application\chrome.exe<br>** 3924 4076    chrome.exe      0xfa801aa00a90  16      228     1       False   2018-08-04 19:29:51.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Google\Chrome\Application\chrome.exe “C:\Program Files (x86)\Google\Chrome\Application\chrome.exe” –type&#x3D;renderer –field-trial-handle&#x3D;984,15358569600588498425,3475374789430647391,131072 –service-pipe-token&#x3D;BB216EAECD5332095D1836CB17604E02 –lang&#x3D;en-US –enable-offline-auto-reload –enable-offline-auto-reload-visible-only –device-scale-factor&#x3D;1 –num-raster-threads&#x3D;1 –service-request-channel-token&#x3D;BB216EAECD5332095D1836CB17604E02 –renderer-client-id&#x3D;9 –mojo-platform-channel-handle&#x3D;2440 &#x2F;prefetch:1 C:\Program Files (x86)\Google\Chrome\Application\chrome.exe<br>** 2748 4076    chrome.exe      0xfa801a7f98f0  15      181     1       False   2018-08-04 19:31:15.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Google\Chrome\Application\chrome.exe “C:\Program Files (x86)\Google\Chrome\Application\chrome.exe” –type&#x3D;renderer –field-trial-handle&#x3D;984,15358569600588498425,3475374789430647391,131072 –service-pipe-token&#x3D;5B96B12CED256E93CD66ABC8626426FB –lang&#x3D;en-US –enable-offline-auto-reload –enable-offline-auto-reload-visible-only –device-scale-factor&#x3D;1 –num-raster-threads&#x3D;1 –service-request-channel-token&#x3D;5B96B12CED256E93CD66ABC8626426FB –renderer-client-id&#x3D;22 –mojo-platform-channel-handle&#x3D;2104 &#x2F;prefetch:1        C:\Program Files (x86)\Google\Chrome\Application\chrome.exe</li>
+<li>3820  2728    Rick And Morty  0xfa801b486b30  4       185     1       True    2018-08-04 19:32:55.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Torrents\Rick And Morty season 1 download.exe    “C:\Torrents\Rick And Morty season 1 download.exe”      C:\Torrents\Rick And Morty season 1 download.exe<br>** 3720 3820    vmware-tray.ex  0xfa801a4c5b30  8       147     1       True    2018-08-04 19:33:02.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Users\Rick\AppData\Local\Temp\RarSFX0\vmware-tray.exe    “C:\Users\Rick\AppData\Local\Temp\RarSFX0\vmware-tray.exe”      C:\Users\Rick\AppData\Local\Temp\RarSFX0\vmware-tray.exe</li>
+<li>2804  2728    vmtoolsd.exe    0xfa801b1cdb30  6       190     1       False   2018-08-04 19:27:06.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files\VMware\VMware Tools\vmtoolsd.exe   “C:\Program Files\VMware\VMware Tools\vmtoolsd.exe” -n vmusr    C:\Program Files\VMware\VMware Tools\vmtoolsd.exe</li>
+<li>2836  2728    BitTorrent.exe  0xfa801b290b30  24      471     1       True    2018-08-04 19:27:07.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Users\Rick\AppData\Roaming\BitTorrent\BitTorrent.exe     “C:\Users\Rick\AppData\Roaming\BitTorrent\BitTorrent.exe”  &#x2F;MINIMIZED   C:\Users\Rick\AppData\Roaming\BitTorrent\BitTorrent.exe<br>** 2624 2836    bittorrentie.e  0xfa801b4c9b30  13      316     1       True    2018-08-04 19:27:21.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Users\Rick\AppData\Roaming\BitTorrent\updates\7.10.3_44495\bittorrentie.exe      “C:\Users\Rick\AppData\Roaming\BitTorrent\updates\7.10.3_44495\bittorrentie.exe” BitTorrent_2836_00313978_1933444659 BT4823DF041B09 BitTorrent  C:\Users\Rick\AppData\Roaming\BitTorrent\updates\7.10.3_44495\bittorrentie.exe<br>** 2308 2836    bittorrentie.e  0xfa801b4a7b30  15      337     1       True    2018-08-04 19:27:19.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Users\Rick\AppData\Roaming\BitTorrent\updates\7.10.3_44495\bittorrentie.exe      “C:\Users\Rick\AppData\Roaming\BitTorrent\updates\7.10.3_44495\bittorrentie.exe” BitTorrent_2836_00313D08_590648902 BT4823DF041B09 BitTorrent   C:\Users\Rick\AppData\Roaming\BitTorrent\updates\7.10.3_44495\bittorrentie.exe</li>
+<li>2844  2728    WebCompanion.e  0xfa801b2f02e0  0       -       1       False   2018-08-04 19:27:07.000000 UTC  2018-08-04 19:33:33.000000 UTC  \Device\HarddiskVolume1\Program Files (x86)\Lavasoft\Web Companion\Application\WebCompanion.exe–<br>3880    1484    WebCompanionIn  0xfa801b18f060  15      522     0       True    2018-08-04 19:33:07.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Lavasoft\Web Companion\Application\WebCompanionInstaller.exe “C:\Program Files (x86)\Lavasoft\Web Companion\Application\WebCompanionInstaller.exe” –update –prod –partner&#x3D;BT170701 –version&#x3D;4.3.1908.3686        C:\Program Files (x86)\Lavasoft\Web Companion\Application\WebCompanionInstaller.exe</li>
+<li>452   3880    sc.exe  0xfa801aeb6890  0       -       0       False   2018-08-04 19:33:48.000000 UTC  2018-08-04 19:33:48.000000 UTC  \Device\HarddiskVolume1\Windows\SysWOW64\sc.exe -       -</li>
+<li>3208  3880    sc.exe  0xfa801b08f060  0       -       0       False   2018-08-04 19:33:47.000000 UTC  2018-08-04 19:33:48.000000 UTC  \Device\HarddiskVolume1\Windows\SysWOW64\sc.exe -       -</li>
+<li>2028  3880    sc.exe  0xfa801ac01060  0       -       0       False   2018-08-04 19:33:49.000000 UTC  2018-08-04 19:34:03.000000 UTC  \Device\HarddiskVolume1\Windows\SysWOW64\sc.exe -       -</li>
+<li>3856  3880    WebCompanion.e  0xfa801a6268b0  15      386     0       True    2018-08-04 19:34:05.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Program Files (x86)\Lavasoft\Web Companion\Application\WebCompanion.exe  “C:\Program Files (x86)\Lavasoft\Web Companion\Application\WebCompanion.exe” –silent –update  C:\Program Files (x86)\Lavasoft\Web Companion\Application\WebCompanion.exe</li>
+<li>3504  3880    sc.exe  0xfa801aa72b30  0       -       0       False   2018-08-04 19:33:48.000000 UTC  2018-08-04 19:33:48.000000 UTC  \Device\HarddiskVolume1\Windows\SysWOW64\sc.exe -       -<br>3304    3132    notepad.exe     0xfa801b1fd960  2       79      1       False   2018-08-04 19:34:10.000000 UTC  N&#x2F;A    \Device\HarddiskVolume1\Windows\System32\notepad.exe     “C:\Windows\system32\NOTEPAD.EXE” C:\Users\Rick\Desktop\Flag.txt.WINDOWS        C:\Windows\system32\NOTEPAD.EXE<br>PS C:\Users\13964\Desktop\OtterCTF&gt;<br></code></pre><pre><code class="language-less">explorer.exe (PID: 2728)
+├── LunarMS.exe      (PID: 708)   ← 游戏！
+├── chrome.exe       (PID: 4076)
+├── BitTorrent.exe   (PID: 2836)
+├── Rick And Morty season 1 download.exe  (PID: 3820)  ← 可疑
+│   └── vmware-tray.exe  (PID: 3720)  ← 恶意软件
+└── vmtoolsd.exe     (PID: 2804)
+</code></pre>
+<p><code>LunarMS.exe</code> 是在用户桌面由 <code>explorer.exe</code>直接启动的子进程。</p>
+<ul>
+<li>LunarMS 是一款 MapleStory（冒险岛）的私服客户端</li>
+<li>玩家不连接官方服务器，而是连接私服搭建者的服务器</li>
+<li>路径为 <code>C:\Nexon\MapleStory\LunarMS.exe</code></li>
+<li><code>Nexon</code> 是 MapleStory 的开发商，路径直接确认了这是冒险岛游戏目录</li>
+</ul>
+<p>所以游戏名是<code>LunarMS</code></p>
+<h3 id="step2查找游戏服务器-ipwindowsnetscan-再过滤pid708">Step2:查找游戏服务器 IP(windows.netscan 再过滤PID<code>708</code>）</h3>
+<p>已知游戏进程的 PID 是 708，现在用 <code>netscan</code> 查它的网络连接：</p>
+<pre><code class="language-bash">vol.exe -f OtterCTF.vmem windows.netscan
+</code></pre>
+<p>然后过滤出 PID 708 的结果：</p>
+<pre><code class="language-bash">vol.exe -f OtterCTF.vmem windows.netscan | Where-Object &#123; $_ -match "708" &#125;
+</code></pre>
+<pre><code class="language-objectivec">Offset       Proto   LocalAddr            LocalPort   ForeignAddr       ForeignPort   State    PID   Owner
+0x7d6124d0   TCPv4   192.168.202.131      49530       77.102.199.102    7575          CLOSED   708   LunarMS.exe
+0x7e413a40   TCPv4   -                    0           -                 0             CLOSED   708   LunarMS.exe
+0x7e521b50   TCPv4   -                    0           -                 0             CLOSED   708   LunarMS.exe
+</code></pre>
+<pre><code class="language-plain">0x7d6124d0   TCPv4   192.168.202.131   49530   77.102.199.102   7575   CLOSED   708   LunarMS.exe
+│            │       │                 │       │                │      │        │     └─ 进程名</li>
+</ul>
+<p>│            │       │                 │       │                │      │        └─ PID<br>│            │       │                 │       │                │      └─ CLOSED &#x3D; 连接已关闭但记录仍在内存<br>│            │       │                 │       │                └─ 目标端口 7575（游戏服务器端口）<br>│            │       │                 │       └─ 目标 IP &#x3D; 77.102.199.102 ← 游戏服务器！<br>│            │       │                 └─ 本地端口 49530（系统随机分配）<br>│            │       └─ 本机 IP 192.168.202.131<br>│            └─ TCP 协议<br>└─ 内存偏移地址<br></code></pre></p>
+<p>为什么此处状态是 CLOSED？<br>
+内存快照捕获时，游戏可能刚好断开了与服务器的连接。但连接的结构体信息还残留在内存中，<code>netscan</code> 能把它找出来。连接已经关闭了，但是记录仍然存在内存里。内存取证把已经消失的内容又找回了一部分owo</p>
+<p>另外两条 PID 708 的记录显示的是 <code>LocalAddr: -</code>，表示这些连接条目不完整，或者说地址信息已经被释放，可以忽略。唯一有效的连接记录就是 <code>77.102.199.102:7575</code></p>
+<p>所以游戏服务器 IP是<code>77.102.199.102</code></p>
+<p>:::color5<br>
+<code>NSSCTF&#123;LunarMS-77.102.199.102&#125;</code></p>
+<p>:::</p>
+<pre><code class="language-bash"># 第一步：查进程树，找游戏进程名和 PID
+vol.exe -f OtterCTF.vmem windows.pstree
+
+<h1 id="第二步：扫描所有网络连接（包括已关闭的）"><a href="#第二步：扫描所有网络连接（包括已关闭的）" class="headerlink" title="第二步：扫描所有网络连接（包括已关闭的）"></a>第二步：扫描所有网络连接（包括已关闭的）</h1><p>vol.exe -f OtterCTF.vmem windows.netscan</p>
+<h1 id="过滤-LunarMS-相关条目"><a href="#过滤-LunarMS-相关条目" class="headerlink" title="过滤 LunarMS 相关条目"></a>过滤 LunarMS 相关条目</h1><p>vol.exe -f OtterCTF.vmem windows.netscan | Where-Object &#123; $_ -match “708” &#125;<br></code></pre></p>
+<h1 id="otterctf-2018name-game">[OtterCTF 2018]Name Game</h1>
+<p>:::warning<br>
+我们知道该账号登录到了一个名为 Lunar-3 的频道。这个账号的名称是什么？</p>
+<p>flag格式：<code>NSSCTF&#123;账号名称&#125;</code></p>
+<p>:::</p>
+<p>题干说是账号登录的频道名是 Lunar-3</p>
+<p>游戏登录时，客户端会把频道名和账号名同时保存在内存里，从而用于界面显示、数据请求等。因此只要在游戏进程的内存中找到 <code>Lunar-3</code>，看它附近存着什么字符串，账号名就藏在那里。</p>
+<h3 id="为什么账号名会明文存在内存里">为什么账号名会明文存在内存里？</h3>
+<p>游戏客户端在登录后需要实时显示账号名（界面 UI、角色选择页面等），因此账号名会以明文字符串形式存在进程的堆内存（heap）或数据段中。除非游戏客户端专门做了内存保护（如加密存储），否则只要进程在运行，账号名就可以被读出来。这也是游戏外挂/内存编辑工具能读取游戏数据的根本原因。</p>
+<h3 id="什么是进程内存dump">什么是进程内存Dump？</h3>
+<p>Volatility 可以把某个进程占用的全部虚拟内存导出成一个文件（<code>.dmp</code>），之后就可以像普通文件一样用 Python、strings 等工具搜索里面的内容，不需要反复调用 Volatility。</p>
+<h3 id="step1确认目标进程-pid">Step1:确认目标进程 PID</h3>
+<p>从上一题已知：</p>
+<pre><code class="language-yaml">LunarMS.exe   PID: 708   路径: C:\Nexon\MapleStory\LunarMS.exe
+</code></pre>
+<h3 id="step2导出进程内存">Step2:导出进程内存</h3>
+<pre><code class="language-bash">vol.exe -f OtterCTF.vmem --output-dir ./dumps windows.memmap --pid 708 --dump
+</code></pre>
+<p>执行完毕后，<code>./dumps/</code> 目录下会生成：</p>
+<pre><code class="language-plain">pid.708.dmp
+</code></pre>
+<p><code>windows.memmap --dump</code> 会把进程的所有虚拟内存页按顺序写成一个原始二进制文件。</p>
+<h3 id="step3在-dump-中搜索lunar-3上下文">Step3:在 Dump 中搜索"Lunar-3"上下文</h3>
+<p>用 Python 搜索 <code>Lunar-3</code>，并打印其前后 200 字节内的所有可见字符串：</p>
+<pre><code class="language-python">import re
+
+<p>with open(‘dumps&#x2F;pid.708.dmp’, ‘rb’) as f:<br>    data &#x3D; f.read()</p>
+<p>pattern &#x3D; b’Lunar-3’<br>for m in re.finditer(pattern, data):<br>    start &#x3D; max(0, m.start() - 200)<br>    end   &#x3D; min(len(data), m.end() + 200)<br>    chunk &#x3D; data[start:end]<br>    print(f’&#x3D;&#x3D;&#x3D; 命中位置 offset &#123;m.start()&#125; &#x3D;&#x3D;&#x3D;’)<br>    # 提取长度 ≥ 4 的可见 ASCII 字符串<br>    for s in re.findall(b’[ -~]&#123;4,&#125;’, chunk):<br>        print(s)<br>    print()<br></code></pre></p>
+<pre><code class="language-sql">PS C:\Users\13964\Desktop\OtterCTF\dumps&gt; python 1.py
+=== 命中位置 offset 523061531 ===
+b'Lunar-3'
+b'Lunar-4'
+
+=== 命中位置 offset 537366640 ===
+b'Sound/'
+b'normal'
+b'pressed'
+b'disabled'
+b'mouseOver'
+b'keyFocused'
+b'Lunar-3'
+b'0tt3r8r33z3'用户名!!!
+b'Sound/UI.img/'
+b'BtMouseClick'
+b'Lunar-4'
+b'Lunar-1'
+b'Lunar-2'
+</code></pre>
+<h3 id="step-4--分析结果">Step 4 — 分析结果</h3>
+<p>找到了两处 <code>Lunar-3</code>：</p>
+<p>第一处只用频道名列表。说明此处是游戏资源文件下载的频道枚举。没有账号信息。</p>
+<p>第二处有频道名和<code>ott3r8r33z3</code>说明是游戏登录状态的数据。账号名紧跟随频道名存储</p>
+<pre><code class="language-plain">Sound/          ← UI 音效资源路径
+normal          ← 按钮状态
+pressed         ┐
+disabled        │  UI 组件的各状态名（说明这是界面相关的内存区）
+mouseOver       │
+keyFocused      ┘
+Lunar-3         ← 当前选择的频道
+0tt3r8r33z3     ← 紧随其后 = 当前登录的账号名
+Sound/UI.img/   ← 下一个 UI 资源路径
+Lunar-4         ┐
+Lunar-1         │  其余频道名列表
+Lunar-2         ┘
+</code></pre>
+<p>游戏的 UI 数据结构中，选中频道名和当前账号名存储在相邻的内存区域，这是典型的游戏客户端内存布局。</p>
+<p>所以账号名是<code>0tt3r8r33z3</code></p>
+<p>:::color5<br>
+<code>NSSCTF&#123;0tt3r8r33z3&#125;</code></p>
+<p>:::</p>
+<h1 id="name-game-2">Name Game 2</h1>
+<p>:::warning<br>
+通过一些初步研究，我们发现：已登录角色的用户名总是出现在以下字节签名之后：</p>
+<p><code>0x64 0x??&#123;6-8&#125; 0x40 0x06 0x??&#123;18&#125; 0x5a 0x0c 0x00&#123;2&#125;</code></p>
+<p>Rick 的游戏角色名是什么？</p>
+<p>flag格式：<code>NSSCTF&#123;游戏角色名&#125;</code></p>
+<p>:::</p>
+<h3 id="字节签名byte-signature">字节签名（Byte Signature）</h3>
+<p>上一题用"关键词附近搜索"找到了账号名，但角色名没有像<code>Lunar-3</code>这样方便的文本线索可以利用。</p>
+<p>题目给了另一种方法：字节签名定位。通过逆向分析或内存对比，研究人员发现：MapleStory客户端在内存中存储已登录角色名时，角色名之前总是有一段固定的字节模式。只要找到这个模式，紧随其后的字符串就是角色名。</p>
+<pre><code class="language-ruby">0x64  0x??&#123;6-8&#125;  0x40 0x06  0x??&#123;18&#125;  0x5a 0x0c  0x00 0x00
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">部分</th>
+<th style="text-align: left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left"><code>0x64</code></td>
+<td style="text-align: left">固定字节，值为 100（十进制）</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>0x??&#123;6-8&#125;</code></td>
+<td style="text-align: left">6 到 8 个任意字节（通配符）</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>0x40 0x06</code></td>
+<td style="text-align: left">固定两字节</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>0x??&#123;18&#125;</code></td>
+<td style="text-align: left">18 个任意字节（通配符）</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>0x5a 0x0c</code></td>
+<td style="text-align: left">固定两字节</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>0x00 0x00</code></td>
+<td style="text-align: left">两个零字节（通常是字段分隔符或对齐填充）</td>
+</tr>
+</tbody>
+</table>
+<p>签名结束后，紧接着就是角色名字符串</p>
+<h3 id="step1确认进程-dump-已存在">Step1:确认进程 dump 已存在</h3>
+<pre><code class="language-bash">dumps/pid.708.dmp   （LunarMS.exe，PID 708）
+</code></pre>
+<p>如果还没有导出，先执行：</p>
+<pre><code class="language-bash">vol.exe -f OtterCTF.vmem --output-dir ./dumps windows.memmap --pid 708 --dump
+</code></pre>
+<h3 id="step2将字节签名转换为正则表达式">Step2:将字节签名转换为正则表达式</h3>
+<p>Python 的 <code>re</code> 模块支持二进制正则，把签名翻译如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">签名部分</th>
+<th style="text-align: left">Python 正则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left"><code>0x64</code></td>
+<td style="text-align: left"><code>\x64</code></td>
+</tr>
+<tr>
+<td style="text-align: left"><code>0x??&#123;6-8&#125;</code></td>
+<td style="text-align: left"><code>.&#123;6,8&#125;</code></td>
+</tr>
+<tr>
+<td style="text-align: left"><code>0x40 0x06</code></td>
+<td style="text-align: left"><code>\x40\x06</code></td>
+</tr>
+<tr>
+<td style="text-align: left"><code>0x??&#123;18&#125;</code></td>
+<td style="text-align: left"><code>.&#123;18&#125;</code></td>
+</tr>
+<tr>
+<td style="text-align: left"><code>0x5a 0x0c</code></td>
+<td style="text-align: left"><code>\x5a\x0c</code></td>
+</tr>
+<tr>
+<td style="text-align: left"><code>0x00 0x00</code></td>
+<td style="text-align: left"><code>\x00\x00</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-python">pattern = re.compile(b'\x64.&#123;6,8&#125;\x40\x06.&#123;18&#125;\x5a\x0c\x00\x00', re.DOTALL)
+</code></pre>
+<p><code>re.DOTALL</code> 标志使 <code>.</code> 能匹配所有字节包括 <code>\x00</code>（默认情况下 <code>.</code> 不匹配换行符 <code>\n</code> 即 <code>\x0a</code>，二进制搜索必须加这个标志）</p>
+<h3 id="step3搜索签名并提取角色名">Step3:搜索签名并提取角色名</h3>
+<pre><code class="language-python">import re
+
+<p>with open(‘dumps&#x2F;pid.708.dmp’, ‘rb’) as f:<br>    data &#x3D; f.read()</p>
+<h1 id="字节签名正则"><a href="#字节签名正则" class="headerlink" title="字节签名正则"></a>字节签名正则</h1><p>pattern &#x3D; re.compile(b’\x64.&#123;6,8&#125;\x40\x06.&#123;18&#125;\x5a\x0c\x00\x00’, re.DOTALL)</p>
+<p>for m in pattern.finditer(data):<br>    # 签名结束位置之后，读取最多 32 字节<br>    after &#x3D; data[m.end(): m.end() + 32]<br>    # 提取开头的连续可见 ASCII 字符串<br>    name_match &#x3D; re.match(b’([ -~]+)’, after)<br>    if name_match:<br>        print(f’offset&#x3D;&#123;m.start():#x&#125;  name&#x3D;&#123;name_match.group(1)&#125;’)<br></code></pre></p>
+<pre><code class="language-plain">offset=0x20b05fa9  name=b'M0rtyL0L'
+</code></pre>
+<p>只有一处命中。而且<code>M0rtyL0L</code>看着就对^^</p>
+<h3 id="step4确认结果">Step4:确认结果</h3>
+<p>在内存偏移 <code>0x20b05fa9</code> 处找到签名</p>
+<pre><code class="language-bash">PS C:\Users\13964\Desktop\OtterCTF&gt; python -c "
+&gt;&gt; with open('c:/Users/13964/Desktop/OtterCTF/dumps/pid.708.dmp', 'rb') as f:
+&gt;&gt;     f.seek(0x20b05fa9)
+&gt;&gt;     raw = f.read(60)
+&gt;&gt;
+&gt;&gt; # 打印十六进制 + ASCII 对照
+&gt;&gt; for i in range(0, len(raw), 16):
+&gt;&gt;     chunk = raw[i:i+16]
+&gt;&gt;     hex_part = ' '.join(f'&#123;b:02x&#125;' for b in chunk)
+&gt;&gt;     asc_part = ''.join(chr(b) if 0x20 &lt;= b &lt;= 0x7e else '.' for b in chunk)
+&gt;&gt;     print(f'&#123;0x20b05fa9+i:#010x&#125;:  &#123;hex_part:&lt;48&#125;  |&#123;asc_part&#125;|')
+&gt;&gt; "
+0x20b05fa9:  64 00 00 00 00 00 00 40 06 00 00 b4 e5 af 00 01   |d......@........|
+0x20b05fb9:  00 00 00 00 00 00 00 b0 e5 af 00 5a 0c 00 00 4d   |...........Z...M|
+0x20b05fc9:  30 72 74 79 4c 30 4c 00 00 00 00 00 00 00 21 4e   |0rtyL0L.......!N|
+0x20b05fd9:  00 00 55 75 00 00 00 00 00 00 00 00               |..Uu........|
+PS C:\Users\13964\Desktop\OtterCTF&gt;
+</code></pre>
+<p>:::color5<br>
+<code>NSSCTF&#123;M0rtyL0L&#125;</code></p>
+<p>:::</p>
+<pre><code class="language-bash">偏移          十六进制字节
+0x20b05fa9:  64                          ← 0x64（签名起始）
+             00 00 00 00 00 00           ← 6 字节通配 0x??&#123;6&#125;
+             40 06                       ← 0x40 0x06（固定）
+             00 00 b4 e5 af 00 01
+             00 00 00 00 00 00 00
+             b0 e5 af 00                 ← 共 18 字节通配 0x??&#123;18&#125;
+             5a 0c                       ← 0x5a 0x0c（固定）
+             00 00                       ← 两个零字节（签名结束）
+0x20b05fc9:  4d 30 72 74 79 4c 30 4c    ← 角色名开始
+             M  0  r  t  y  L  0  L
+
+<p></code></pre></p>
+<h3 id="字节签名定位-vs-关键词搜索">字节签名定位 vs 关键词搜索</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left">方法</th>
+<th style="text-align: left">适用场景</th>
+<th style="text-align: left">优点</th>
+<th style="text-align: left">缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left">关键词搜索</td>
+<td style="text-align: left">已知目标附近有文本线索</td>
+<td style="text-align: left">简单直接</td>
+<td style="text-align: left">需要有文本锚点</td>
+</tr>
+<tr>
+<td style="text-align: left">字节签名定位</td>
+<td style="text-align: left">已知数据结构但没有文本锚点</td>
+<td style="text-align: left">精确定位数据结构</td>
+<td style="text-align: left">需要提前知道签名（逆向分析）</td>
+</tr>
+</tbody>
+</table>
+<p>字节签名在真实的恶意软件分析中同样广泛使用——杀毒软件的特征库本质上就是一堆字节签名（Signature）</p>
+<h1 id="otterctf-2018silly-rick">[OtterCTF 2018]Silly Rick</h1>
+<p>:::warning<br>
+傻乎乎的Rick总是忘记自己邮箱的密码，所以他使用了一个在线的“已保存密码服务”（Stored Password Services）来存储密码。他每次都会复制粘贴这个密码，以免输错。<br>
+Rick 的邮箱密码是什么？</p>
+<p>flag格式:<code>NSSCTF&#123;邮箱密码&#125;</code></p>
+<p>:::</p>
+<ol>
+<li>Rick 用在线密码存储服务保存密码</li>
+<li>他每次都复制粘贴密码，不手打</li>
+</ol>
+<p>"复制粘贴"意味着密码此刻就在 Windows 剪贴板里。</p>
+<p>内存快照捕获时，剪贴板内容还残留在内存中，Volatility 可以直接读出来。</p>
+<pre><code class="language-plain">用户按 Ctrl+C
+      ↓
+程序调用 SetClipboardData(CF_UNICODETEXT, 密码字符串)
+      ↓
+win32k.sys 在内核堆中分配内存块，存储 UTF-16LE 编码的文本
+      ↓
+内存快照时数据仍在 ← Volatility 2 的 clipboard 插件可直接提取
+</code></pre>
+<h3 id="此处必须用vol2的原因">此处必须用Vol2的原因</h3>
+<p>vol2没有<code>clipboard(剪切板)</code>插件。vol3有。所以此处必须装一个vol2。</p>
+<p>配置vol2的方法我放到了同目录下的《已有vol3补装vol2》</p>
+<h3 id="vol2-本机安装路径">Vol2 本机安装路径</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left"><strong>文件</strong></th>
+<th style="text-align: left"><strong>路径</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left">Vol2 快捷脚本</td>
+<td style="text-align: left"><code>C:\tools\vol2.bat</code></td>
+</tr>
+<tr>
+<td style="text-align: left">Vol2 源码</td>
+<td style="text-align: left"><code>C:\tools\volatility-2.6.1\vol.py</code></td>
+</tr>
+<tr>
+<td style="text-align: left">Python 2.7 环境</td>
+<td style="text-align: left"><code>C:\Users\13964\miniconda3\envs\vol2\</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="vol2-常用命令格式及常用插件">Vol2 常用命令格式及常用插件</h3>
+<pre><code class="language-bash"># 基础格式（必须指定 --profile）
+C:\tools\vol2.bat -f &lt;内存文件&gt; --profile=&lt;系统版本&gt; &lt;插件名&gt;
+
+<h1 id="本题的系统版本：Win7SP1x64（来自-windows-info-的结论）"><a href="#本题的系统版本：Win7SP1x64（来自-windows-info-的结论）" class="headerlink" title="本题的系统版本：Win7SP1x64（来自 windows.info 的结论）"></a>本题的系统版本：Win7SP1x64（来自 windows.info 的结论）</h1><p></code></pre></p>
+<pre><code class="language-bash"># 查看所有可用插件和 Profile
+C:\tools\vol2.bat --info
+
+# 进程列表
+C:\tools\vol2.bat -f OtterCTF.vmem --profile=Win7SP1x64 pslist
+
+# 进程树
+C:\tools\vol2.bat -f OtterCTF.vmem --profile=Win7SP1x64 pstree
+
+# 网络连接
+C:\tools\vol2.bat -f OtterCTF.vmem --profile=Win7SP1x64 netscan
+
+# Hash 提取
+C:\tools\vol2.bat -f OtterCTF.vmem --profile=Win7SP1x64 hashdump
+
+# 剪贴板（Vol2 专属！）
+C:\tools\vol2.bat -f OtterCTF.vmem --profile=Win7SP1x64 clipboard
+
+# 桌面截图（Vol2 专属！）
+C:\tools\vol2.bat -f OtterCTF.vmem --profile=Win7SP1x64 screenshot --dump-dir ./screenshots
+
+# 文本框内容（Vol2 专属！）
+C:\tools\vol2.bat -f OtterCTF.vmem --profile=Win7SP1x64 editbox
+</code></pre>
+<h3 id="什么时候用vol23">什么时候用Vol2/3</h3>
+<p>剪切板/截图/文本框用vol2,其余都用vol3</p>
+<h3 id="step1使用-vol2-提取剪贴板">Step1:使用 Vol2 提取剪贴板</h3>
+<pre><code class="language-bash">C:\tools\vol2.bat -f OtterCTF.vmem --profile=Win7SP1x64 clipboard
+</code></pre>
+<pre><code class="language-sql">// 不用理会distorm警告
+Session  WindowStation  Format          Handle    Object              Data
+-------  -------------  ------          ------    ------              ----
+      1  WinSta0        CF_UNICODETEXT  0x602e3   0xfffff900c1ad93f0  M@il_Pr0vid0rs
+      1  WinSta0        CF_TEXT         0x10      ------------------
+      1  WinSta0        0x150133L       0x200...  ------------------
+      1  WinSta0        CF_TEXT         0x1       ------------------
+</code></pre>
+<h3 id="step2逐列解读">Step2:逐列解读</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left"><strong>列</strong></th>
+<th style="text-align: left"><strong>值</strong></th>
+<th style="text-align: left"><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left">Session</td>
+<td style="text-align: left">1</td>
+<td style="text-align: left">用户会话 1（Rick 的登录桌面）</td>
+</tr>
+<tr>
+<td style="text-align: left">WindowStation</td>
+<td style="text-align: left">WinSta0</td>
+<td style="text-align: left">用户桌面窗口站</td>
+</tr>
+<tr>
+<td style="text-align: left">Format</td>
+<td style="text-align: left">CF_UNICODETEXT</td>
+<td style="text-align: left">Unicode 文本格式（Chrome 复制文本时的标准格式）</td>
+</tr>
+<tr>
+<td style="text-align: left">Handle</td>
+<td style="text-align: left">0x602e3</td>
+<td style="text-align: left">剪贴板句柄</td>
+</tr>
+<tr>
+<td style="text-align: left">Object</td>
+<td style="text-align: left">0xfffff900c1ad93f0</td>
+<td style="text-align: left">内核对象地址</td>
+</tr>
+<tr>
+<td style="text-align: left"><strong>Data</strong></td>
+<td style="text-align: left"><strong>M@il_Pr0vid0rs</strong></td>
+<td style="text-align: left">✅ <strong>剪贴板明文内容</strong></td>
+</tr>
+</tbody>
+</table>
+<p>其余三行 <code>Data</code> 列为空：<code>CF_TEXT</code> 是 ANSI 文本格式（与 Unicode 共存但内容已释放），<code>0x150133L</code> 是 Chrome 的私有剪贴板格式，均无可读数据。</p>
+<pre><code class="language-java">Rick 打开在线密码管理网站（Chrome）
+            ↓
+看到保存的 mail.com 密码：M@il_Pr0vid0rs
+            ↓
+Ctrl+C 复制到剪贴板
+            ↓
+     ← 内存快照就在此刻捕获 →
+            ↓
+打开 mail.com 登录页（rickypinky@mail.com）
+            ↓
+Ctrl+V 粘贴密码
+</code></pre>
+<pre><code class="language-bash">vol2.bat -f OtterCTF.vmem --profile=Win7SP1x64 clipboard
+</code></pre>
+<h3 id="vol2-clipborad插件的原理">vol2 clipborad插件的原理</h3>
+<ol>
+<li>找到 win32k.sys 在内核中的基地址</li>
+<li>定位 tagWINDOWSTATION 结构（记录了所有窗口站）</li>
+<li>遍历每个窗口站的 tagCLIPDATA 链表</li>
+<li>对每个 CF_UNICODETEXT 条目，读取 cbData 字节的数据</li>
+<li>以 UTF-16LE 解码，输出明文</li>
+</ol>
+<h3 id="为什么剪贴板内容在内存里">为什么剪贴板内容在内存里？</h3>
+<p>Windows 剪贴板不会自动清除，<strong>只有以下情况才会清空</strong>：</p>
+<ol>
+<li>新内容写入剪贴板（下一次 Ctrl+C）</li>
+<li>程序主动调用 <code>EmptyClipboard()</code></li>
+<li>系统重启</li>
+</ol>
+<p>内存快照时Rick可能刚复制完还没粘贴或者粘贴完程序没有清除剪贴板。</p>
+<p>这样这样Windows剪切板数据在有新内容覆盖前始终保留在内存中。</p>
+<p>因为内存快照捕获的是某一瞬间的内存状态。所以，时机合适就能捕获到剪切板内容</p>
+<p>还有还有。运行 Vol2 时可能会看到类似这样的警告：</p>
+<pre><code class="language-plain">*** Failed to import volatility.plugins.malware.apihooks (NameError: name 'distorm3' is not defined)
+</code></pre>
+<p>这是因为我这里<code>distorm3</code>（反汇编库）没有安装，只影响 <code>apihooks</code>、<code>ssdt</code> 等需要反汇编的插件，<strong>不影响 clipboard、pstree、netscan 等大多数常用插件</strong>，可以忽略。当然如果安了就不会报错了。</p>
+<p>:::color5<br>
+<code>NSSCTF&#123;M@il_Pr0vid0rs&#125;</code></p>
+<p>:::<br>
+好像高光块没办法以md格式导出，，，那下次不用了<br>
+但是我觉得语雀的这个功能还挺好看的<br>
+2026/3/15大一下的第二周的周末 图书馆快关门了www 债见</p>
+
+
+</div>
+<div class="clear"></div>
+<div id="blog_post_info_block" role="contentinfo" class="post-meta-container">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date" data-last-update-days="0" data-date-updated="2026-03-15 21:54">2026-03-15 21:54</span>&nbsp;
+<a target="_blank" rel="noopener" href="https://www.cnblogs.com/luxlu">luakslu</a>&nbsp;
+阅读(<span id="post_view_count">19</span>)&nbsp;
+评论(<span id="post_comment_count">1</span>)&nbsp;
+&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(19722235);return false;">收藏</a>&nbsp;
+<a href="javascript:void(0)" onclick="reportManager.report({ currentUserId: '', targetType: 'blogPost', targetId: '19722235', targetLink: 'https://www.cnblogs.com/luxlu/p/19722235', title: '部分OtterCTF2018' })">举报</a>
+</div>
+        </div>
+        
+        
+<pre><code>&lt;/div&gt;&lt;!--end: topics 文章、评论容器--&gt;
+</code></pre>
+</div>
+<script>
+    var cb_entryId = 19722235, cb_entryCreatedDate = '2026-03-15 21:54', cb_postType = 1, cb_postTitle = '部分OtterCTF2018';
+    var allowComments = true, cb_blogId = 858433, cb_blogApp = 'luxlu', cb_blogUserGuid = '60dc8a14-0bf1-489f-ec73-08de15cf43c9';
+    mermaidRender.render()
+    markdown_highlight()
+    zoomManager.apply("#cnblogs_post_body img:not(.code_img_closed):not(.code_img_opened)");    
+</script>
+<a id="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav">
+        <div class="comment-nav-right">
+            <span id="span_refresh_tips"></span><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a>
+        </div>
+    </div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+        <div id="cnblogs_ch"></div>
+    <div id="opt_under_post"></div>
+        <div id="blog_c1" class="under-post-card below-post-card">
+            <a href="https://www.cnblogs.com/cmt/p/19735235" rel="nofollow" target="_blank" onclick="countCreativeClicks('C1-youclaw')">
+                <img src="https://img2024.cnblogs.com/blog/35695/202603/35695-20260320185348610-340218167.webp" onload="countCreativeImpressions('C1-youclaw')" alt="" style="width:300px!important;height:250px!important;min-width:300px!important;max-width:300px!important;" />
+                <span id="c1_impression" style="display:none"></span>
+            </a>
+        </div>
+    <div id="under_post_card1"></div>
+    <div id="related_posts_card"></div>
+    <div id="under_post_card2"></div>
+    <div id="HistoryToday" class="under-post-card below-post-card"></div>
+    <script type="text/javascript">
+        var commentManager = new blogCommentManager();
+        commentManager.renderComments(0);
+        fixPostBody();
+        window.footnoteTipManager.generateFootnoteTips();
+
+<pre><code>        window.tocManager.displayDisableTocTips = false;
+        window.tocManager.generateToc();
+        
+        setTimeout(function() &#123; countViews(cb_blogId, cb_entryId); &#125;, 50);
+        
+        deliverT2();
+        deliverC1C2();
+        loadNewsAndKb();
+        
+        LoadPostCategoriesTags(cb_blogId, cb_entryId);
+        
+        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+            &lt;/script&gt;
+</code></pre>
+</div>
+
+<pre><code>&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&quot;sideBar&quot;&gt;
+    &lt;div id=&quot;sideBarMain&quot;&gt;
+        &lt;div id=&quot;sidebar_news&quot; class=&quot;newsItem&quot;&gt;
+&lt;h3 class=&quot;catListTitle&quot;&gt;公告&lt;/h3&gt;
+</code></pre>
+<div id="blog-news" class="sidebar-news">
+    <div id="sidebar_news_container">
+    </div>
+</div>
+<script>loadBlogNews();</script>
+
+
+</div>
+            <div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>			
+            <div id="leftcontentcontainer">
+                <div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn()</script>
+            </div>			
+        </div>
+    </div>
+    <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+    <div id="footer">
+        <a target="_blank" rel="noopener" href="https://www.cnblogs.com/" id="footer_site_link" class="footer-brand">博客园</a>
+<span class="footer-copyright"> &nbsp;&copy;&nbsp; 2004-2026</span>
+<br /><span class="footer-icp">
+    <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33010602011771"><img src="//assets.cnblogs.com/images/ghs.png" />浙公网安备 33010602011771号</a>
+    <a href="https://beian.miit.gov.cn" target="_blank">浙ICP备2021040463号-3</a>
+</span>
+
+
+
+<pre><code>&lt;/div&gt;
+</code></pre>
+</div>
+
+
+
+<pre><code>&lt;div id=&quot;page_end_html&quot;&gt;
+    &lt;!-- 底部小鱼动效 --&gt;
+</code></pre>
+<div id="jsi-flying-fish-container" class="container"></div>
+<script src='https://blog-static.cnblogs.com/files/elkyo/fish.js'></script>
+<style>
+    @media only screen and (max-width: 767px){
+        #sidebar_search_box input[type=text]{width:calc(100% - 24px)}
+    }
+    #jsi-flying-fish-container{height: 220px; width: 100%}
+</style>
+
+<!-- 鼠标点击粒子特效 -->
+<p><canvas width="1777" height="841" style="position: fixed; left: 0px; top: 0px; z-index: 2147483647; pointer-events: none;"></canvas></p>
+<script src="https://blog-static.cnblogs.com/files/elkyo/mouse-click.js"></script>
+
+<!-- Emoji支持 -->
+<script src='https://blog-static.cnblogs.com/files/blogs/680427/emojify.min.js'></script>
+<script>
+    emojify.setConfig({
+        emojify_tag_type : 'div',
+        only_crawl_id    : null,
+        img_dir          : 'http://www.emoji-cheat-sheet.com/graphics/emojis',
+        ignored_tags     : {'SCRIPT':1,'TEXTAREA':1,'A':1,'PRE':1,'CODE':1}
+    });
+    emojify.run();
+</script>
+<style>.emoji{width:22px;height:22px;vertical-align:middle}</style>
+<script>
+    window.onload = function () {
+        var tbCommentBody = document.getElementById("tbCommentBody");
+        tbCommentBody.placeholder="支持 Markdown 语法，支持 Emoji 代码(www.emoji-cheat-sheet.com)"
+    }
+</script>
+<pre><code>&lt;/div&gt;
+
+&lt;input type=&quot;hidden&quot; id=&quot;antiforgery_token&quot; value=&quot;CfDJ8E2WNf1AXE5GolAm9rsxlHDe-8nKsQAietgVCMewxVHlrNaB6RkFo1Lt19jVCJsGCOumNVcR9MODIpTXL6xpFareJenTjK3uvhM4KeTJG1AG4HS2GzDxuBTZ8pb_luYuZxJNpKfIZsT1_IyhlmZyDSI&quot; /&gt;
+&lt;script async src=&quot;https://www.googletagmanager.com/gtag/js?id=G-M95P3TTWJZ&quot;&gt;&lt;/script&gt;
+</code></pre>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-M95P3TTWJZ');
+</script>
+<script defer src="https://hm.baidu.com/hm.js?866c9be12d4a814454792b1fd0fed295"></script>
+</body>
+</html>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://luxlu.top">luxlu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://luxlu.top/posts/cnblogs-19722235/">https://luxlu.top/posts/cnblogs-19722235/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://luxlu.top" target="_blank">luxlu</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/">???</a><a class="post-meta__tags" href="/tags/">??</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/posts/cnblogs-19775744/" title="命令行美化教程（全文AI生成）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">命令行美化教程（全文AI生成）</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19775744  命令行美化完整教程  适用系统：Windows 11 / Windows 10 涉及工具：Windows Terminal + PowerShell + Oh My Posh + Nerd Fonts   目录  安装 Windows Terminal 安装 PowerShell 7 安装 Nerd Fonts 字体 安装 Oh My Posh 配置主题 安装常用 PowerShell 模块 美化 Windows Terminal 外观 完整 Profile 配置参考 常见问题   1. 安装 Windows Terminal 方法一：Microsoft Store（推荐） 在 Microsoft Store 搜索 Windows Terminal 安装即可。 方法二：命令行安装 winget install Microsoft.WindowsTerminal   2. 安装 PowerShell 7 Windows 自带的是 PowerShell 5，建议升级到最新的 PowerSh...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19606190/" title="攻防世界[中等]QR1"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">攻防世界[中等]QR1</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19606190/gfsj  [中等] QR1 010打开 没问题 没有文件隐藏 是图片本身的隐写 仔细看有很多黑色像素点 法1 不是扫描全能王的暗广       法2 微小的黑点构成二维码，但太细看不清。让黑点变粗，就像 PS 里描边一样 原始图（白底+细黑点）        ↓ 二值化 → 纯白底 + 纯黑点        ↓ 反转   → 黑底 + 白点        ↓ 膨胀   → 黑底 + 变粗的白点 ← 描边效果        ↓ 反转   → 白底 + 变粗的黑点        ↓ 保存 → 清晰二维码  import cv2 import numpy as np  img &#x3D; cv2.imread(“enc.png”, 0)               # 读灰度图_, binary &#x3D; cv2.threshold(img, 0, 255, cv2.THRESH_OTSU)kernel &#x3D; np.ones((10, 10), np.uint8)       ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/posts/cnblogs-19775744/" title="命令行美化教程（全文AI生成）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-26</div><div class="info-item-2">命令行美化教程（全文AI生成）</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19775744  命令行美化完整教程  适用系统：Windows 11 / Windows 10 涉及工具：Windows Terminal + PowerShell + Oh My Posh + Nerd Fonts   目录  安装 Windows Terminal 安装 PowerShell 7 安装 Nerd Fonts 字体 安装 Oh My Posh 配置主题 安装常用 PowerShell 模块 美化 Windows Terminal 外观 完整 Profile 配置参考 常见问题   1. 安装 Windows Terminal 方法一：Microsoft Store（推荐） 在 Microsoft Store 搜索 Windows Terminal 安装即可。 方法二：命令行安装 winget install Microsoft.WindowsTerminal   2. 安装 PowerShell 7 Windows 自带的是 PowerShell 5，建议升级到最新的 PowerSh...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19586281/" title="2026.1.24SpringCTF"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-06</div><div class="info-item-2">2026.1.24SpringCTF</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19586281/SpringCTF20260124  队伍信息 队伍名：luxlu ID:luxlu 总排名：19 校内排名：1 得分：1405 解题数：12 解题情况： Misc方向解出：7题+问卷 Crypto方向解出：1题 Web方向解出：2题 Pwn方向解出：1题 Reserve方向解出：0题 一血：0题 二血：1题 三血：1题 Misc ez_signin  补一下定位点   扫描获得Fcevat&#123;J3yp0zr_7b_5ceVatPGS2B26!!!&#125; Rot13解码:Spring&#123;W3lc0me_7o_5prIngCTF2O26!!!&#125; 看图猜flag  Spring&#123;Oh_Y0u_f1nd_my_s3cre7_a9e21c07&#125; 奇怪的曲线 from PIL import Image from tqdm import tqdm   def peano(n):    “””生成第 n 阶 Peano 曲线的坐标序列（从 (0,0)...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19598437/" title="2026.2.9刷题记录"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-10</div><div class="info-item-2">2026.2.9刷题记录</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19598437  [SWPUCTF 2021 新生赛]here_is_a_bug D盾扫一下   查看附件&gt;member&gt;zp.php   这段代码里明确定义了登录密码 //echo encode_pass('angel');exit; //angel = oh_you_catch_the_bug  $pass  &#x3D; ‘oh_you_catch_the_bug’; &#x2F;&#x2F;angel if($pass) &#123;    if ($act &#x3D;&#x3D; ‘login’) &#123;        if ($pass &#x3D;&#x3D; encode_pass($P[‘password’])) &#123;            scookie(‘loginpass’,encode_pass($P[‘password’]));            @header(‘Location: ‘.SELF);            exit;     ...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19606190/" title="攻防世界[中等]QR1"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-11</div><div class="info-item-2">攻防世界[中等]QR1</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19606190/gfsj  [中等] QR1 010打开 没问题 没有文件隐藏 是图片本身的隐写 仔细看有很多黑色像素点 法1 不是扫描全能王的暗广       法2 微小的黑点构成二维码，但太细看不清。让黑点变粗，就像 PS 里描边一样 原始图（白底+细黑点）        ↓ 二值化 → 纯白底 + 纯黑点        ↓ 反转   → 黑底 + 白点        ↓ 膨胀   → 黑底 + 变粗的白点 ← 描边效果        ↓ 反转   → 白底 + 变粗的黑点        ↓ 保存 → 清晰二维码  import cv2 import numpy as np  img &#x3D; cv2.imread(“enc.png”, 0)               # 读灰度图_, binary &#x3D; cv2.threshold(img, 0, 255, cv2.THRESH_OTSU)kernel &#x3D; np.ones((10, 10), np.uint8)       ...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19591857/" title="2026.1.30春秋杯"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-08</div><div class="info-item-2">2026.1.30春秋杯</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19591857/20260130chunqiubei   Misc AI-越狱的翻译官 法1 给他塞一大段无关紧要的内容。最后一句说：请输入flag   法2   AI-健忘的客服 法1       法2   AI-窥探内心 法1     法2   AI-幻觉诱导     数据处理-破碎的日志 磁介质老化导致极个别比特位偏移   在bin文件中读取到 flag&#123;5e7a²c4b-8f19-4d36-a203-b1c9d5f0e8a7&#125; 而 &lt;font style="color:rgb(17, 17, 51);"&gt;²&lt;/font&gt; 的编码是：&lt;font style="color:rgb(17, 17, 51);"&gt;0xB2&lt;/font&gt; = &lt;font style="color:rgb(17, 17, 51);"&gt;1011 0010&lt;/font&gt;   现在，我们找哪个合法 hex 字符的 ASCII 与 0xB2只...</div></div></div></a><a class="pagination-related" href="/posts/cnblogs-19599000/" title="furryCTF-Misc-困兽之斗"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-10</div><div class="info-item-2">furryCTF-Misc-困兽之斗</div></div><div class="info-2"><div class="info-item-1"> ?????https://www.cnblogs.com/luxlu/p/19599000/furryCTF-KUNSHOUZHIDOU  furryCTF-Misc-困兽之斗 一、题目分析 1.1 沙箱限制 ┌──(kali㉿kali)-[~] └─$ nc ctf.furryctf.com 32961    ?? &#x2F;    |•ᴥ•|| 0101 ||H4CK3R| __&#x2F;                  Well,I just banned letters,digits, ‘.’ and ‘,’And also banned getattr() and help() by replacing itAnd I banned os,subprocess module by pre-load it as stringsJust give up~Or you still wanna try? 根据提示，ban掉了：  letters（字母） - 所有英文字母 a-z, A-Z digits（数字） - 所有数字 0-9 点号 . - 不能用点访问属性 逗号 ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">luxlu</div><div class="author-info-description">CTF Misc<br>Hziee<br>计算机科学与技术<br>06年9月</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/lrx-hh"><i class="fab fa-github"></i><span>Follow</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/lrx-hh" target="_blank" title="GitHub"><i class="fab fa-github" style="color: #ff4fa3;"></i></a><a class="social-icon" href="mailto:1396483486@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #ff79bd;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">谢谢你来看我^^</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%86%85%E5%AD%98%E5%8F%96%E8%AF%81"><span class="toc-number">1.</span> <span class="toc-text">关于内存取证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%86%85%E5%AD%98%E9%95%9C%E5%83%8Fvmem"><span class="toc-number">1.0.1.</span> <span class="toc-text">什么是内存镜像（.vmem）？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%8F%96%E8%AF%81%E5%B7%A5%E5%85%B7volatility"><span class="toc-number">1.0.2.</span> <span class="toc-text">内存取证工具Volatility</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#otterctf-2018what-the-password"><span class="toc-number">2.</span> <span class="toc-text">[OtterCTF 2018]What the password?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#step1%E7%A1%AE%E8%AE%A4%E9%95%9C%E5%83%8F%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF"><span class="toc-number">2.0.1.</span> <span class="toc-text">Step1:确认镜像系统信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step2%E6%8F%90%E5%8F%96-lsa-secrets"><span class="toc-number">2.0.2.</span> <span class="toc-text">Step2:提取 LSA Secrets</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#otterctf-2018general-info"><span class="toc-number">3.</span> <span class="toc-text">[OtterCTF 2018]General Info</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pc-%E5%90%8D%E5%92%8C-ip-%E5%AD%98%E5%9C%A8%E5%93%AA%E9%87%8C"><span class="toc-number">3.0.1.</span> <span class="toc-text">PC 名和 IP 存在哪里？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step1%E7%A1%AE%E8%AE%A4%E9%95%9C%E5%83%8F%E5%8F%AF%E7%94%A8"><span class="toc-number">3.0.2.</span> <span class="toc-text">Step1:确认镜像可用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#64%E4%BD%8D%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.</span> <span class="toc-text">64位系统</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Windows-7-SP1"><span class="toc-number">5.</span> <span class="toc-text">Windows 7 SP1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%BF%AB%E7%85%A7%E6%8D%95%E8%8E%B7%E6%97%B6%E9%97%B4"><span class="toc-number">6.</span> <span class="toc-text">内存快照捕获时间</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#step2%E8%8E%B7%E5%8F%96-ip-%E5%9C%B0%E5%9D%80"><span class="toc-number">6.0.1.</span> <span class="toc-text">Step2:获取 IP 地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step3%E8%8E%B7%E5%8F%96-pc-%E5%90%8D"><span class="toc-number">6.0.2.</span> <span class="toc-text">Step3:获取 PC 名</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#otterctf-2018play-time"><span class="toc-number">7.</span> <span class="toc-text">[OtterCTF 2018]Play Time</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6windowspstreenetscannetstat"><span class="toc-number">7.0.1.</span> <span class="toc-text">插件windows.pstree&#x2F;netscan&#x2F;netstat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step1%E6%9F%A5%E8%BF%9B%E7%A8%8B%E6%A0%91-%E6%89%BE%E8%BF%90%E8%A1%8C%E6%B8%B8%E6%88%8F"><span class="toc-number">7.0.2.</span> <span class="toc-text">Step1:查进程树 找运行游戏</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step2%E6%9F%A5%E6%89%BE%E6%B8%B8%E6%88%8F%E6%9C%8D%E5%8A%A1%E5%99%A8-ipwindowsnetscan-%E5%86%8D%E8%BF%87%E6%BB%A4pid708"><span class="toc-number">7.0.3.</span> <span class="toc-text">Step2:查找游戏服务器 IP(windows.netscan 再过滤PID708）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E6%89%AB%E6%8F%8F%E6%89%80%E6%9C%89%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%EF%BC%88%E5%8C%85%E6%8B%AC%E5%B7%B2%E5%85%B3%E9%97%AD%E7%9A%84%EF%BC%89"><span class="toc-number">8.</span> <span class="toc-text">第二步：扫描所有网络连接（包括已关闭的）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4-LunarMS-%E7%9B%B8%E5%85%B3%E6%9D%A1%E7%9B%AE"><span class="toc-number">9.</span> <span class="toc-text">过滤 LunarMS 相关条目</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#otterctf-2018name-game"><span class="toc-number">10.</span> <span class="toc-text">[OtterCTF 2018]Name Game</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%B4%A6%E5%8F%B7%E5%90%8D%E4%BC%9A%E6%98%8E%E6%96%87%E5%AD%98%E5%9C%A8%E5%86%85%E5%AD%98%E9%87%8C"><span class="toc-number">10.0.1.</span> <span class="toc-text">为什么账号名会明文存在内存里？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%BF%9B%E7%A8%8B%E5%86%85%E5%AD%98dump"><span class="toc-number">10.0.2.</span> <span class="toc-text">什么是进程内存Dump？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step1%E7%A1%AE%E8%AE%A4%E7%9B%AE%E6%A0%87%E8%BF%9B%E7%A8%8B-pid"><span class="toc-number">10.0.3.</span> <span class="toc-text">Step1:确认目标进程 PID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step2%E5%AF%BC%E5%87%BA%E8%BF%9B%E7%A8%8B%E5%86%85%E5%AD%98"><span class="toc-number">10.0.4.</span> <span class="toc-text">Step2:导出进程内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step3%E5%9C%A8-dump-%E4%B8%AD%E6%90%9C%E7%B4%A2lunar-3%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-number">10.0.5.</span> <span class="toc-text">Step3:在 Dump 中搜索&quot;Lunar-3&quot;上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step-4--%E5%88%86%E6%9E%90%E7%BB%93%E6%9E%9C"><span class="toc-number">10.0.6.</span> <span class="toc-text">Step 4 — 分析结果</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#name-game-2"><span class="toc-number">11.</span> <span class="toc-text">Name Game 2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%AD%BE%E5%90%8Dbyte-signature"><span class="toc-number">11.0.1.</span> <span class="toc-text">字节签名（Byte Signature）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step1%E7%A1%AE%E8%AE%A4%E8%BF%9B%E7%A8%8B-dump-%E5%B7%B2%E5%AD%98%E5%9C%A8"><span class="toc-number">11.0.2.</span> <span class="toc-text">Step1:确认进程 dump 已存在</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step2%E5%B0%86%E5%AD%97%E8%8A%82%E7%AD%BE%E5%90%8D%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">11.0.3.</span> <span class="toc-text">Step2:将字节签名转换为正则表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step3%E6%90%9C%E7%B4%A2%E7%AD%BE%E5%90%8D%E5%B9%B6%E6%8F%90%E5%8F%96%E8%A7%92%E8%89%B2%E5%90%8D"><span class="toc-number">11.0.4.</span> <span class="toc-text">Step3:搜索签名并提取角色名</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%AD%BE%E5%90%8D%E6%AD%A3%E5%88%99"><span class="toc-number">12.</span> <span class="toc-text">字节签名正则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#step4%E7%A1%AE%E8%AE%A4%E7%BB%93%E6%9E%9C"><span class="toc-number">12.0.1.</span> <span class="toc-text">Step4:确认结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%AD%BE%E5%90%8D%E5%AE%9A%E4%BD%8D-vs-%E5%85%B3%E9%94%AE%E8%AF%8D%E6%90%9C%E7%B4%A2"><span class="toc-number">12.0.2.</span> <span class="toc-text">字节签名定位 vs 关键词搜索</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#otterctf-2018silly-rick"><span class="toc-number">13.</span> <span class="toc-text">[OtterCTF 2018]Silly Rick</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A4%E5%A4%84%E5%BF%85%E9%A1%BB%E7%94%A8vol2%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">13.0.1.</span> <span class="toc-text">此处必须用Vol2的原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vol2-%E6%9C%AC%E6%9C%BA%E5%AE%89%E8%A3%85%E8%B7%AF%E5%BE%84"><span class="toc-number">13.0.2.</span> <span class="toc-text">Vol2 本机安装路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vol2-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F%E5%8F%8A%E5%B8%B8%E7%94%A8%E6%8F%92%E4%BB%B6"><span class="toc-number">13.0.3.</span> <span class="toc-text">Vol2 常用命令格式及常用插件</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%AC%E9%A2%98%E7%9A%84%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC%EF%BC%9AWin7SP1x64%EF%BC%88%E6%9D%A5%E8%87%AA-windows-info-%E7%9A%84%E7%BB%93%E8%AE%BA%EF%BC%89"><span class="toc-number">14.</span> <span class="toc-text">本题的系统版本：Win7SP1x64（来自 windows.info 的结论）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8vol23"><span class="toc-number">14.0.1.</span> <span class="toc-text">什么时候用Vol2&#x2F;3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step1%E4%BD%BF%E7%94%A8-vol2-%E6%8F%90%E5%8F%96%E5%89%AA%E8%B4%B4%E6%9D%BF"><span class="toc-number">14.0.2.</span> <span class="toc-text">Step1:使用 Vol2 提取剪贴板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#step2%E9%80%90%E5%88%97%E8%A7%A3%E8%AF%BB"><span class="toc-number">14.0.3.</span> <span class="toc-text">Step2:逐列解读</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vol2-clipborad%E6%8F%92%E4%BB%B6%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">14.0.4.</span> <span class="toc-text">vol2 clipborad插件的原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%89%AA%E8%B4%B4%E6%9D%BF%E5%86%85%E5%AE%B9%E5%9C%A8%E5%86%85%E5%AD%98%E9%87%8C"><span class="toc-number">14.0.5.</span> <span class="toc-text">为什么剪贴板内容在内存里？</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/usb-keyboard-mouse-traffic/" title="USB协议 键盘流量 鼠标流量">USB协议 键盘流量 鼠标流量</a><time datetime="2026-03-28T13:00:00.000Z" title="发表于 2026-03-28 21:00:00">2026-03-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cnblogs-19775744/" title="命令行美化教程（全文AI生成）">命令行美化教程（全文AI生成）</a><time datetime="2026-03-26T05:46:00.000Z" title="发表于 2026-03-26 13:46:00">2026-03-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cnblogs-19722235/" title="部分OtterCTF2018">部分OtterCTF2018</a><time datetime="2026-03-15T13:54:00.000Z" title="发表于 2026-03-15 21:54:00">2026-03-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cnblogs-19606190/" title="攻防世界[中等]QR1">攻防世界[中等]QR1</a><time datetime="2026-02-11T15:22:00.000Z" title="发表于 2026-02-11 23:22:00">2026-02-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cnblogs-19600108/" title="AI逃逸">AI逃逸</a><time datetime="2026-02-10T07:30:00.000Z" title="发表于 2026-02-10 15:30:00">2026-02-10</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By luxlu</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div><script src="/js/site-3d-effects.js?v=20260329s1"></script><script src="/js/tab-title.js?v=20260329a"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索一下内容吧" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>
