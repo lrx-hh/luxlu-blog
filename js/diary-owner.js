@@ -1,6 +1,12 @@
 (function () {
   const STORAGE_KEY = "luxlu_diary_entries_v1";
   const OWNER_HASH = "11079afd9b280f41fc114e34f27a50161f7a12e003463802c9a78aea6a57e642"; // luxlu667
+  const AUTH_POLICY = {
+    maxFails: 5,
+    lockMs: 10 * 60 * 1000,
+    sessionMs: 30 * 60 * 1000
+  };
+  const AUTH_GUARD_KEY = "luxlu_diary_auth_guard_v1";
 
   const refs = {
     ownerBtn: document.getElementById("diary-owner-toggle"),
@@ -15,8 +21,10 @@
   if (!refs.ownerBtn || !refs.list) return;
 
   let ownerMode = false;
+  let ownerLastAuthAt = 0;
   let editingId = "";
   let entries = loadEntries();
+  let authGuard = loadAuthGuard();
 
   bindEvents();
   render();
@@ -26,6 +34,7 @@
 
     refs.saveBtn.addEventListener("click", () => {
       if (!ownerMode) return;
+      if (!ensureOwnerSessionActive()) return;
       const text = (refs.input.value || "").trim();
       if (!text) {
         window.alert("内容不能为空");
@@ -47,6 +56,7 @@
         }
       }
 
+      touchOwnerSession();
       saveEntries();
       resetEditor();
       render();
@@ -62,6 +72,7 @@
       const editBtn = e.target.closest("button[data-edit]");
       if (editBtn) {
         if (!ownerMode) return;
+        if (!ensureOwnerSessionActive()) return;
         const id = editBtn.getAttribute("data-edit");
         const item = entries.find((x) => x.id === id);
         if (!item) return;
@@ -77,6 +88,7 @@
       const delBtn = e.target.closest("button[data-del]");
       if (delBtn) {
         if (!ownerMode) return;
+        if (!ensureOwnerSessionActive()) return;
         const id = delBtn.getAttribute("data-del");
         const ok = window.confirm("确认删除这条留言吗？");
         if (!ok) return;
@@ -91,21 +103,35 @@
   async function toggleOwnerMode() {
     if (ownerMode) {
       ownerMode = false;
+      ownerLastAuthAt = 0;
       resetEditor();
       render();
       return;
     }
 
-    const input = window.prompt("luxlu\u7edd\u5bc6\u53e3\u4ee4");
+    const lockRemain = getAuthLockRemainMs();
+    if (lockRemain > 0) {
+      window.alert("尝试过多，请 " + formatRemain(lockRemain) + " 后再试");
+      return;
+    }
+
+    const input = window.prompt("luxlu绝密口令");
     if (!input) return;
 
     const hash = await sha256(input.trim());
     if (hash !== OWNER_HASH) {
-      window.alert("口令错误");
+      const failInfo = registerAuthFail();
+      if (failInfo.locked) {
+        window.alert("口令错误次数过多，已锁定 " + formatRemain(failInfo.lockRemain) + "。");
+      } else {
+        window.alert("口令错误，还可尝试 " + failInfo.left + " 次。");
+      }
       return;
     }
 
+    resetAuthGuard();
     ownerMode = true;
+    ownerLastAuthAt = Date.now();
     render();
     window.alert("编辑模式已开启");
   }
@@ -116,6 +142,12 @@
   }
 
   function renderOwnerState() {
+    if (ownerMode && !isOwnerSessionValid()) {
+      ownerMode = false;
+      ownerLastAuthAt = 0;
+      resetEditor();
+    }
+
     refs.ownerBtn.textContent = ownerMode ? "退出编辑模式" : "进入编辑模式";
     refs.editor.classList.toggle("hidden", !ownerMode);
     if (!ownerMode) {
@@ -205,5 +237,87 @@
     const enc = new TextEncoder().encode(text);
     const hashBuffer = await crypto.subtle.digest("SHA-256", enc);
     return [...new Uint8Array(hashBuffer)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  function ensureOwnerSessionActive() {
+    if (!ownerMode) return false;
+    if (isOwnerSessionValid()) {
+      touchOwnerSession();
+      return true;
+    }
+    ownerMode = false;
+    ownerLastAuthAt = 0;
+    resetEditor();
+    renderOwnerState();
+    window.alert("编辑会话已过期，请重新输入口令。");
+    return false;
+  }
+
+  function isOwnerSessionValid() {
+    if (!ownerLastAuthAt) return false;
+    return Date.now() - ownerLastAuthAt <= AUTH_POLICY.sessionMs;
+  }
+
+  function touchOwnerSession() {
+    ownerLastAuthAt = Date.now();
+  }
+
+  function loadAuthGuard() {
+    try {
+      const raw = localStorage.getItem(AUTH_GUARD_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return {
+        fails: Math.max(0, Number(parsed.fails) || 0),
+        lockUntil: Math.max(0, Number(parsed.lockUntil) || 0)
+      };
+    } catch (_) {
+      return { fails: 0, lockUntil: 0 };
+    }
+  }
+
+  function saveAuthGuard() {
+    localStorage.setItem(AUTH_GUARD_KEY, JSON.stringify(authGuard));
+  }
+
+  function getAuthLockRemainMs() {
+    const now = Date.now();
+    if (authGuard.lockUntil > now) return authGuard.lockUntil - now;
+    if (authGuard.lockUntil > 0 || authGuard.fails > 0) {
+      authGuard = { fails: 0, lockUntil: 0 };
+      saveAuthGuard();
+    }
+    return 0;
+  }
+
+  function registerAuthFail() {
+    authGuard.fails = (Number(authGuard.fails) || 0) + 1;
+
+    let locked = false;
+    let lockRemain = 0;
+    if (authGuard.fails >= AUTH_POLICY.maxFails) {
+      authGuard.fails = 0;
+      authGuard.lockUntil = Date.now() + AUTH_POLICY.lockMs;
+      locked = true;
+      lockRemain = AUTH_POLICY.lockMs;
+    }
+
+    saveAuthGuard();
+    return {
+      locked: locked,
+      lockRemain: lockRemain,
+      left: Math.max(0, AUTH_POLICY.maxFails - authGuard.fails)
+    };
+  }
+
+  function resetAuthGuard() {
+    authGuard = { fails: 0, lockUntil: 0 };
+    saveAuthGuard();
+  }
+
+  function formatRemain(ms) {
+    const total = Math.max(0, Math.ceil(ms / 1000));
+    const m = Math.floor(total / 60);
+    const s = total % 60;
+    return m + "分" + String(s).padStart(2, "0") + "秒";
   }
 })();

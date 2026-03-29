@@ -6,9 +6,7 @@
   const ACCESS_HASH_POOL = {
     admin: ["faa9aa94ef30e64ca0ac64e0d378279ee39007bd6f9bdb4db923c50dde3aac64"],
     team: [
-      "9f8113302def626ec4f960f141cb8d1737d76376f7bae365cab4e4b76fb0566f",
-      "eac07a9dd545e9ad27c5ef2c5bba0f2bf15ff43b60b6ab7ce9e8b67ce9fbf56b",
-      "497922237c338050bd01d66af506fbd1c3d69191ca3971177f89f4c960bdd3f6"
+      "b59207a6e43deb03fe7693695c6f6807c71866f214e4b41e056ce94a3529e198"
     ]
   };
 
@@ -19,6 +17,13 @@
     token: "luxlu_collab_token_v1"
   };
 
+  const AUTH_POLICY = {
+    maxFails: 5,
+    lockMs: 10 * 60 * 1000
+  };
+
+  const AUTH_STATE_KEY = "luxlu_collab_auth_guard_v1";
+
   const state = {
     owner: "lrx-hh",
     repo: "luxlu-blog",
@@ -27,6 +32,8 @@
     role: "visitor",
     connected: false
   };
+
+  const authState = loadAuthState();
 
   const pixelEditor = {
     size: 32,
@@ -161,6 +168,12 @@
   }
 
   async function tryLoginRole(targetRole) {
+    const lockRemain = getLockRemainMs(targetRole);
+    if (lockRemain > 0) {
+      window.alert("尝试过多，请 " + formatRemain(lockRemain) + " 后再试");
+      return;
+    }
+
     const pass = (refs.passInput.value || "").trim();
     if (!pass) {
       window.alert("请输入口令");
@@ -169,17 +182,26 @@
 
     const hash = await sha256(pass);
     if (targetRole === "team" && ACCESS_HASH_POOL.team.includes(hash)) {
+      resetAuthRole("team");
       setRole("team");
       refs.passInput.value = "";
       return;
     }
     if (targetRole === "admin" && ACCESS_HASH_POOL.admin.includes(hash)) {
+      resetAuthRole("admin");
       setRole("admin");
       refs.passInput.value = "";
       return;
     }
 
-    window.alert("口令错误");
+    refs.passInput.value = "";
+    const remainInfo = registerAuthFail(targetRole);
+    if (remainInfo.locked) {
+      window.alert("口令错误次数过多，已锁定 " + formatRemain(remainInfo.lockRemain) + "。");
+      return;
+    }
+
+    window.alert("口令错误，还可尝试 " + remainInfo.left + " 次。");
   }
 
   async function connectRepo() {
@@ -885,5 +907,80 @@
     return Array.from(new Uint8Array(buf))
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
+  }
+
+  function loadAuthState() {
+    try {
+      const raw = localStorage.getItem(AUTH_STATE_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return {
+        team: sanitizeGuard(parsed.team),
+        admin: sanitizeGuard(parsed.admin)
+      };
+    } catch (_) {
+      return {
+        team: { fails: 0, lockUntil: 0 },
+        admin: { fails: 0, lockUntil: 0 }
+      };
+    }
+  }
+
+  function sanitizeGuard(input) {
+    const fails = Number(input && input.fails) || 0;
+    const lockUntil = Number(input && input.lockUntil) || 0;
+    return {
+      fails: Math.max(0, Math.min(999, fails)),
+      lockUntil: Math.max(0, lockUntil)
+    };
+  }
+
+  function saveAuthState() {
+    localStorage.setItem(AUTH_STATE_KEY, JSON.stringify(authState));
+  }
+
+  function getLockRemainMs(role) {
+    const item = authState[role] || { fails: 0, lockUntil: 0 };
+    const now = Date.now();
+    if (item.lockUntil > now) return item.lockUntil - now;
+    if (item.lockUntil > 0 || item.fails > 0) {
+      authState[role] = { fails: 0, lockUntil: 0 };
+      saveAuthState();
+    }
+    return 0;
+  }
+
+  function registerAuthFail(role) {
+    const item = authState[role] || { fails: 0, lockUntil: 0 };
+    item.fails = (Number(item.fails) || 0) + 1;
+    let lockRemain = 0;
+    let locked = false;
+
+    if (item.fails >= AUTH_POLICY.maxFails) {
+      item.fails = 0;
+      item.lockUntil = Date.now() + AUTH_POLICY.lockMs;
+      lockRemain = AUTH_POLICY.lockMs;
+      locked = true;
+    }
+
+    authState[role] = item;
+    saveAuthState();
+
+    return {
+      locked: locked,
+      lockRemain: lockRemain,
+      left: Math.max(0, AUTH_POLICY.maxFails - item.fails)
+    };
+  }
+
+  function resetAuthRole(role) {
+    authState[role] = { fails: 0, lockUntil: 0 };
+    saveAuthState();
+  }
+
+  function formatRemain(ms) {
+    const total = Math.max(0, Math.ceil(ms / 1000));
+    const m = Math.floor(total / 60);
+    const s = total % 60;
+    return m + "分" + String(s).padStart(2, "0") + "秒";
   }
 })();
