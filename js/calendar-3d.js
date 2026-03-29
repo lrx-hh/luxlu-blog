@@ -1,5 +1,6 @@
 (function () {
   const STORAGE_KEY = "luxlu_calendar_events_v2";
+  const CLOUD_NAMESPACE = "calendar";
   const OWNER_HASH_POOL = [
     "bec5a521c92f5edc7b6cf176d70ca44611d9889775b0b2850f3fb4ebd820d9f4"
   ];
@@ -10,6 +11,7 @@
     sessionMs: 30 * 60 * 1000
   };
   const AUTH_GUARD_KEY = "luxlu_calendar_auth_guard_v1";
+  const CLOUD_ERROR_ALERT_GAP_MS = 6000;
 
   const refs = {
     monthTitle: document.getElementById("month-title"),
@@ -41,6 +43,8 @@
 
   if (!refs.grid || !refs.dialog || !refs.form) return;
 
+  document.body.classList.add("calendar-page");
+
   const today = new Date();
   let current = new Date(today.getFullYear(), today.getMonth(), 1);
   let selectedDateKey = formatDateKey(today);
@@ -49,9 +53,11 @@
   let editEventId = null;
   let events = loadEvents();
   let authGuard = loadAuthGuard();
+  let lastCloudErrorAt = 0;
 
   bindEvents();
   render();
+  hydrateFromCloud(false);
 
   function bindEvents() {
     refs.prevBtn.addEventListener("click", () => {
@@ -87,7 +93,7 @@
       });
     }
 
-    refs.agendaList.addEventListener("click", (event) => {
+    refs.agendaList.addEventListener("click", async (event) => {
       const row = event.target.closest(".agenda-item");
       if (!row) return;
 
@@ -106,7 +112,7 @@
       if (event.target.classList.contains("agenda-check")) {
         ev.done = !!event.target.checked;
         touchOwnerSession();
-        saveEvents();
+        await persistEvents("calendar: toggle done");
         render();
         return;
       }
@@ -119,17 +125,17 @@
       refs.cancelBtn.addEventListener("click", () => closeDialog());
     }
 
-    refs.deleteBtn.addEventListener("click", () => {
+    refs.deleteBtn.addEventListener("click", async () => {
       if (!ownerMode || !editEventId) return;
       if (!ensureOwnerSessionActive()) return;
       events = events.filter((item) => item.id !== editEventId);
       touchOwnerSession();
-      saveEvents();
+      await persistEvents("calendar: delete event");
       closeDialog();
       render();
     });
 
-    refs.form.addEventListener("submit", (event) => {
+    refs.form.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (!ownerMode) return;
       if (!ensureOwnerSessionActive()) return;
@@ -142,12 +148,15 @@
         events.push(payload);
       } else {
         const idx = events.findIndex((item) => item.id === editEventId);
-        if (idx >= 0) events[idx] = payload;
+        if (idx >= 0) {
+          payload.id = editEventId;
+          events[idx] = payload;
+        }
       }
 
       events.sort(compareEvents);
       touchOwnerSession();
-      saveEvents();
+      await persistEvents("calendar: upsert event");
       closeDialog();
 
       selectedDateKey = payload.startDate;
@@ -198,9 +207,15 @@
       return;
     }
 
+    const cloudOk = await ensureCloudWriteReady();
+    if (!cloudOk) {
+      return;
+    }
+
     resetAuthGuard();
     ownerMode = true;
     ownerLastAuthAt = Date.now();
+    await hydrateFromCloud(true);
     renderOwnerState();
     window.alert("主人模式已开启");
   }
@@ -487,13 +502,95 @@
       }
 
       return seedEvents();
-    } catch (err) {
+    } catch (_) {
       return seedEvents();
     }
   }
 
-  function saveEvents() {
+  function saveEventsLocal() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+  }
+
+  async function persistEvents(message) {
+    saveEventsLocal();
+    await saveEventsToCloud(message);
+  }
+
+  async function hydrateFromCloud(forceOverride) {
+    const store = getCloudStore();
+    if (!store) return;
+
+    try {
+      const remote = await store.fetchJson(CLOUD_NAMESPACE);
+      if (!Array.isArray(remote)) return;
+
+      const normalized = remote.map(normalizeEvent).filter(Boolean).sort(compareEvents);
+      if (!forceOverride && normalized.length === 0 && events.length > 0) {
+        await tryBootstrapCloud();
+        return;
+      }
+
+      events = normalized;
+      saveEventsLocal();
+      render();
+    } catch (err) {
+      console.warn("[calendar] cloud read failed", err);
+    }
+  }
+
+  async function saveEventsToCloud(message) {
+    const store = getCloudStore();
+    if (!store) return;
+
+    try {
+      await store.saveJson(CLOUD_NAMESPACE, events, message || "calendar update");
+    } catch (err) {
+      console.warn("[calendar] cloud write failed", err);
+      const now = Date.now();
+      if (now - lastCloudErrorAt > CLOUD_ERROR_ALERT_GAP_MS) {
+        lastCloudErrorAt = now;
+        window.alert("已保存到当前设备，但云端同步失败：" + getErrMessage(err));
+      }
+    }
+  }
+
+  async function ensureCloudWriteReady() {
+    const store = getCloudStore();
+    if (!store || typeof store.ensureToken !== "function") return true;
+
+    const ok = await store.ensureToken();
+    if (!ok) {
+      window.alert("需要先输入 GitHub Token，才能在所有设备同步日历。\n你可以在协作页先连接仓库，再回来编辑。");
+      return false;
+    }
+
+    return true;
+  }
+
+  async function tryBootstrapCloud() {
+    const store = getCloudStore();
+    if (!store || !events.length) return;
+    if (typeof store.hasToken !== "function" || !store.hasToken()) return;
+
+    try {
+      await store.saveJson(CLOUD_NAMESPACE, events, "bootstrap calendar data");
+    } catch (err) {
+      console.warn("[calendar] cloud bootstrap failed", err);
+    }
+  }
+
+  function getCloudStore() {
+    const store = window.luxluCloudStore;
+    if (!store) return null;
+    if (typeof store.fetchJson !== "function") return null;
+    if (typeof store.saveJson !== "function") return null;
+    return store;
+  }
+
+  function getErrMessage(err) {
+    if (!err) return "unknown error";
+    if (typeof err === "string") return err;
+    return err.message || "unknown error";
   }
 
   function seedEvents() {

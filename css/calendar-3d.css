@@ -1,13 +1,16 @@
-.layout:has(.calendar-shell) {
+.layout:has(.calendar-shell),
+body.calendar-page .layout {
   max-width: min(99vw, 1900px) !important;
   width: 99vw !important;
 }
 
-.layout:has(.calendar-shell) #page {
+.layout:has(.calendar-shell) #page,
+body.calendar-page #page {
   width: 100% !important;
 }
 
-.layout:has(.calendar-shell) #page .container {
+.layout:has(.calendar-shell) #page .container,
+body.calendar-page #page .container {
   max-width: none !important;
 }
 
@@ -418,7 +421,8 @@ dialog#edit-dialog {
 }
 
 @media (max-width: 1080px) {
-  .layout:has(.calendar-shell) {
+  .layout:has(.calendar-shell),
+  body.calendar-page .layout {
     max-width: 98vw !important;
     width: 98vw !important;
   }
