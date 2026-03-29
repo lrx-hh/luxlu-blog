@@ -6,7 +6,7 @@ top_img: /img/black-pink-cover.svg
 description: 队友协作写作与文件上传工作台
 ---
 
-<link rel="stylesheet" href="/css/collab-workbench.css">
+<link rel="stylesheet" href="/css/collab-workbench.css?v=20260329c1">
 
 <section class="collab-shell">
   <div class="collab-glow glow-a"></div>
@@ -141,4 +141,4 @@ description: 队友协作写作与文件上传工作台
   </section>
 </section>
 
-<script src="/js/collab-workbench.js"></script>
+<script src="/js/collab-workbench.js?v=20260329c1"></script>

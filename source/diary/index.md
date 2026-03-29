@@ -31,4 +31,4 @@ description: 访客只读，luxlu可在线编辑的日志页
   <ul class="diary-list" id="diary-list"></ul>
 </section>
 
-<script src="/js/diary-owner.js?v=20260329b"></script>
+<script src="/js/diary-owner.js?v=20260329c"></script>

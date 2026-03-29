@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const MODE_KEY = "luxlu_fx_mode";
   const MODES = ["lite", "balanced", "full"];
   const isCoarse = window.matchMedia("(pointer: coarse)").matches;
@@ -56,6 +56,7 @@
     setFxMode(fxMode, false);
     exposeFxHelpers();
     cleanupDeprecatedEffects();
+    cleanupLegacyHeroOnMobile();
     stabilizeContentFrames();
     cleanupByMode(fxMode);
     initScrollProgress3D();
@@ -112,6 +113,14 @@
       const el = document.getElementById(id);
       if (el) el.remove();
     });
+  }
+
+  function cleanupLegacyHeroOnMobile() {
+    const hero = document.getElementById("luxlu-signature-hero");
+    if (!hero) return;
+    if (window.matchMedia("(max-width: 900px), (pointer: coarse)").matches) {
+      hero.remove();
+    }
   }
 
   function cleanupByMode(mode) {
