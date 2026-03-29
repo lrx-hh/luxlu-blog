@@ -42,4 +42,4 @@ comments: false
 <p id="luxlu-whisper-status" class="about-status"></p>
 </section>
 
-<script src="/js/about-page.js?v=20260329b"></script>
+<script src="/js/about-page.js?v=20260329c"></script>
