@@ -11,6 +11,28 @@
     "done": true
   },
   {
+    "id": "ev_mnblteeh_pw9eg5",
+    "title": "PolarCTF",
+    "color": "#ff4fa3",
+    "startDate": "2026-03-21",
+    "startTime": "",
+    "endDate": "2026-03-21",
+    "endTime": "",
+    "desc": "好可惜 电脑坏了 我没打",
+    "done": true
+  },
+  {
+    "id": "ev_mnblugle_o3u13s",
+    "title": "CISCN半决赛",
+    "color": "#ff4fa3",
+    "startDate": "2026-03-22",
+    "startTime": "",
+    "endDate": "2026-03-22",
+    "endTime": "",
+    "desc": "Zeta拿了国一等奖^^",
+    "done": false
+  },
+  {
     "id": "ev_mnanb3iz_a6wehy",
     "title": "星盟招新赛",
     "color": "#ff4dbe",
