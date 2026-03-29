@@ -86,6 +86,8 @@
     pixelSaveBtn: document.getElementById("pixel-save-btn"),
     pixelCanvas: document.getElementById("pixel-canvas"),
     pixelResult: document.getElementById("pixel-result"),
+    pixelGalleryRefreshBtn: document.getElementById("pixel-gallery-refresh"),
+    pixelGalleryList: document.getElementById("pixel-gallery-list"),
 
     logBox: document.getElementById("collab-log"),
     editorOnly: document.querySelectorAll(".editor-only"),
@@ -102,6 +104,7 @@
     bindEvents();
     initPixelEditor();
     refreshProjects();
+    refreshPixelGallery();
     log("ready");
   }
 
@@ -126,6 +129,7 @@
     if (refs.pixelClearBtn) refs.pixelClearBtn.addEventListener("click", clearPixelCanvas);
     if (refs.pixelDownloadBtn) refs.pixelDownloadBtn.addEventListener("click", downloadPixelCanvas);
     if (refs.pixelSaveBtn) refs.pixelSaveBtn.addEventListener("click", savePixelCanvasToRepo);
+    if (refs.pixelGalleryRefreshBtn) refs.pixelGalleryRefreshBtn.addEventListener("click", refreshPixelGallery);
 
     if (refs.pixelCanvas) {
       refs.pixelCanvas.addEventListener("pointerdown", onPixelPointerDown);
@@ -265,6 +269,7 @@
         (fallbackToReadonly ? "（只读）" : "");
       log("repo connected");
       await refreshProjects();
+      await refreshPixelGallery();
 
       if (fallbackToReadonly) {
         window.alert("Token 无效或被拦截，已切换只读连接。要上传和保存请填正确 PAT。");
@@ -316,6 +321,58 @@
     } catch (err) {
       refs.projectList.innerHTML = "<li>读取失败: " + escapeHtml(err.message) + "</li>";
       log("list failed: " + err.message);
+    }
+  }
+
+  async function refreshPixelGallery() {
+    if (!refs.pixelGalleryList) return;
+
+    refs.pixelGalleryList.innerHTML = '<div class="pixel-gallery-empty">loading...</div>';
+    try {
+      const items = await listDirectory(PIXEL_UPLOAD_DIR);
+      const files = items.filter((item) => item.type === "file" && isPixelImageName(item.name));
+
+      if (!files.length) {
+        refs.pixelGalleryList.innerHTML = '<div class="pixel-gallery-empty">还没有像素画，等管理员上传第一张。</div>';
+        return;
+      }
+
+      files.sort((a, b) => b.name.localeCompare(a.name));
+      refs.pixelGalleryList.innerHTML = files
+        .map((item) => {
+          const rawUrl = item.download_url || toGitHubRawUrl(item.path);
+          const blobUrl = toGithubBlobUrl(item.path);
+          const name = item.name || "";
+          const timeText = formatPixelTimestamp(name);
+
+          return (
+            '<article class="pixel-gallery-item">' +
+            '<a href="' +
+            blobUrl +
+            '" target="_blank" rel="noopener">' +
+            '<img src="' +
+            rawUrl +
+            '" alt="' +
+            escapeHtml(name) +
+            '" loading="lazy">' +
+            "</a>" +
+            '<div class="pixel-gallery-meta">' +
+            '<span class="name">' +
+            escapeHtml(name) +
+            "</span>" +
+            '<span class="time">' +
+            escapeHtml(timeText || "未标注时间") +
+            "</span>" +
+            "</div>" +
+            "</article>"
+          );
+        })
+        .join("");
+
+      log("pixel gallery refreshed");
+    } catch (err) {
+      refs.pixelGalleryList.innerHTML = '<div class="pixel-gallery-empty">读取失败: ' + escapeHtml(err.message) + "</div>";
+      log("pixel gallery failed: " + err.message);
     }
   }
 
@@ -602,6 +659,7 @@
       const publicPath = "/" + path.replace(/^source\//, "");
       setPixelResult("Saved: " + publicPath);
       log("pixel art saved: " + path);
+      await refreshPixelGallery();
       window.alert("像素画已保存: " + publicPath);
     } catch (err) {
       setPixelResult("Save failed: " + err.message);
@@ -756,6 +814,36 @@
         .map((seg) => encodeURIComponent(seg))
         .join("/")
     );
+  }
+
+  function toGitHubRawUrl(path) {
+    return (
+      "https://raw.githubusercontent.com/" +
+      encodeURIComponent(state.owner) +
+      "/" +
+      encodeURIComponent(state.repo) +
+      "/" +
+      encodeURIComponent(state.branch) +
+      "/" +
+      path
+        .split("/")
+        .map((seg) => encodeURIComponent(seg))
+        .join("/")
+    );
+  }
+
+  function isPixelImageName(name) {
+    return /\.(png|jpe?g|gif|webp|bmp|svg)$/i.test(String(name || ""));
+  }
+
+  function formatPixelTimestamp(name) {
+    const m = String(name || "").match(/^(\d{13})-/);
+    if (!m) return "";
+    const ts = Number(m[1]);
+    if (!Number.isFinite(ts)) return "";
+    const d = new Date(ts);
+    if (Number.isNaN(d.getTime())) return "";
+    return formatDate(d);
   }
 
   function apiHeaders(withJson) {

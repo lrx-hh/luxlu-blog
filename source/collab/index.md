@@ -6,7 +6,7 @@ top_img: /img/black-pink-cover.svg
 description: 队友协作写作与文件上传工作台
 ---
 
-<link rel="stylesheet" href="/css/collab-workbench.css?v=20260329c2">
+<link rel="stylesheet" href="/css/collab-workbench.css?v=20260329c3">
 
 <section class="collab-shell">
 <div class="collab-glow glow-a"></div>
@@ -61,8 +61,17 @@ description: 队友协作写作与文件上传工作台
 <ul id="project-list" class="project-list"></ul>
 </article>
 
+<article class="collab-card collab-span-full">
+<h2>4) 像素画廊（访客可看）</h2>
+<div class="btn-row">
+<button id="pixel-gallery-refresh" class="collab-btn" type="button">刷新画廊</button>
+</div>
+<p class="small-note">这里会展示管理员保存到仓库的所有像素画（source/uploads/team/pixel-art/）。</p>
+<div id="pixel-gallery-list" class="pixel-gallery-list"></div>
+</article>
+
 <article class="collab-card editor-only hidden">
-<h2>4) 队友新增文章</h2>
+<h2>5) 队友新增文章</h2>
 <form id="new-post-form" class="stack">
 <label>标题 <input id="post-title" maxlength="80" placeholder="例如：MISC 训练周报 #1"></label>
 <label>标签（逗号分隔） <input id="post-tags" maxlength="120" placeholder="Misc,Team,Writeup"></label>
@@ -72,7 +81,7 @@ description: 队友协作写作与文件上传工作台
 </article>
 
 <article class="collab-card editor-only hidden">
-<h2>5) 队友上传文件</h2>
+<h2>6) 队友上传文件</h2>
 <form id="upload-form" class="stack">
 <label>目标子目录（自动放在 source/uploads/team/ 下）
 <input id="upload-subdir" value="shared" maxlength="40">
@@ -86,7 +95,7 @@ description: 队友协作写作与文件上传工作台
 </article>
 
 <article class="collab-card admin-only hidden">
-<h2>6) 管理员编辑任意文件</h2>
+<h2>7) 管理员编辑任意文件</h2>
 <div class="stack">
 <label>文件路径
 <input id="admin-path" placeholder="例如：source/_posts/team/2026-03-28-demo.md">
@@ -102,7 +111,7 @@ description: 队友协作写作与文件上传工作台
 </article>
 
 <article class="collab-card admin-only hidden">
-<h2>7) 管理员像素画板（Piskel 风格）</h2>
+<h2>8) 管理员像素画板（Piskel 风格）</h2>
 <div class="stack pixel-editor-shell">
 <div class="row-grid pixel-controls">
 <label>网格尺寸
@@ -135,10 +144,10 @@ description: 队友协作写作与文件上传工作台
 </article>
 
 <article class="collab-card">
-<h2>8) 操作日志</h2>
+<h2>9) 操作日志</h2>
 <pre id="collab-log" class="log-box">[ready] wait for action</pre>
 </article>
 </section>
 </section>
 
-<script src="/js/collab-workbench.js?v=20260329c2"></script>
+<script src="/js/collab-workbench.js?v=20260329c3"></script>
