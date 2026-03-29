@@ -1,6 +1,6 @@
 (function () {
   const PUBLIC_KEY = "luxlu_public_guestbook_v1";
-  const EMAIL = "1396343486@qq.com";
+  const EMAIL = "1396483486@qq.com";
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, (ch) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
@@ -148,7 +148,7 @@
         if (!whisperStatus) return;
         const text = String((err && err.message) || "");
         if (text === "activation") {
-          whisperStatus.textContent = "邮箱通知未激活，请先去 1396343486@qq.com 点开 FormSubmit 的 Activate Form 邮件。";
+          whisperStatus.textContent = "邮箱通知未激活，请先去 1396483486@qq.com 点开 FormSubmit 的 Activate Form 邮件。";
         } else if (text && text !== "bad") {
           whisperStatus.textContent = "发送失败：" + text;
         } else {
