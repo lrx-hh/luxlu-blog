@@ -1792,6 +1792,79 @@ div#archive.tilt-3d {
   color: #f3c4dd;
 }
 
+#fx-blender-dock .blender-fallback-core {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+}
+
+#fx-blender-dock .blender-fallback-core .bf-orbit {
+  position: absolute;
+  width: 58%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 180, 226, 0.32);
+  box-shadow: 0 0 12px rgba(255, 131, 204, 0.2);
+}
+
+#fx-blender-dock .blender-fallback-core .bf-orbit.o1 {
+  transform: rotateX(74deg);
+  animation: bfSpinA 9s linear infinite;
+}
+
+#fx-blender-dock .blender-fallback-core .bf-orbit.o2 {
+  transform: rotateY(74deg);
+  animation: bfSpinB 11s linear infinite reverse;
+}
+
+#fx-blender-dock .blender-fallback-core .bf-orbit.o3 {
+  transform: rotateZ(18deg) rotateX(74deg);
+  animation: bfSpinC 13s linear infinite;
+}
+
+#fx-blender-dock .blender-fallback-core .bf-gem {
+  width: 70px;
+  height: 70px;
+  clip-path: polygon(50% 0%, 100% 40%, 82% 100%, 18% 100%, 0% 40%);
+  border: 1px solid rgba(255, 193, 230, 0.34);
+  background: linear-gradient(145deg, rgba(255, 146, 214, 0.28), rgba(162, 188, 255, 0.2));
+  box-shadow:
+    inset 0 0 14px rgba(255, 190, 228, 0.28),
+    0 0 18px rgba(255, 115, 196, 0.22);
+  transform-style: preserve-3d;
+  animation: bfGemFloat 4.8s ease-in-out infinite;
+}
+
+@keyframes bfSpinA {
+  to {
+    transform: rotateX(74deg) rotateY(360deg);
+  }
+}
+
+@keyframes bfSpinB {
+  to {
+    transform: rotateY(74deg) rotateX(360deg);
+  }
+}
+
+@keyframes bfSpinC {
+  to {
+    transform: rotateZ(378deg) rotateX(74deg);
+  }
+}
+
+@keyframes bfGemFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotateY(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotateY(180deg);
+  }
+}
+
 #fx-blender-dock.loading .blender-stage-wrap::after {
   content: "";
   position: absolute;
