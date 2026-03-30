@@ -245,12 +245,14 @@
     if (!canvas) throw new Error("canvas missing");
 
     const THREE = await importModuleWithFallback([
+      "/lib/three/three.module.js",
       "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
       "https://unpkg.com/three@0.160.0/build/three.module.js"
     ]);
     const loaderMod = await importModuleWithFallback([
-      "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js",
-      "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js"
+      "/lib/three/GLTFLoader.js",
+      "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js?module",
+      "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js?module"
     ]);
     const GLTFLoader = loaderMod.GLTFLoader;
     if (window.__luxluBlenderFx !== state || state.disposed) return;
