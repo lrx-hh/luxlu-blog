@@ -332,7 +332,7 @@
       if (statusNode) statusNode.textContent = "Blender 模型已加载";
     } catch (err) {
       dock.classList.add("fallback");
-      if (statusNode) statusNode.textContent = "麻衣剪影 · 花瓣雨 · 节拍联动场景";
+      if (statusNode) statusNode.textContent = "";
       console.warn("[blender-fx] fallback model", err);
     }
 
@@ -484,14 +484,13 @@
 
   function createFallbackBlenderObject(THREE) {
     const wrap = new THREE.Group();
-    wrap.position.y = -0.06;
+    wrap.position.y = -0.08;
 
     const beatDriver = createBeatDriver();
-    const silhouetteTexture = createMaiSilhouetteTexture(THREE);
     const petalTexture = createPetalTexture(THREE);
 
     const stageGlow = new THREE.Mesh(
-      new THREE.CircleGeometry(1.95, 96),
+      new THREE.CircleGeometry(2.02, 100),
       new THREE.MeshBasicMaterial({
         color: 0xff77c7,
         transparent: true,
@@ -499,15 +498,15 @@
       })
     );
     stageGlow.rotation.x = -Math.PI * 0.5;
-    stageGlow.position.y = -1.18;
+    stageGlow.position.y = -1.2;
     wrap.add(stageGlow);
 
     const pulseRing = new THREE.Mesh(
-      new THREE.TorusGeometry(1.24, 0.03, 20, 160),
+      new THREE.TorusGeometry(1.28, 0.032, 22, 160),
       new THREE.MeshBasicMaterial({
         color: 0xffa0d8,
         transparent: true,
-        opacity: 0.46
+        opacity: 0.48
       })
     );
     pulseRing.rotation.x = Math.PI * 0.5;
@@ -515,11 +514,11 @@
     wrap.add(pulseRing);
 
     const pulseRing2 = new THREE.Mesh(
-      new THREE.TorusGeometry(0.92, 0.022, 18, 140),
+      new THREE.TorusGeometry(0.94, 0.024, 20, 140),
       new THREE.MeshBasicMaterial({
         color: 0xaab9ff,
         transparent: true,
-        opacity: 0.35
+        opacity: 0.36
       })
     );
     pulseRing2.rotation.x = Math.PI * 0.5;
@@ -527,49 +526,61 @@
     pulseRing2.position.y = -1.01;
     wrap.add(pulseRing2);
 
-    const silhouetteGroup = new THREE.Group();
-    wrap.add(silhouetteGroup);
+    const heartGroup = new THREE.Group();
+    heartGroup.position.set(0, 0.28, 0);
+    wrap.add(heartGroup);
 
-    const silhouetteCore = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.02, 3.42),
-      new THREE.MeshBasicMaterial({
-        map: silhouetteTexture,
-        color: 0x100817,
-        transparent: true,
-        opacity: 0.98,
-        side: THREE.DoubleSide,
-        alphaTest: 0.06
+    const heartShape = makeHeartShape(THREE);
+    const heartGeo = new THREE.ExtrudeGeometry(heartShape, {
+      depth: 0.46,
+      bevelEnabled: true,
+      bevelSegments: 6,
+      steps: 2,
+      bevelSize: 0.07,
+      bevelThickness: 0.08,
+      curveSegments: 42
+    });
+    heartGeo.center();
+
+    const heartCore = new THREE.Mesh(
+      heartGeo,
+      new THREE.MeshPhysicalMaterial({
+        color: 0xff88cc,
+        emissive: 0x2f061d,
+        roughness: 0.1,
+        metalness: 0.24,
+        transmission: 0.55,
+        thickness: 1.35,
+        clearcoat: 1,
+        clearcoatRoughness: 0.08
       })
     );
-    silhouetteCore.position.set(0, 0.26, 0);
-    silhouetteGroup.add(silhouetteCore);
+    heartCore.scale.set(0.9, 0.9, 0.86);
+    heartCore.rotation.x = 0.2;
+    heartGroup.add(heartCore);
 
-    const silhouetteRim = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.08, 3.52),
-      new THREE.MeshBasicMaterial({
-        map: silhouetteTexture,
-        color: 0xff9cd8,
+    const heartOutline = new THREE.LineSegments(
+      new THREE.EdgesGeometry(heartGeo, 26),
+      new THREE.LineBasicMaterial({
+        color: 0xffd9ef,
         transparent: true,
-        opacity: 0.3,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        alphaTest: 0.02
+        opacity: 0.42
       })
     );
-    silhouetteRim.position.set(0, 0.26, -0.04);
-    silhouetteGroup.add(silhouetteRim);
+    heartOutline.scale.set(0.95, 0.95, 0.92);
+    heartOutline.rotation.x = 0.2;
+    heartGroup.add(heartOutline);
 
-    const backAura = new THREE.Mesh(
-      new THREE.SphereGeometry(1.25, 26, 26),
+    const heartAura = new THREE.Mesh(
+      new THREE.SphereGeometry(1.05, 24, 24),
       new THREE.MeshBasicMaterial({
-        color: 0xff86cc,
+        color: 0xff88cf,
         transparent: true,
         opacity: 0.09
       })
     );
-    backAura.position.set(0, 0.28, -0.38);
-    silhouetteGroup.add(backAura);
+    heartAura.position.z = -0.22;
+    heartGroup.add(heartAura);
 
     const crystalGroup = new THREE.Group();
     wrap.add(crystalGroup);
@@ -648,16 +659,17 @@
       beatSmooth += (beat - beatSmooth) * 0.2;
 
       const pulse = 1 + beatSmooth * 0.2;
-      silhouetteGroup.position.y = Math.sin(t * 1.15) * 0.06 + beatSmooth * 0.06;
-      silhouetteGroup.rotation.y = smoothX * 0.6;
-      silhouetteGroup.rotation.x = -smoothY * 0.18;
+      heartGroup.position.y = 0.26 + Math.sin(t * 1.25) * 0.06 + beatSmooth * 0.06;
+      heartGroup.rotation.y = smoothX * 0.58;
+      heartGroup.rotation.x = -smoothY * 0.16;
 
-      silhouetteRim.material.opacity = 0.2 + beatSmooth * 0.5;
-      silhouetteRim.scale.setScalar(1 + beatSmooth * 0.09);
-      silhouetteCore.scale.setScalar(0.99 + Math.sin(t * 2.1) * 0.01 + beatSmooth * 0.03);
+      heartCore.rotation.y = t * 0.62;
+      heartOutline.rotation.y = -t * 0.4;
+      heartCore.scale.setScalar(0.9 + beatSmooth * 0.1);
+      heartOutline.scale.setScalar(0.95 + beatSmooth * 0.12);
 
-      backAura.material.opacity = 0.06 + beatSmooth * 0.12;
-      backAura.scale.setScalar(1 + beatSmooth * 0.18);
+      heartAura.material.opacity = 0.06 + beatSmooth * 0.16;
+      heartAura.scale.setScalar(1 + beatSmooth * 0.22);
 
       pulseRing.scale.setScalar(pulse);
       pulseRing.material.opacity = 0.2 + beatSmooth * 0.58;
@@ -704,9 +716,6 @@
 
     wrap.userData.dispose = function () {
       beatDriver.dispose();
-      if (silhouetteTexture && typeof silhouetteTexture.dispose === "function") {
-        silhouetteTexture.dispose();
-      }
       if (petalTexture && typeof petalTexture.dispose === "function") {
         petalTexture.dispose();
       }
@@ -729,118 +738,16 @@
       petal.position.y = initial ? -1.25 + Math.random() * 3.55 : 1.95 + Math.random() * 0.85;
       petal.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
     }
-  }
 
-  function createMaiSilhouetteTexture(THREE) {
-    const canvas = document.createElement("canvas");
-    canvas.width = 512;
-    canvas.height = 1024;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return null;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ffffff";
-
-    // bunny ears
-    ctx.beginPath();
-    ctx.moveTo(188, 212);
-    ctx.quadraticCurveTo(168, 90, 206, 48);
-    ctx.quadraticCurveTo(238, 94, 230, 214);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(328, 212);
-    ctx.quadraticCurveTo(344, 84, 306, 44);
-    ctx.quadraticCurveTo(272, 96, 286, 214);
-    ctx.closePath();
-    ctx.fill();
-
-    // head + hair
-    ctx.beginPath();
-    ctx.arc(256, 286, 88, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(156, 280);
-    ctx.quadraticCurveTo(100, 360, 112, 498);
-    ctx.quadraticCurveTo(122, 606, 168, 700);
-    ctx.quadraticCurveTo(198, 756, 230, 802);
-    ctx.lineTo(286, 802);
-    ctx.quadraticCurveTo(320, 758, 350, 700);
-    ctx.quadraticCurveTo(392, 612, 402, 502);
-    ctx.quadraticCurveTo(414, 358, 354, 282);
-    ctx.quadraticCurveTo(314, 246, 256, 252);
-    ctx.quadraticCurveTo(198, 246, 156, 280);
-    ctx.closePath();
-    ctx.fill();
-
-    // torso + skirt
-    ctx.beginPath();
-    ctx.moveTo(218, 410);
-    ctx.quadraticCurveTo(196, 456, 176, 544);
-    ctx.quadraticCurveTo(162, 606, 168, 658);
-    ctx.quadraticCurveTo(194, 726, 252, 742);
-    ctx.quadraticCurveTo(318, 742, 346, 678);
-    ctx.quadraticCurveTo(354, 618, 336, 548);
-    ctx.quadraticCurveTo(318, 458, 294, 410);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(170, 632);
-    ctx.quadraticCurveTo(124, 680, 140, 746);
-    ctx.quadraticCurveTo(188, 800, 256, 804);
-    ctx.quadraticCurveTo(324, 800, 372, 744);
-    ctx.quadraticCurveTo(388, 674, 342, 632);
-    ctx.quadraticCurveTo(296, 610, 256, 610);
-    ctx.quadraticCurveTo(214, 610, 170, 632);
-    ctx.closePath();
-    ctx.fill();
-
-    // arms
-    ctx.beginPath();
-    ctx.moveTo(176, 470);
-    ctx.quadraticCurveTo(124, 526, 118, 598);
-    ctx.quadraticCurveTo(132, 614, 154, 602);
-    ctx.quadraticCurveTo(174, 546, 206, 486);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(336, 470);
-    ctx.quadraticCurveTo(386, 526, 394, 600);
-    ctx.quadraticCurveTo(378, 616, 356, 602);
-    ctx.quadraticCurveTo(338, 550, 306, 488);
-    ctx.closePath();
-    ctx.fill();
-
-    // legs + shoes
-    ctx.beginPath();
-    ctx.moveTo(228, 794);
-    ctx.lineTo(250, 794);
-    ctx.lineTo(254, 958);
-    ctx.lineTo(228, 958);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(274, 794);
-    ctx.lineTo(300, 794);
-    ctx.lineTo(302, 958);
-    ctx.lineTo(276, 958);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.ellipse(242, 968, 40, 18, 0, 0, Math.PI * 2);
-    ctx.ellipse(290, 968, 40, 18, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    const texture = new THREE.CanvasTexture(canvas);
-    if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
-    texture.needsUpdate = true;
-    return texture;
+    function makeHeartShape(THREERef) {
+      const shape = new THREERef.Shape();
+      shape.moveTo(0, 0.2);
+      shape.bezierCurveTo(0, -0.45, -0.9, -0.45, -0.9, 0.25);
+      shape.bezierCurveTo(-0.9, 0.92, -0.22, 1.28, 0, 1.55);
+      shape.bezierCurveTo(0.22, 1.28, 0.9, 0.92, 0.9, 0.25);
+      shape.bezierCurveTo(0.9, -0.45, 0, -0.45, 0, 0.2);
+      return shape;
+    }
   }
 
   function createPetalTexture(THREE) {

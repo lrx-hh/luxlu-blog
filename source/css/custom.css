@@ -1828,6 +1828,10 @@ div#archive.tilt-3d {
   opacity: 0.88;
 }
 
+#fx-blender-dock .blender-status:empty {
+  display: none;
+}
+
 #fx-blender-dock.ready .blender-status {
   color: #ffd9ee;
 }
