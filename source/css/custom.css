@@ -1703,3 +1703,127 @@ div#archive.tilt-3d {
     display: none !important;
   }
 }
+
+/* Blender-style 3D dock (home only) */
+#fx-blender-dock {
+  position: fixed;
+  right: clamp(10px, 2.2vw, 30px);
+  bottom: max(84px, 9vh);
+  width: min(340px, 28vw);
+  min-width: 250px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 157, 218, 0.24);
+  background: linear-gradient(160deg, rgba(20, 12, 30, 0.86), rgba(9, 6, 16, 0.78));
+  box-shadow:
+    0 16px 30px rgba(5, 3, 12, 0.5),
+    inset 0 0 0 1px rgba(255, 190, 229, 0.06);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  z-index: 8;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+#fx-blender-dock .blender-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px 8px;
+  color: #ffdff2;
+  border-bottom: 1px solid rgba(255, 163, 220, 0.15);
+}
+
+#fx-blender-dock .blender-head strong {
+  font-size: 0.9rem;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+}
+
+#fx-blender-dock .blender-head small {
+  font-size: 0.72rem;
+  color: #ffc7e6;
+  opacity: 0.8;
+  letter-spacing: 0.06em;
+}
+
+#fx-blender-dock .blender-stage-wrap {
+  position: relative;
+  margin: 10px 12px 8px;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 157, 218, 0.22);
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 156, 216, 0.14), transparent 34%),
+    radial-gradient(circle at 80% 90%, rgba(154, 184, 255, 0.13), transparent 30%),
+    linear-gradient(160deg, rgba(20, 10, 28, 0.9), rgba(10, 8, 16, 0.94));
+  overflow: hidden;
+}
+
+#fx-blender-dock #fx-blender-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#fx-blender-dock .blender-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 80%, rgba(255, 126, 201, 0.2), transparent 45%),
+    radial-gradient(circle at 48% 50%, rgba(255, 186, 229, 0.08), transparent 58%);
+}
+
+#fx-blender-dock .blender-status {
+  margin: 0;
+  padding: 0 14px 12px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #ffc6e6;
+  opacity: 0.88;
+}
+
+#fx-blender-dock.ready .blender-status {
+  color: #ffd9ee;
+}
+
+#fx-blender-dock.fallback .blender-status {
+  color: #f3c4dd;
+}
+
+#fx-blender-dock.loading .blender-stage-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(255, 180, 226, 0) 22%,
+    rgba(255, 180, 226, 0.16) 48%,
+    rgba(255, 180, 226, 0) 74%
+  );
+  animation: blenderScan 1.4s linear infinite;
+}
+
+@keyframes blenderScan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 1220px) {
+  #fx-blender-dock {
+    width: min(300px, 30vw);
+    min-width: 228px;
+    bottom: 76px;
+  }
+}
+
+@media (max-width: 1024px), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  #fx-blender-dock {
+    display: none !important;
+  }
+}

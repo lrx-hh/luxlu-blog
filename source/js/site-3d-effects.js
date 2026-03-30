@@ -64,6 +64,7 @@
     initZipperIntro();
     initReveal3D();
     initHeadingDepth();
+    initBlenderDock(fxMode);
 
     if (fxMode === "lite") return;
 
@@ -131,6 +132,7 @@
     if (mode === "lite") {
       removeFxElements(["fx-particles", "fx-depth-grid", "fx-cube-field", "fx-showcase", "fx-star-field"]);
       removeCursorLayers();
+      destroyBlenderDock();
       if (particleRafId) cancelAnimationFrame(particleRafId);
       particleRafId = null;
     }
@@ -157,6 +159,354 @@
 
   function removeCursorLayers() {
     document.querySelectorAll(".fx-cursor, .fx-cursor-dot").forEach((el) => el.remove());
+  }
+
+  function isHomePage() {
+    const pageType = window.GLOBAL_CONFIG_SITE && window.GLOBAL_CONFIG_SITE.pageType;
+    const path = (window.location.pathname || "/").replace(/\/+$/, "") || "/";
+    return pageType === "home" || path === "/" || path === "/index.html";
+  }
+
+  function ensureBlenderDockHost() {
+    let dock = document.getElementById("fx-blender-dock");
+    if (dock) return dock;
+
+    dock = document.createElement("section");
+    dock.id = "fx-blender-dock";
+    dock.setAttribute("aria-label", "Blender 3D showcase");
+    dock.innerHTML =
+      "<header class=\"blender-head\">" +
+      "<strong>BLENDER 3D</strong>" +
+      "<small>luxlu showcase</small>" +
+      "</header>" +
+      "<div class=\"blender-stage-wrap\">" +
+      "<canvas id=\"fx-blender-canvas\"></canvas>" +
+      "<span class=\"blender-glow\"></span>" +
+      "</div>" +
+      "<p class=\"blender-status\">3D 场景初始化中...</p>";
+
+    document.body.appendChild(dock);
+    return dock;
+  }
+
+  function initBlenderDock(mode) {
+    const shouldRun = isHomePage() && mode !== "lite" && !prefersReduced && !isCoarse;
+    if (!shouldRun) {
+      destroyBlenderDock();
+      return;
+    }
+
+    const current = window.__luxluBlenderFx;
+    if (current && (current.ready || current.booting)) return;
+
+    bootstrapBlenderDock(mode).catch((err) => {
+      console.warn("[blender-fx] init failed", err);
+      destroyBlenderDock();
+    });
+  }
+
+  function destroyBlenderDock() {
+    const current = window.__luxluBlenderFx;
+    if (current && typeof current.destroy === "function") {
+      current.destroy();
+      window.__luxluBlenderFx = null;
+      return;
+    }
+
+    const dock = document.getElementById("fx-blender-dock");
+    if (dock) dock.remove();
+    window.__luxluBlenderFx = null;
+  }
+
+  async function bootstrapBlenderDock(mode) {
+    const state = {
+      booting: true,
+      ready: false,
+      disposed: false,
+      rafId: null,
+      cleanupFns: [],
+      renderer: null,
+      scene: null,
+      camera: null,
+      group: null,
+      coreObject: null,
+      ring: null,
+      dock: null
+    };
+    window.__luxluBlenderFx = state;
+
+    const dock = ensureBlenderDockHost();
+    state.dock = dock;
+    dock.classList.remove("ready", "fallback");
+    dock.classList.add("loading");
+
+    const statusNode = dock.querySelector(".blender-status");
+    const canvas = dock.querySelector("#fx-blender-canvas");
+    if (!canvas) throw new Error("canvas missing");
+
+    const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
+    const loaderMod = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
+    const GLTFLoader = loaderMod.GLTFLoader;
+    if (window.__luxluBlenderFx !== state || state.disposed) return;
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: mode === "full",
+      alpha: true,
+      powerPreference: "high-performance"
+    });
+    state.renderer = renderer;
+    renderer.setClearColor(0x000000, 0);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    if ("outputColorSpace" in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const scene = new THREE.Scene();
+    state.scene = scene;
+
+    const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+    camera.position.set(0, 0.26, 4.2);
+    state.camera = camera;
+
+    const group = new THREE.Group();
+    state.group = group;
+    scene.add(group);
+
+    const hemi = new THREE.HemisphereLight(0xffc6e7, 0x120915, 1.2);
+    scene.add(hemi);
+
+    const key = new THREE.DirectionalLight(0xfff2ff, 1.5);
+    key.position.set(2.6, 3.2, 3.8);
+    scene.add(key);
+
+    const fill = new THREE.PointLight(0xff63bb, 1.35, 18);
+    fill.position.set(-2.7, 1.4, 2.6);
+    scene.add(fill);
+
+    const rim = new THREE.PointLight(0xa7baff, 0.92, 16);
+    rim.position.set(2.2, -0.8, -2.2);
+    scene.add(rim);
+
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(1.56, 0.035, 18, 120),
+      new THREE.MeshBasicMaterial({
+        color: 0xff7bc6,
+        transparent: true,
+        opacity: 0.54
+      })
+    );
+    ring.rotation.x = Math.PI * 0.5;
+    ring.position.y = -1.15;
+    scene.add(ring);
+    state.ring = ring;
+
+    const fallback = createFallbackBlenderObject(THREE);
+    group.add(fallback);
+    state.coreObject = fallback;
+
+    if (statusNode) statusNode.textContent = "尝试加载 Blender 模型...";
+    try {
+      const loader = new GLTFLoader();
+      const gltf = await loadGLB(loader, "/model/luxlu-scene.glb");
+      if (window.__luxluBlenderFx !== state || state.disposed) return;
+
+      const model = gltf.scene || gltf.scenes && gltf.scenes[0];
+      if (!model) throw new Error("empty glb scene");
+
+      normalizeModelToStage(THREE, model);
+      if (state.coreObject) {
+        disposeObject3D(state.coreObject);
+        group.remove(state.coreObject);
+      }
+      group.add(model);
+      state.coreObject = model;
+      dock.classList.remove("fallback");
+      if (statusNode) statusNode.textContent = "Blender 模型已加载";
+    } catch (err) {
+      dock.classList.add("fallback");
+      if (statusNode) statusNode.textContent = "未检测到 .glb，已使用内置 3D 备用模型";
+      console.warn("[blender-fx] fallback model", err);
+    }
+
+    let targetX = 0;
+    let targetY = 0;
+    let smoothX = 0;
+    let smoothY = 0;
+
+    const onPointerMove = (ev) => {
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const nx = (ev.clientX - rect.left) / rect.width - 0.5;
+      const ny = (ev.clientY - rect.top) / rect.height - 0.5;
+      targetX = nx * 0.85;
+      targetY = ny * 0.52;
+    };
+
+    const onPointerLeave = () => {
+      targetX = 0;
+      targetY = 0;
+    };
+
+    dock.addEventListener("pointermove", onPointerMove);
+    dock.addEventListener("pointerleave", onPointerLeave);
+    state.cleanupFns.push(() => dock.removeEventListener("pointermove", onPointerMove));
+    state.cleanupFns.push(() => dock.removeEventListener("pointerleave", onPointerLeave));
+
+    const onResize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(220, Math.floor(rect.width || 0));
+      const height = Math.max(220, Math.floor(rect.height || 0));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mode === "full" ? 1.7 : 1.25));
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
+
+    onResize();
+    window.addEventListener("resize", onResize, { passive: true });
+    state.cleanupFns.push(() => window.removeEventListener("resize", onResize));
+
+    const clock = new THREE.Clock();
+    const tick = () => {
+      if (state.disposed || window.__luxluBlenderFx !== state) return;
+      const t = clock.getElapsedTime();
+      smoothX += (targetX - smoothX) * 0.09;
+      smoothY += (targetY - smoothY) * 0.09;
+
+      group.rotation.y = t * 0.32 + smoothX;
+      group.rotation.x = -smoothY * 0.45 + Math.sin(t * 0.45) * 0.03;
+      if (state.coreObject) state.coreObject.position.y = Math.sin(t * 1.35) * 0.08;
+      if (state.ring) state.ring.rotation.z = t * 0.52;
+
+      renderer.render(scene, camera);
+      state.rafId = requestAnimationFrame(tick);
+    };
+    state.rafId = requestAnimationFrame(tick);
+
+    state.destroy = function () {
+      state.disposed = true;
+      if (state.rafId) cancelAnimationFrame(state.rafId);
+      state.cleanupFns.forEach((fn) => {
+        try {
+          fn();
+        } catch (_) {}
+      });
+      state.cleanupFns.length = 0;
+
+      if (state.group && state.coreObject) {
+        try {
+          state.group.remove(state.coreObject);
+        } catch (_) {}
+      }
+      disposeObject3D(state.coreObject);
+      state.coreObject = null;
+
+      if (state.ring) {
+        disposeObject3D(state.ring);
+        if (state.scene) state.scene.remove(state.ring);
+      }
+      state.ring = null;
+
+      if (state.renderer) {
+        try {
+          state.renderer.dispose();
+          if (typeof state.renderer.forceContextLoss === "function") {
+            state.renderer.forceContextLoss();
+          }
+        } catch (_) {}
+      }
+      state.renderer = null;
+
+      if (state.dock) state.dock.remove();
+    };
+
+    dock.classList.remove("loading");
+    dock.classList.add("ready");
+    state.booting = false;
+    state.ready = true;
+  }
+
+  function createFallbackBlenderObject(THREE) {
+    const wrap = new THREE.Group();
+
+    const main = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(1.03, 2),
+      new THREE.MeshPhysicalMaterial({
+        color: 0xff8fcf,
+        emissive: 0x32071f,
+        roughness: 0.16,
+        metalness: 0.58,
+        transmission: 0.12,
+        thickness: 1.0,
+        clearcoat: 0.95,
+        clearcoatRoughness: 0.2
+      })
+    );
+    wrap.add(main);
+
+    const wire = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(1.07, 1),
+      new THREE.MeshBasicMaterial({
+        color: 0xffd5ee,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.42
+      })
+    );
+    wrap.add(wire);
+
+    const knot = new THREE.Mesh(
+      new THREE.TorusKnotGeometry(0.58, 0.16, 120, 18),
+      new THREE.MeshStandardMaterial({
+        color: 0xa0b4ff,
+        roughness: 0.18,
+        metalness: 0.68,
+        transparent: true,
+        opacity: 0.74
+      })
+    );
+    knot.rotation.x = 0.4;
+    knot.rotation.y = 0.3;
+    wrap.add(knot);
+
+    return wrap;
+  }
+
+  function normalizeModelToStage(THREE, model) {
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const maxAxis = Math.max(size.x, size.y, size.z) || 1;
+    const scale = 2.0 / maxAxis;
+    model.scale.setScalar(scale);
+
+    model.position.x += -center.x * scale;
+    model.position.y += -center.y * scale;
+    model.position.z += -center.z * scale;
+    model.position.y -= 0.2;
+  }
+
+  function loadGLB(loader, url) {
+    return new Promise((resolve, reject) => {
+      loader.load(url, resolve, undefined, reject);
+    });
+  }
+
+  function disposeObject3D(root) {
+    if (!root || typeof root.traverse !== "function") return;
+    root.traverse((node) => {
+      if (node.geometry && typeof node.geometry.dispose === "function") {
+        node.geometry.dispose();
+      }
+      if (!node.material) return;
+      if (Array.isArray(node.material)) {
+        node.material.forEach((mat) => {
+          if (mat && typeof mat.dispose === "function") mat.dispose();
+        });
+      } else if (typeof node.material.dispose === "function") {
+        node.material.dispose();
+      }
+    });
   }
 
   function initCategoryCollabEntry() {
