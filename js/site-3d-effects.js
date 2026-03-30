@@ -384,6 +384,9 @@
       group.rotation.y = t * 0.32 + smoothX;
       group.rotation.x = -smoothY * 0.45 + Math.sin(t * 0.45) * 0.03;
       if (state.coreObject) state.coreObject.position.y = Math.sin(t * 1.35) * 0.08;
+      if (state.coreObject && state.coreObject.userData && typeof state.coreObject.userData.tick === "function") {
+        state.coreObject.userData.tick(t, smoothX, smoothY);
+      }
       if (state.ring) state.ring.rotation.z = t * 0.52;
 
       renderer.render(scene, camera);
@@ -472,48 +475,184 @@
 
   function createFallbackBlenderObject(THREE) {
     const wrap = new THREE.Group();
+    wrap.position.y = 0.12;
 
-    const main = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1.03, 2),
-      new THREE.MeshPhysicalMaterial({
-        color: 0xff8fcf,
-        emissive: 0x32071f,
-        roughness: 0.16,
-        metalness: 0.58,
-        transmission: 0.12,
-        thickness: 1.0,
-        clearcoat: 0.95,
-        clearcoatRoughness: 0.2
-      })
-    );
-    wrap.add(main);
+    const core = new THREE.Group();
+    wrap.add(core);
 
-    const wire = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1.07, 1),
-      new THREE.MeshBasicMaterial({
-        color: 0xffd5ee,
-        wireframe: true,
+    const heartShape = createHeartShape(THREE);
+    const heartGeo = new THREE.ExtrudeGeometry(heartShape, {
+      depth: 0.36,
+      bevelEnabled: true,
+      bevelSegments: 5,
+      steps: 2,
+      bevelSize: 0.08,
+      bevelThickness: 0.08,
+      curveSegments: 40
+    });
+    heartGeo.center();
+
+    const heartMat = new THREE.MeshPhysicalMaterial({
+      color: 0xff77c5,
+      emissive: 0x2c061b,
+      roughness: 0.12,
+      metalness: 0.22,
+      transmission: 0.6,
+      thickness: 1.3,
+      clearcoat: 1,
+      clearcoatRoughness: 0.1
+    });
+    const heartMesh = new THREE.Mesh(heartGeo, heartMat);
+    heartMesh.scale.setScalar(0.72);
+    heartMesh.rotation.x = 0.22;
+    core.add(heartMesh);
+
+    const heartWire = new THREE.LineSegments(
+      new THREE.EdgesGeometry(heartGeo, 28),
+      new THREE.LineBasicMaterial({
+        color: 0xffd8f0,
         transparent: true,
-        opacity: 0.42
+        opacity: 0.38
       })
     );
-    wrap.add(wire);
+    heartWire.scale.setScalar(0.76);
+    heartWire.rotation.x = 0.22;
+    core.add(heartWire);
 
-    const knot = new THREE.Mesh(
-      new THREE.TorusKnotGeometry(0.58, 0.16, 120, 18),
-      new THREE.MeshStandardMaterial({
-        color: 0xa0b4ff,
-        roughness: 0.18,
-        metalness: 0.68,
+    const orbitA = new THREE.Mesh(
+      new THREE.TorusGeometry(1.42, 0.03, 18, 140),
+      new THREE.MeshBasicMaterial({ color: 0xff97d4, transparent: true, opacity: 0.42 })
+    );
+    orbitA.rotation.x = Math.PI * 0.52;
+    wrap.add(orbitA);
+
+    const orbitB = new THREE.Mesh(
+      new THREE.TorusGeometry(1.18, 0.026, 18, 120),
+      new THREE.MeshBasicMaterial({ color: 0xa8b7ff, transparent: true, opacity: 0.34 })
+    );
+    orbitB.rotation.x = Math.PI * 0.16;
+    orbitB.rotation.y = Math.PI * 0.45;
+    wrap.add(orbitB);
+
+    const glowDisk = new THREE.Mesh(
+      new THREE.CircleGeometry(1.96, 80),
+      new THREE.MeshBasicMaterial({
+        color: 0xff7ecb,
+        transparent: true,
+        opacity: 0.17
+      })
+    );
+    glowDisk.rotation.x = -Math.PI * 0.5;
+    glowDisk.position.y = -1.22;
+    wrap.add(glowDisk);
+
+    const crystalGroup = new THREE.Group();
+    wrap.add(crystalGroup);
+
+    const crystals = [];
+    const crystalGeo = new THREE.OctahedronGeometry(0.09, 0);
+    for (let i = 0; i < 26; i += 1) {
+      const mat = new THREE.MeshStandardMaterial({
+        color: i % 2 === 0 ? 0xff88cb : 0x9db0ff,
+        emissive: i % 2 === 0 ? 0x2a0719 : 0x0e1534,
+        roughness: 0.2,
+        metalness: 0.55,
         transparent: true,
         opacity: 0.74
+      });
+
+      const crystal = new THREE.Mesh(crystalGeo, mat);
+      const radius = 1.52 + Math.random() * 0.56;
+      const angle = (i / 26) * Math.PI * 2;
+      const y = (Math.random() - 0.5) * 1.1;
+      crystal.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+      crystal.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      crystal.scale.setScalar(0.86 + Math.random() * 1.05);
+      crystal.userData.seed = Math.random() * Math.PI * 2;
+      crystal.userData.radius = radius;
+      crystal.userData.height = y;
+      crystals.push(crystal);
+      crystalGroup.add(crystal);
+    }
+
+    const starGeo = new THREE.BufferGeometry();
+    const starCount = 340;
+    const positions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i += 1) {
+      const r = 1.05 + Math.random() * 1.65;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = (r * Math.cos(phi)) * 0.75;
+      positions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+    }
+    starGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    const stars = new THREE.Points(
+      starGeo,
+      new THREE.PointsMaterial({
+        color: 0xffd7ee,
+        size: 0.032,
+        sizeAttenuation: true,
+        transparent: true,
+        opacity: 0.78
       })
     );
-    knot.rotation.x = 0.4;
-    knot.rotation.y = 0.3;
-    wrap.add(knot);
+    wrap.add(stars);
+
+    const aura = new THREE.Mesh(
+      new THREE.SphereGeometry(1.04, 24, 24),
+      new THREE.MeshBasicMaterial({
+        color: 0xff7fcf,
+        transparent: true,
+        opacity: 0.09
+      })
+    );
+    core.add(aura);
+
+    wrap.userData.tick = function (t) {
+      heartMesh.rotation.y = t * 0.62;
+      heartWire.rotation.y = -t * 0.46;
+      heartMesh.scale.setScalar(0.72 + Math.sin(t * 2.1) * 0.022);
+      heartWire.scale.setScalar(0.76 + Math.sin(t * 1.7 + 0.8) * 0.02);
+
+      orbitA.rotation.z = t * 0.38;
+      orbitB.rotation.z = -t * 0.3;
+      aura.scale.setScalar(1 + Math.sin(t * 1.4) * 0.06);
+      aura.material.opacity = 0.07 + (Math.sin(t * 1.4) + 1) * 0.025;
+      glowDisk.material.opacity = 0.13 + (Math.sin(t * 1.7) + 1) * 0.035;
+
+      stars.rotation.y = -t * 0.14;
+      stars.rotation.x = Math.sin(t * 0.3) * 0.08;
+
+      for (let i = 0; i < crystals.length; i += 1) {
+        const c = crystals[i];
+        const seed = c.userData.seed || 0;
+        const radius = c.userData.radius || 1.4;
+        const height = c.userData.height || 0;
+        const ang = seed + t * 0.34 + i * 0.025;
+        c.position.x = Math.cos(ang) * radius;
+        c.position.z = Math.sin(ang) * radius;
+        c.position.y = height + Math.sin(t * 1.7 + seed) * 0.1;
+        c.rotation.x += 0.01;
+        c.rotation.y += 0.012;
+      }
+    };
 
     return wrap;
+  }
+
+  function createHeartShape(THREE) {
+    const shape = new THREE.Shape();
+    const x = 0;
+    const y = 0;
+    shape.moveTo(x + 0.5, y + 0.5);
+    shape.bezierCurveTo(x + 0.5, y + 0.5, x + 0.4, y, x, y);
+    shape.bezierCurveTo(x - 0.6, y, x - 0.6, y + 0.7, x - 0.6, y + 0.7);
+    shape.bezierCurveTo(x - 0.6, y + 1.1, x - 0.3, y + 1.54, x + 0.5, y + 1.9);
+    shape.bezierCurveTo(x + 1.2, y + 1.54, x + 1.6, y + 1.1, x + 1.6, y + 0.7);
+    shape.bezierCurveTo(x + 1.6, y + 0.7, x + 1.6, y, x + 1, y);
+    shape.bezierCurveTo(x + 0.7, y, x + 0.5, y + 0.5, x + 0.5, y + 0.5);
+    return shape;
   }
 
   function normalizeModelToStage(THREE, model) {
