@@ -100,7 +100,7 @@ darkmode:
 
 inject:
   head:
-    - <link rel="stylesheet" href="/css/custom.css?v=20260329bg5">
+    - <link rel="stylesheet" href="/css/custom.css?v=20260330bg6">
   bottom:
-    - <script src="/js/site-3d-effects.js?v=20260330b3"></script>
+    - <script src="/js/site-3d-effects.js?v=20260330b4"></script>
     - <script src="/js/tab-title.js?v=20260329a"></script>

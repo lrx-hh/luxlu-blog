@@ -1709,19 +1709,45 @@ div#archive.tilt-3d {
   position: fixed;
   right: clamp(10px, 2.2vw, 30px);
   bottom: max(84px, 9vh);
-  width: min(340px, 28vw);
+  width: min(372px, 31vw);
   min-width: 250px;
   border-radius: 18px;
   border: 1px solid rgba(255, 157, 218, 0.24);
-  background: linear-gradient(160deg, rgba(20, 12, 30, 0.86), rgba(9, 6, 16, 0.78));
+  background:
+    radial-gradient(circle at 16% 14%, rgba(255, 147, 213, 0.12), transparent 28%),
+    radial-gradient(circle at 82% 88%, rgba(159, 183, 255, 0.11), transparent 26%),
+    linear-gradient(160deg, rgba(20, 12, 30, 0.86), rgba(9, 6, 16, 0.78));
   box-shadow:
-    0 16px 30px rgba(5, 3, 12, 0.5),
+    0 18px 34px rgba(5, 3, 12, 0.52),
     inset 0 0 0 1px rgba(255, 190, 229, 0.06);
   backdrop-filter: blur(10px) saturate(120%);
   -webkit-backdrop-filter: blur(10px) saturate(120%);
   z-index: 8;
   overflow: hidden;
   transform: translate3d(0, 0, 0);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+#fx-blender-dock:hover {
+  transform: translate3d(0, -2px, 0);
+  box-shadow:
+    0 22px 42px rgba(5, 3, 12, 0.56),
+    0 0 32px rgba(255, 130, 204, 0.18),
+    inset 0 0 0 1px rgba(255, 190, 229, 0.07);
+}
+
+#fx-blender-dock::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 190, 230, 0) 22%,
+    rgba(255, 190, 230, 0.08) 45%,
+    rgba(255, 190, 230, 0) 70%
+  );
+  opacity: 0.9;
 }
 
 #fx-blender-dock .blender-head {
@@ -1758,12 +1784,30 @@ div#archive.tilt-3d {
     radial-gradient(circle at 80% 90%, rgba(154, 184, 255, 0.13), transparent 30%),
     linear-gradient(160deg, rgba(20, 10, 28, 0.9), rgba(10, 8, 16, 0.94));
   overflow: hidden;
+  box-shadow: inset 0 0 28px rgba(255, 120, 196, 0.08);
+}
+
+#fx-blender-dock .blender-stage-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 153, 216, 0.14),
+    rgba(165, 184, 255, 0.1),
+    rgba(255, 153, 216, 0.14),
+    rgba(255, 153, 216, 0)
+  );
+  animation: blenderAurora 14s linear infinite;
+  opacity: 0.6;
 }
 
 #fx-blender-dock #fx-blender-canvas {
   width: 100%;
   height: 100%;
   display: block;
+  filter: saturate(1.08) contrast(1.03);
 }
 
 #fx-blender-dock .blender-glow {
@@ -1840,6 +1884,12 @@ div#archive.tilt-3d {
 @keyframes bfSpinA {
   to {
     transform: rotateX(74deg) rotateY(360deg);
+  }
+}
+
+@keyframes blenderAurora {
+  to {
+    transform: rotate(360deg);
   }
 }
 
