@@ -332,7 +332,7 @@
       if (statusNode) statusNode.textContent = "Blender 模型已加载";
     } catch (err) {
       dock.classList.add("fallback");
-      if (statusNode) statusNode.textContent = "未检测到 .glb，已使用内置 3D 备用模型";
+      if (statusNode) statusNode.textContent = "麻衣剪影 · 花瓣雨 · 节拍联动场景";
       console.warn("[blender-fx] fallback model", err);
     }
 
@@ -409,6 +409,15 @@
           state.group.remove(state.coreObject);
         } catch (_) {}
       }
+      if (
+        state.coreObject &&
+        state.coreObject.userData &&
+        typeof state.coreObject.userData.dispose === "function"
+      ) {
+        try {
+          state.coreObject.userData.dispose();
+        } catch (_) {}
+      }
       disposeObject3D(state.coreObject);
       state.coreObject = null;
 
@@ -475,99 +484,114 @@
 
   function createFallbackBlenderObject(THREE) {
     const wrap = new THREE.Group();
-    wrap.position.y = 0.12;
+    wrap.position.y = -0.06;
 
-    const core = new THREE.Group();
-    wrap.add(core);
+    const beatDriver = createBeatDriver();
+    const silhouetteTexture = createMaiSilhouetteTexture(THREE);
+    const petalTexture = createPetalTexture(THREE);
 
-    const heartShape = createHeartShape(THREE);
-    const heartGeo = new THREE.ExtrudeGeometry(heartShape, {
-      depth: 0.36,
-      bevelEnabled: true,
-      bevelSegments: 5,
-      steps: 2,
-      bevelSize: 0.08,
-      bevelThickness: 0.08,
-      curveSegments: 40
-    });
-    heartGeo.center();
-
-    const heartMat = new THREE.MeshPhysicalMaterial({
-      color: 0xff77c5,
-      emissive: 0x2c061b,
-      roughness: 0.12,
-      metalness: 0.22,
-      transmission: 0.6,
-      thickness: 1.3,
-      clearcoat: 1,
-      clearcoatRoughness: 0.1
-    });
-    const heartMesh = new THREE.Mesh(heartGeo, heartMat);
-    heartMesh.scale.setScalar(0.72);
-    heartMesh.rotation.x = 0.22;
-    core.add(heartMesh);
-
-    const heartWire = new THREE.LineSegments(
-      new THREE.EdgesGeometry(heartGeo, 28),
-      new THREE.LineBasicMaterial({
-        color: 0xffd8f0,
-        transparent: true,
-        opacity: 0.38
-      })
-    );
-    heartWire.scale.setScalar(0.76);
-    heartWire.rotation.x = 0.22;
-    core.add(heartWire);
-
-    const orbitA = new THREE.Mesh(
-      new THREE.TorusGeometry(1.42, 0.03, 18, 140),
-      new THREE.MeshBasicMaterial({ color: 0xff97d4, transparent: true, opacity: 0.42 })
-    );
-    orbitA.rotation.x = Math.PI * 0.52;
-    wrap.add(orbitA);
-
-    const orbitB = new THREE.Mesh(
-      new THREE.TorusGeometry(1.18, 0.026, 18, 120),
-      new THREE.MeshBasicMaterial({ color: 0xa8b7ff, transparent: true, opacity: 0.34 })
-    );
-    orbitB.rotation.x = Math.PI * 0.16;
-    orbitB.rotation.y = Math.PI * 0.45;
-    wrap.add(orbitB);
-
-    const glowDisk = new THREE.Mesh(
-      new THREE.CircleGeometry(1.96, 80),
+    const stageGlow = new THREE.Mesh(
+      new THREE.CircleGeometry(1.95, 96),
       new THREE.MeshBasicMaterial({
-        color: 0xff7ecb,
+        color: 0xff77c7,
         transparent: true,
-        opacity: 0.17
+        opacity: 0.16
       })
     );
-    glowDisk.rotation.x = -Math.PI * 0.5;
-    glowDisk.position.y = -1.22;
-    wrap.add(glowDisk);
+    stageGlow.rotation.x = -Math.PI * 0.5;
+    stageGlow.position.y = -1.18;
+    wrap.add(stageGlow);
+
+    const pulseRing = new THREE.Mesh(
+      new THREE.TorusGeometry(1.24, 0.03, 20, 160),
+      new THREE.MeshBasicMaterial({
+        color: 0xffa0d8,
+        transparent: true,
+        opacity: 0.46
+      })
+    );
+    pulseRing.rotation.x = Math.PI * 0.5;
+    pulseRing.position.y = -1.03;
+    wrap.add(pulseRing);
+
+    const pulseRing2 = new THREE.Mesh(
+      new THREE.TorusGeometry(0.92, 0.022, 18, 140),
+      new THREE.MeshBasicMaterial({
+        color: 0xaab9ff,
+        transparent: true,
+        opacity: 0.35
+      })
+    );
+    pulseRing2.rotation.x = Math.PI * 0.5;
+    pulseRing2.rotation.z = 0.42;
+    pulseRing2.position.y = -1.01;
+    wrap.add(pulseRing2);
+
+    const silhouetteGroup = new THREE.Group();
+    wrap.add(silhouetteGroup);
+
+    const silhouetteCore = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.02, 3.42),
+      new THREE.MeshBasicMaterial({
+        map: silhouetteTexture,
+        color: 0x100817,
+        transparent: true,
+        opacity: 0.98,
+        side: THREE.DoubleSide,
+        alphaTest: 0.06
+      })
+    );
+    silhouetteCore.position.set(0, 0.26, 0);
+    silhouetteGroup.add(silhouetteCore);
+
+    const silhouetteRim = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.08, 3.52),
+      new THREE.MeshBasicMaterial({
+        map: silhouetteTexture,
+        color: 0xff9cd8,
+        transparent: true,
+        opacity: 0.3,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        alphaTest: 0.02
+      })
+    );
+    silhouetteRim.position.set(0, 0.26, -0.04);
+    silhouetteGroup.add(silhouetteRim);
+
+    const backAura = new THREE.Mesh(
+      new THREE.SphereGeometry(1.25, 26, 26),
+      new THREE.MeshBasicMaterial({
+        color: 0xff86cc,
+        transparent: true,
+        opacity: 0.09
+      })
+    );
+    backAura.position.set(0, 0.28, -0.38);
+    silhouetteGroup.add(backAura);
 
     const crystalGroup = new THREE.Group();
     wrap.add(crystalGroup);
-
     const crystals = [];
-    const crystalGeo = new THREE.OctahedronGeometry(0.09, 0);
-    for (let i = 0; i < 26; i += 1) {
-      const mat = new THREE.MeshStandardMaterial({
-        color: i % 2 === 0 ? 0xff88cb : 0x9db0ff,
-        emissive: i % 2 === 0 ? 0x2a0719 : 0x0e1534,
-        roughness: 0.2,
-        metalness: 0.55,
+    const crystalGeo = new THREE.OctahedronGeometry(0.1, 0);
+    for (let i = 0; i < 24; i += 1) {
+      const crystalMat = new THREE.MeshStandardMaterial({
+        color: i % 2 ? 0xff9edb : 0xa5b5ff,
+        emissive: i % 2 ? 0x300a1d : 0x10183a,
+        roughness: 0.18,
+        metalness: 0.54,
         transparent: true,
         opacity: 0.74
       });
 
-      const crystal = new THREE.Mesh(crystalGeo, mat);
-      const radius = 1.52 + Math.random() * 0.56;
-      const angle = (i / 26) * Math.PI * 2;
-      const y = (Math.random() - 0.5) * 1.1;
+      const crystal = new THREE.Mesh(crystalGeo, crystalMat);
+      const radius = 1.26 + Math.random() * 0.74;
+      const angle = (i / 24) * Math.PI * 2 + Math.random() * 0.18;
+      const y = -0.78 + Math.random() * 2.0;
       crystal.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+      crystal.scale.setScalar(0.76 + Math.random() * 1.05);
       crystal.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-      crystal.scale.setScalar(0.86 + Math.random() * 1.05);
       crystal.userData.seed = Math.random() * Math.PI * 2;
       crystal.userData.radius = radius;
       crystal.userData.height = y;
@@ -575,84 +599,377 @@
       crystalGroup.add(crystal);
     }
 
-    const starGeo = new THREE.BufferGeometry();
-    const starCount = 340;
+    const petalGroup = new THREE.Group();
+    wrap.add(petalGroup);
+    const petals = [];
+    const petalGeo = new THREE.PlaneGeometry(0.16, 0.24);
+    for (let i = 0; i < 92; i += 1) {
+      const petalMat = new THREE.MeshBasicMaterial({
+        map: petalTexture,
+        color: i % 3 === 0 ? 0xfff0f8 : 0xff8ed0,
+        transparent: true,
+        opacity: 0.8,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      const petal = new THREE.Mesh(petalGeo, petalMat);
+      resetPetal(petal, true);
+      petals.push(petal);
+      petalGroup.add(petal);
+    }
+
+    const starsGeo = new THREE.BufferGeometry();
+    const starCount = 260;
     const positions = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount; i += 1) {
-      const r = 1.05 + Math.random() * 1.65;
+      const r = 1.12 + Math.random() * 1.7;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = (r * Math.cos(phi)) * 0.75;
+      positions[i * 3 + 1] = (r * Math.cos(phi)) * 0.88;
       positions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
     }
-    starGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    starsGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     const stars = new THREE.Points(
-      starGeo,
+      starsGeo,
       new THREE.PointsMaterial({
-        color: 0xffd7ee,
-        size: 0.032,
+        color: 0xffd9ef,
+        size: 0.028,
         sizeAttenuation: true,
         transparent: true,
-        opacity: 0.78
+        opacity: 0.68
       })
     );
     wrap.add(stars);
 
-    const aura = new THREE.Mesh(
-      new THREE.SphereGeometry(1.04, 24, 24),
-      new THREE.MeshBasicMaterial({
-        color: 0xff7fcf,
-        transparent: true,
-        opacity: 0.09
-      })
-    );
-    core.add(aura);
+    let beatSmooth = 0.22;
+    wrap.userData.tick = function (t, smoothX, smoothY) {
+      const beat = beatDriver.sample(t);
+      beatSmooth += (beat - beatSmooth) * 0.2;
 
-    wrap.userData.tick = function (t) {
-      heartMesh.rotation.y = t * 0.62;
-      heartWire.rotation.y = -t * 0.46;
-      heartMesh.scale.setScalar(0.72 + Math.sin(t * 2.1) * 0.022);
-      heartWire.scale.setScalar(0.76 + Math.sin(t * 1.7 + 0.8) * 0.02);
+      const pulse = 1 + beatSmooth * 0.2;
+      silhouetteGroup.position.y = Math.sin(t * 1.15) * 0.06 + beatSmooth * 0.06;
+      silhouetteGroup.rotation.y = smoothX * 0.6;
+      silhouetteGroup.rotation.x = -smoothY * 0.18;
 
-      orbitA.rotation.z = t * 0.38;
-      orbitB.rotation.z = -t * 0.3;
-      aura.scale.setScalar(1 + Math.sin(t * 1.4) * 0.06);
-      aura.material.opacity = 0.07 + (Math.sin(t * 1.4) + 1) * 0.025;
-      glowDisk.material.opacity = 0.13 + (Math.sin(t * 1.7) + 1) * 0.035;
+      silhouetteRim.material.opacity = 0.2 + beatSmooth * 0.5;
+      silhouetteRim.scale.setScalar(1 + beatSmooth * 0.09);
+      silhouetteCore.scale.setScalar(0.99 + Math.sin(t * 2.1) * 0.01 + beatSmooth * 0.03);
 
-      stars.rotation.y = -t * 0.14;
-      stars.rotation.x = Math.sin(t * 0.3) * 0.08;
+      backAura.material.opacity = 0.06 + beatSmooth * 0.12;
+      backAura.scale.setScalar(1 + beatSmooth * 0.18);
+
+      pulseRing.scale.setScalar(pulse);
+      pulseRing.material.opacity = 0.2 + beatSmooth * 0.58;
+      pulseRing.rotation.z += 0.008 + beatSmooth * 0.02;
+
+      pulseRing2.scale.setScalar(1 + beatSmooth * 0.15);
+      pulseRing2.material.opacity = 0.18 + beatSmooth * 0.44;
+      pulseRing2.rotation.z -= 0.006 + beatSmooth * 0.016;
+
+      stageGlow.material.opacity = 0.1 + beatSmooth * 0.14;
+      stageGlow.scale.setScalar(1 + beatSmooth * 0.15);
+
+      stars.rotation.y = -t * (0.12 + beatSmooth * 0.06);
+      stars.rotation.x = Math.sin(t * 0.24) * 0.1;
 
       for (let i = 0; i < crystals.length; i += 1) {
         const c = crystals[i];
         const seed = c.userData.seed || 0;
-        const radius = c.userData.radius || 1.4;
+        const radius = c.userData.radius || 1.5;
         const height = c.userData.height || 0;
-        const ang = seed + t * 0.34 + i * 0.025;
-        c.position.x = Math.cos(ang) * radius;
-        c.position.z = Math.sin(ang) * radius;
-        c.position.y = height + Math.sin(t * 1.7 + seed) * 0.1;
-        c.rotation.x += 0.01;
-        c.rotation.y += 0.012;
+        const ang = seed + t * (0.24 + beatSmooth * 0.18) + i * 0.018;
+        c.position.x = Math.cos(ang) * (radius + beatSmooth * 0.1);
+        c.position.z = Math.sin(ang) * (radius + beatSmooth * 0.1);
+        c.position.y = height + Math.sin(t * 1.6 + seed) * (0.09 + beatSmooth * 0.07);
+        c.rotation.x += 0.01 + beatSmooth * 0.01;
+        c.rotation.y += 0.012 + beatSmooth * 0.012;
+      }
+
+      for (let i = 0; i < petals.length; i += 1) {
+        const p = petals[i];
+        const u = p.userData;
+        p.position.y -= u.fall + beatSmooth * 0.009;
+        p.position.x += Math.sin(t * u.swing + u.phase) * 0.0034 * u.drift;
+        p.position.z += Math.cos(t * u.swing * 0.72 + u.phase) * 0.0023 * u.drift;
+        p.rotation.x += u.spin * 0.72;
+        p.rotation.y += u.spin;
+        p.rotation.z += u.spin * 0.52;
+
+        if (p.position.y < -1.58 || Math.abs(p.position.x) > 2.7 || Math.abs(p.position.z) > 2.2) {
+          resetPetal(p, false);
+        }
+      }
+    };
+
+    wrap.userData.dispose = function () {
+      beatDriver.dispose();
+      if (silhouetteTexture && typeof silhouetteTexture.dispose === "function") {
+        silhouetteTexture.dispose();
+      }
+      if (petalTexture && typeof petalTexture.dispose === "function") {
+        petalTexture.dispose();
       }
     };
 
     return wrap;
+
+    function resetPetal(petal, initial) {
+      const u = petal.userData;
+      u.phase = Math.random() * Math.PI * 2;
+      u.fall = 0.004 + Math.random() * 0.005;
+      u.spin = (Math.random() * 2 - 1) * 0.045;
+      u.swing = 0.8 + Math.random() * 1.6;
+      u.drift = 0.6 + Math.random() * 1.2;
+
+      const s = 0.62 + Math.random() * 1.15;
+      petal.scale.setScalar(s);
+      petal.position.x = (Math.random() * 2 - 1) * 2.15;
+      petal.position.z = -1.1 + Math.random() * 2.2;
+      petal.position.y = initial ? -1.25 + Math.random() * 3.55 : 1.95 + Math.random() * 0.85;
+      petal.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+    }
   }
 
-  function createHeartShape(THREE) {
-    const shape = new THREE.Shape();
-    const x = 0;
-    const y = 0;
-    shape.moveTo(x + 0.5, y + 0.5);
-    shape.bezierCurveTo(x + 0.5, y + 0.5, x + 0.4, y, x, y);
-    shape.bezierCurveTo(x - 0.6, y, x - 0.6, y + 0.7, x - 0.6, y + 0.7);
-    shape.bezierCurveTo(x - 0.6, y + 1.1, x - 0.3, y + 1.54, x + 0.5, y + 1.9);
-    shape.bezierCurveTo(x + 1.2, y + 1.54, x + 1.6, y + 1.1, x + 1.6, y + 0.7);
-    shape.bezierCurveTo(x + 1.6, y + 0.7, x + 1.6, y, x + 1, y);
-    shape.bezierCurveTo(x + 0.7, y, x + 0.5, y + 0.5, x + 0.5, y + 0.5);
-    return shape;
+  function createMaiSilhouetteTexture(THREE) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 512;
+    canvas.height = 1024;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ffffff";
+
+    // bunny ears
+    ctx.beginPath();
+    ctx.moveTo(188, 212);
+    ctx.quadraticCurveTo(168, 90, 206, 48);
+    ctx.quadraticCurveTo(238, 94, 230, 214);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(328, 212);
+    ctx.quadraticCurveTo(344, 84, 306, 44);
+    ctx.quadraticCurveTo(272, 96, 286, 214);
+    ctx.closePath();
+    ctx.fill();
+
+    // head + hair
+    ctx.beginPath();
+    ctx.arc(256, 286, 88, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(156, 280);
+    ctx.quadraticCurveTo(100, 360, 112, 498);
+    ctx.quadraticCurveTo(122, 606, 168, 700);
+    ctx.quadraticCurveTo(198, 756, 230, 802);
+    ctx.lineTo(286, 802);
+    ctx.quadraticCurveTo(320, 758, 350, 700);
+    ctx.quadraticCurveTo(392, 612, 402, 502);
+    ctx.quadraticCurveTo(414, 358, 354, 282);
+    ctx.quadraticCurveTo(314, 246, 256, 252);
+    ctx.quadraticCurveTo(198, 246, 156, 280);
+    ctx.closePath();
+    ctx.fill();
+
+    // torso + skirt
+    ctx.beginPath();
+    ctx.moveTo(218, 410);
+    ctx.quadraticCurveTo(196, 456, 176, 544);
+    ctx.quadraticCurveTo(162, 606, 168, 658);
+    ctx.quadraticCurveTo(194, 726, 252, 742);
+    ctx.quadraticCurveTo(318, 742, 346, 678);
+    ctx.quadraticCurveTo(354, 618, 336, 548);
+    ctx.quadraticCurveTo(318, 458, 294, 410);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(170, 632);
+    ctx.quadraticCurveTo(124, 680, 140, 746);
+    ctx.quadraticCurveTo(188, 800, 256, 804);
+    ctx.quadraticCurveTo(324, 800, 372, 744);
+    ctx.quadraticCurveTo(388, 674, 342, 632);
+    ctx.quadraticCurveTo(296, 610, 256, 610);
+    ctx.quadraticCurveTo(214, 610, 170, 632);
+    ctx.closePath();
+    ctx.fill();
+
+    // arms
+    ctx.beginPath();
+    ctx.moveTo(176, 470);
+    ctx.quadraticCurveTo(124, 526, 118, 598);
+    ctx.quadraticCurveTo(132, 614, 154, 602);
+    ctx.quadraticCurveTo(174, 546, 206, 486);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(336, 470);
+    ctx.quadraticCurveTo(386, 526, 394, 600);
+    ctx.quadraticCurveTo(378, 616, 356, 602);
+    ctx.quadraticCurveTo(338, 550, 306, 488);
+    ctx.closePath();
+    ctx.fill();
+
+    // legs + shoes
+    ctx.beginPath();
+    ctx.moveTo(228, 794);
+    ctx.lineTo(250, 794);
+    ctx.lineTo(254, 958);
+    ctx.lineTo(228, 958);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(274, 794);
+    ctx.lineTo(300, 794);
+    ctx.lineTo(302, 958);
+    ctx.lineTo(276, 958);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(242, 968, 40, 18, 0, 0, Math.PI * 2);
+    ctx.ellipse(290, 968, 40, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    const texture = new THREE.CanvasTexture(canvas);
+    if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
+    texture.needsUpdate = true;
+    return texture;
+  }
+
+  function createPetalTexture(THREE) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    const grad = ctx.createLinearGradient(64, 8, 64, 120);
+    grad.addColorStop(0, "rgba(255,250,255,0.98)");
+    grad.addColorStop(0.45, "rgba(255,189,226,0.95)");
+    grad.addColorStop(1, "rgba(255,120,193,0.78)");
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(64, 6);
+    ctx.bezierCurveTo(102, 24, 112, 62, 66, 122);
+    ctx.bezierCurveTo(16, 64, 24, 24, 64, 6);
+    ctx.closePath();
+    ctx.fill();
+
+    const hi = ctx.createRadialGradient(50, 26, 2, 52, 30, 48);
+    hi.addColorStop(0, "rgba(255,255,255,0.95)");
+    hi.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = hi;
+    ctx.beginPath();
+    ctx.ellipse(52, 30, 38, 22, -0.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    const texture = new THREE.CanvasTexture(canvas);
+    if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
+    texture.needsUpdate = true;
+    return texture;
+  }
+
+  function createBeatDriver() {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let analyser = null;
+    let dataArr = null;
+    let resumeBound = false;
+    let attachTick = 0;
+    let smooth = 0.25;
+
+    function bindResume() {
+      if (resumeBound) return;
+      resumeBound = true;
+      const resume = () => {
+        if (!audioCtx || audioCtx.state !== "suspended") return;
+        audioCtx.resume().catch(() => {});
+      };
+      window.addEventListener("pointerdown", resume, { passive: true });
+      window.addEventListener("keydown", resume, { passive: true });
+    }
+
+    function tryAttachAudio() {
+      if (!AudioCtx) return;
+      const audioEl = document.querySelector("audio");
+      if (!audioEl) return;
+
+      try {
+        if (!audioCtx) {
+          audioCtx = window.__luxluBeatAudioCtx || new AudioCtx();
+          window.__luxluBeatAudioCtx = audioCtx;
+        }
+        bindResume();
+
+        if (audioEl.__luxluBeatAnalyser) {
+          analyser = audioEl.__luxluBeatAnalyser;
+          dataArr = audioEl.__luxluBeatData;
+          return;
+        }
+
+        const sourceNode = audioEl.__luxluBeatSource || audioCtx.createMediaElementSource(audioEl);
+        audioEl.__luxluBeatSource = sourceNode;
+
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.78;
+        dataArr = new Uint8Array(analyser.frequencyBinCount);
+
+        sourceNode.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        audioEl.__luxluBeatAnalyser = analyser;
+        audioEl.__luxluBeatData = dataArr;
+      } catch (_) {
+        analyser = null;
+        dataArr = null;
+      }
+    }
+
+    return {
+      sample: function (t) {
+        attachTick += 1;
+        if (attachTick % 80 === 1) tryAttachAudio();
+
+        let beat = 0;
+        if (analyser && dataArr) {
+          try {
+            analyser.getByteFrequencyData(dataArr);
+            let low = 0;
+            let high = 0;
+            const lowBins = Math.min(18, dataArr.length);
+            const highStart = Math.min(18, dataArr.length);
+            const highEnd = Math.min(48, dataArr.length);
+            for (let i = 0; i < lowBins; i += 1) low += dataArr[i];
+            for (let i = highStart; i < highEnd; i += 1) high += dataArr[i];
+
+            const lowAvg = lowBins ? low / lowBins : 0;
+            const highAvg = highEnd > highStart ? high / (highEnd - highStart) : 0;
+            beat = Math.min(1, Math.max(0, lowAvg / 168 + highAvg / 540));
+          } catch (_) {
+            beat = 0;
+          }
+        }
+
+        if (beat <= 0.02) {
+          const kick = Math.pow(Math.max(0, Math.sin(t * 3.5)), 4);
+          const pad = (Math.sin(t * 1.7 + 0.6) + 1) * 0.5;
+          beat = Math.min(1, 0.16 + kick * 0.7 + pad * 0.22);
+        }
+
+        smooth += (beat - smooth) * 0.22;
+        return smooth;
+      },
+      dispose: function () {}
+    };
   }
 
   function normalizeModelToStage(THREE, model) {
@@ -689,17 +1006,26 @@
 
   function disposeObject3D(root) {
     if (!root || typeof root.traverse !== "function") return;
+
+    const disposeMaterial = (mat) => {
+      if (!mat) return;
+      ["map", "alphaMap", "emissiveMap", "normalMap", "roughnessMap", "metalnessMap", "aoMap"].forEach((key) => {
+        if (mat[key] && typeof mat[key].dispose === "function") {
+          mat[key].dispose();
+        }
+      });
+      if (typeof mat.dispose === "function") mat.dispose();
+    };
+
     root.traverse((node) => {
       if (node.geometry && typeof node.geometry.dispose === "function") {
         node.geometry.dispose();
       }
       if (!node.material) return;
       if (Array.isArray(node.material)) {
-        node.material.forEach((mat) => {
-          if (mat && typeof mat.dispose === "function") mat.dispose();
-        });
-      } else if (typeof node.material.dispose === "function") {
-        node.material.dispose();
+        node.material.forEach((mat) => disposeMaterial(mat));
+      } else {
+        disposeMaterial(node.material);
       }
     });
   }
