@@ -557,6 +557,7 @@
     );
     heartCore.scale.set(0.9, 0.9, 0.86);
     heartCore.rotation.x = 0.2;
+    heartCore.rotation.z = Math.PI;
     heartGroup.add(heartCore);
 
     const heartOutline = new THREE.LineSegments(
@@ -569,6 +570,7 @@
     );
     heartOutline.scale.set(0.95, 0.95, 0.92);
     heartOutline.rotation.x = 0.2;
+    heartOutline.rotation.z = Math.PI;
     heartGroup.add(heartOutline);
 
     const heartAura = new THREE.Mesh(
