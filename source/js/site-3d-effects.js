@@ -201,7 +201,7 @@
 
     bootstrapBlenderDock(mode).catch((err) => {
       console.warn("[blender-fx] init failed", err);
-      destroyBlenderDock();
+      showBlenderDockFallback("3D 引擎加载失败，已切换轻量模式");
     });
   }
 
@@ -244,8 +244,14 @@
     const canvas = dock.querySelector("#fx-blender-canvas");
     if (!canvas) throw new Error("canvas missing");
 
-    const THREE = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js");
-    const loaderMod = await import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js");
+    const THREE = await importModuleWithFallback([
+      "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "https://unpkg.com/three@0.160.0/build/three.module.js"
+    ]);
+    const loaderMod = await importModuleWithFallback([
+      "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js",
+      "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js"
+    ]);
     const GLTFLoader = loaderMod.GLTFLoader;
     if (window.__luxluBlenderFx !== state || state.disposed) return;
 
@@ -426,6 +432,42 @@
     state.ready = true;
   }
 
+  function showBlenderDockFallback(message) {
+    const dock = ensureBlenderDockHost();
+    const statusNode = dock.querySelector(".blender-status");
+    const stageWrap = dock.querySelector(".blender-stage-wrap");
+    const canvas = dock.querySelector("#fx-blender-canvas");
+
+    dock.classList.remove("loading");
+    dock.classList.add("ready", "fallback");
+
+    if (canvas) canvas.style.display = "none";
+
+    if (stageWrap && !stageWrap.querySelector(".blender-fallback-core")) {
+      const fallback = document.createElement("div");
+      fallback.className = "blender-fallback-core";
+      fallback.innerHTML =
+        "<span class=\"bf-orbit o1\"></span>" +
+        "<span class=\"bf-orbit o2\"></span>" +
+        "<span class=\"bf-orbit o3\"></span>" +
+        "<span class=\"bf-gem\"></span>";
+      stageWrap.appendChild(fallback);
+    }
+
+    if (statusNode) {
+      statusNode.textContent = message || "3D 轻量模式";
+    }
+
+    window.__luxluBlenderFx = {
+      booting: false,
+      ready: true,
+      destroy: function () {
+        const d = document.getElementById("fx-blender-dock");
+        if (d) d.remove();
+      }
+    };
+  }
+
   function createFallbackBlenderObject(THREE) {
     const wrap = new THREE.Group();
 
@@ -490,6 +532,18 @@
     return new Promise((resolve, reject) => {
       loader.load(url, resolve, undefined, reject);
     });
+  }
+
+  async function importModuleWithFallback(urls) {
+    let lastErr = null;
+    for (let i = 0; i < urls.length; i += 1) {
+      try {
+        return await import(urls[i]);
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    throw lastErr || new Error("module import failed");
   }
 
   function disposeObject3D(root) {
