@@ -2,6 +2,8 @@
   const TEAM_POST_DIR = "source/_posts/team";
   const TEAM_UPLOAD_DIR = "source/uploads/team";
   const PIXEL_UPLOAD_DIR = TEAM_UPLOAD_DIR + "/pixel-art";
+  const PIXEL_REVIEW_DIR = TEAM_UPLOAD_DIR + "/pixel-review";
+  const PIXEL_PENDING_DIR = PIXEL_REVIEW_DIR + "/pending";
 
   const ACCESS_HASH_POOL = {
     admin: ["faa9aa94ef30e64ca0ac64e0d378279ee39007bd6f9bdb4db923c50dde3aac64"],
@@ -88,6 +90,8 @@
     pixelResult: document.getElementById("pixel-result"),
     pixelGalleryRefreshBtn: document.getElementById("pixel-gallery-refresh"),
     pixelGalleryList: document.getElementById("pixel-gallery-list"),
+    pixelReviewRefreshBtn: document.getElementById("pixel-review-refresh"),
+    pixelReviewList: document.getElementById("pixel-review-list"),
 
     logBox: document.getElementById("collab-log"),
     editorOnly: document.querySelectorAll(".editor-only"),
@@ -105,6 +109,7 @@
     initPixelEditor();
     refreshProjects();
     refreshPixelGallery();
+    refreshPixelReviewQueue();
     log("ready");
   }
 
@@ -131,6 +136,8 @@
     if (refs.pixelSaveBtn) refs.pixelSaveBtn.addEventListener("click", savePixelCanvasToRepo);
     if (refs.pixelGalleryRefreshBtn) refs.pixelGalleryRefreshBtn.addEventListener("click", refreshPixelGallery);
     if (refs.pixelGalleryList) refs.pixelGalleryList.addEventListener("click", onPixelGalleryAction);
+    if (refs.pixelReviewRefreshBtn) refs.pixelReviewRefreshBtn.addEventListener("click", refreshPixelReviewQueue);
+    if (refs.pixelReviewList) refs.pixelReviewList.addEventListener("click", onPixelReviewAction);
 
     if (refs.pixelCanvas) {
       refs.pixelCanvas.addEventListener("pointerdown", onPixelPointerDown);
@@ -159,17 +166,29 @@
     refs.editorOnly.forEach((el) => el.classList.toggle("hidden", !canEdit));
     refs.adminOnly.forEach((el) => el.classList.toggle("hidden", state.role !== "admin"));
 
+    // Backward compatibility: old cached HTML may still mark pixel board as admin-only.
+    // Force pixel board visibility by current role.
+    const pixelCard = refs.pixelCanvas ? refs.pixelCanvas.closest(".collab-card") : null;
+    if (pixelCard) pixelCard.classList.toggle("hidden", !canEdit);
+
     refs.roleBadge.textContent = state.role;
     refs.roleBadge.className = "badge " + state.role;
     refs.visitorBtn.classList.toggle("active", state.role === "visitor");
     refs.teamBtn.classList.toggle("active", state.role === "team");
     refs.adminBtn.classList.toggle("active", state.role === "admin");
+
+    if (refs.pixelSaveBtn) {
+      if (state.role === "admin") refs.pixelSaveBtn.textContent = "直接发布到画廊";
+      else if (state.role === "team") refs.pixelSaveBtn.textContent = "提交管理员审核";
+      else refs.pixelSaveBtn.textContent = "保存 / 提交";
+    }
   }
 
   function setRole(nextRole) {
     state.role = nextRole;
     renderState();
     refreshPixelGallery();
+    refreshPixelReviewQueue();
     log("role => " + nextRole);
   }
 
@@ -191,12 +210,14 @@
       resetAuthRole("team");
       setRole("team");
       refs.passInput.value = "";
+      window.alert("已进入队友模式");
       return;
     }
     if (targetRole === "admin" && ACCESS_HASH_POOL.admin.includes(hash)) {
       resetAuthRole("admin");
       setRole("admin");
       refs.passInput.value = "";
+      window.alert("已进入管理员模式");
       return;
     }
 
@@ -272,6 +293,7 @@
       log("repo connected");
       await refreshProjects();
       await refreshPixelGallery();
+      await refreshPixelReviewQueue();
 
       if (fallbackToReadonly) {
         window.alert("Token 无效或被拦截，已切换只读连接。要上传和保存请填正确 PAT。");
@@ -426,6 +448,138 @@
     }
   }
 
+  async function refreshPixelReviewQueue() {
+    if (!refs.pixelReviewList) return;
+
+    if (state.role !== "admin") {
+      refs.pixelReviewList.innerHTML = '<div class="pixel-gallery-empty">仅管理员可查看待审核列表。</div>';
+      return;
+    }
+
+    refs.pixelReviewList.innerHTML = '<div class="pixel-gallery-empty">loading...</div>';
+    try {
+      const items = await listDirectory(PIXEL_PENDING_DIR);
+      const files = items.filter((item) => item.type === "file" && isPixelImageName(item.name));
+
+      if (!files.length) {
+        refs.pixelReviewList.innerHTML = '<div class="pixel-gallery-empty">暂无待审核像素画。</div>';
+        return;
+      }
+
+      files.sort((a, b) => b.name.localeCompare(a.name));
+      refs.pixelReviewList.innerHTML = files
+        .map((item) => {
+          const rawUrl = item.download_url || toGitHubRawUrl(item.path);
+          const blobUrl = toGithubBlobUrl(item.path);
+          const name = item.name || "";
+          const timeText = formatPixelTimestamp(name);
+          const safePath = escapeHtml(item.path || "");
+          const safeSha = escapeHtml(item.sha || "");
+          const safeName = escapeHtml(name);
+
+          return (
+            '<article class="pixel-gallery-item">' +
+            '<a href="' +
+            blobUrl +
+            '" target="_blank" rel="noopener">' +
+            '<img src="' +
+            rawUrl +
+            '" alt="' +
+            safeName +
+            '" loading="lazy">' +
+            "</a>" +
+            '<div class="pixel-gallery-meta">' +
+            '<span class="name">' +
+            safeName +
+            "</span>" +
+            '<span class="time">' +
+            escapeHtml(timeText || "待审核") +
+            "</span>" +
+            "</div>" +
+            '<div class="pixel-review-actions">' +
+            '<button class="collab-btn primary" type="button" data-review-action="approve" data-review-path="' +
+            safePath +
+            '" data-review-sha="' +
+            safeSha +
+            '" data-review-name="' +
+            safeName +
+            '">通过并发布</button>' +
+            '<button class="collab-btn danger" type="button" data-review-action="reject" data-review-path="' +
+            safePath +
+            '" data-review-sha="' +
+            safeSha +
+            '" data-review-name="' +
+            safeName +
+            '">驳回删除</button>' +
+            "</div>" +
+            "</article>"
+          );
+        })
+        .join("");
+
+      log("pixel review queue refreshed");
+    } catch (err) {
+      refs.pixelReviewList.innerHTML = '<div class="pixel-gallery-empty">读取失败: ' + escapeHtml(err.message) + "</div>";
+      log("pixel review queue failed: " + err.message);
+    }
+  }
+
+  async function onPixelReviewAction(event) {
+    const btn = event.target.closest("button[data-review-action]");
+    if (!btn) return;
+
+    if (state.role !== "admin") {
+      window.alert("仅管理员可审核像素画");
+      return;
+    }
+    if (!ensureToken()) return;
+
+    const action = (btn.getAttribute("data-review-action") || "").trim();
+    const path = (btn.getAttribute("data-review-path") || "").trim();
+    const name = (btn.getAttribute("data-review-name") || path.split("/").pop() || "").trim();
+    if (!path || !action) return;
+
+    btn.disabled = true;
+    try {
+      const file = await getFile(path);
+      const fileSha = (file && file.sha) || (btn.getAttribute("data-review-sha") || "").trim();
+      if (!fileSha) throw new Error("缺少文件 SHA，无法执行审核");
+
+      if (action === "approve") {
+        const approvedName = buildApprovedPixelName(name);
+        const targetPath = PIXEL_UPLOAD_DIR + "/" + approvedName;
+        const content = String((file && file.content) || "").replace(/\n/g, "");
+        if (!content) throw new Error("文件内容为空");
+
+        await writeFile(targetPath, content, "admin approve pixel: " + name, true);
+        await deleteFile(path, fileSha, "admin remove pending pixel: " + name);
+
+        const publicPath = "/" + targetPath.replace(/^source\//, "");
+        setPixelResult("Approved: " + publicPath);
+        log("pixel approved: " + path + " => " + targetPath);
+        await refreshPixelGallery();
+        await refreshPixelReviewQueue();
+        window.alert("审核通过并发布: " + publicPath);
+        return;
+      }
+
+      if (action === "reject") {
+        await deleteFile(path, fileSha, "admin reject pixel: " + name);
+        setPixelResult("Rejected: " + name);
+        log("pixel rejected: " + path);
+        await refreshPixelReviewQueue();
+        window.alert("已驳回并删除: " + name);
+        return;
+      }
+
+      throw new Error("未知审核动作");
+    } catch (err) {
+      btn.disabled = false;
+      log("pixel review action failed: " + err.message);
+      window.alert("审核失败: " + err.message);
+    }
+  }
+
   async function createTeamPost(e) {
     e.preventDefault();
     if (!ensureEditorRole()) return;
@@ -478,6 +632,16 @@
     }
 
     const subdir = sanitizePath(refs.uploadSubdir.value || "shared");
+    if (
+      state.role === "team" &&
+      (subdir === "pixel-art" ||
+        subdir.startsWith("pixel-art/") ||
+        subdir === "pixel-review" ||
+        subdir.startsWith("pixel-review/"))
+    ) {
+      window.alert("像素画请用像素画板提交（走管理员审核流程）");
+      return;
+    }
     const safeName = sanitizeFileName(file.name);
     const path = TEAM_UPLOAD_DIR + "/" + subdir + "/" + Date.now() + "-" + safeName;
     const allowUpdate = state.role === "admin";
@@ -693,24 +857,38 @@
   }
 
   async function savePixelCanvasToRepo() {
-    if (state.role !== "admin") {
-      window.alert("需要管理员身份");
-      return;
-    }
+    if (!ensureEditorRole()) return;
     if (!ensureToken()) return;
 
     const exportCanvas = buildPixelExportCanvas();
     const fileBase = getPixelFileBaseName();
-    const path = PIXEL_UPLOAD_DIR + "/" + Date.now() + "-" + fileBase + ".png";
+    const isAdmin = state.role === "admin";
+    const path =
+      (isAdmin ? PIXEL_UPLOAD_DIR : PIXEL_PENDING_DIR) + "/" + Date.now() + "-" + fileBase + ".png";
     const base64Content = exportCanvas.toDataURL("image/png").split(",")[1] || "";
 
     try {
-      await writeFile(path, base64Content, "admin pixel art: " + fileBase, true);
-      const publicPath = "/" + path.replace(/^source\//, "");
-      setPixelResult("Saved: " + publicPath);
-      log("pixel art saved: " + path);
-      await refreshPixelGallery();
-      window.alert("像素画已保存: " + publicPath);
+      await writeFile(
+        path,
+        base64Content,
+        (isAdmin ? "admin pixel art: " : "team pixel submit: ") + fileBase,
+        isAdmin
+      );
+
+      if (isAdmin) {
+        const publicPath = "/" + path.replace(/^source\//, "");
+        setPixelResult("Saved: " + publicPath);
+        log("pixel art saved: " + path);
+        await refreshPixelGallery();
+        await refreshPixelReviewQueue();
+        window.alert("像素画已发布到画廊: " + publicPath);
+        return;
+      }
+
+      setPixelResult("Submitted for review: " + path.replace(/^source\//, ""));
+      log("pixel art submitted: " + path);
+      window.alert("提交成功，等待管理员审核后发布。");
+      await refreshPixelReviewQueue();
     } catch (err) {
       setPixelResult("Save failed: " + err.message);
       log("pixel save failed: " + err.message);
@@ -748,6 +926,17 @@
       .replace(/-{2,}/g, "-")
       .replace(/^-+|-+$/g, "");
     return cleaned || "pixel-art";
+  }
+
+  function buildApprovedPixelName(rawName) {
+    const safeName = sanitizeFileName(rawName || "pixel-art.png");
+    const dotIndex = safeName.lastIndexOf(".");
+    const ext = dotIndex >= 0 ? safeName.slice(dotIndex + 1) : "png";
+    const base = (dotIndex >= 0 ? safeName.slice(0, dotIndex) : safeName)
+      .replace(/^\d{13}-/, "")
+      .replace(/^-+/, "");
+    const finalBase = base || "pixel-art";
+    return Date.now() + "-" + finalBase + "." + ext;
   }
 
   function setPixelResult(text) {
@@ -802,6 +991,12 @@
       const allowedPrefixB = TEAM_UPLOAD_DIR + "/";
       if (!path.startsWith(allowedPrefixA) && !path.startsWith(allowedPrefixB)) {
         throw new Error("队友只能在 team 目录新增文件");
+      }
+      if (path.startsWith(PIXEL_UPLOAD_DIR + "/")) {
+        throw new Error("队友不能直接发布像素画，请走待审核流程");
+      }
+      if (path.startsWith(PIXEL_REVIEW_DIR + "/") && !path.startsWith(PIXEL_PENDING_DIR + "/")) {
+        throw new Error("队友只能写入像素画待审核目录");
       }
     }
 

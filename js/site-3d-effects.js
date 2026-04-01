@@ -484,233 +484,193 @@
 
   function createFallbackBlenderObject(THREE) {
     const wrap = new THREE.Group();
-    wrap.position.y = -0.08;
+    wrap.position.y = -0.06;
 
     const beatDriver = createBeatDriver();
     const petalTexture = createPetalTexture(THREE);
 
-    const stageGlow = new THREE.Mesh(
-      new THREE.CircleGeometry(2.02, 100),
+    const floor = new THREE.Mesh(
+      new THREE.CircleGeometry(1.72, 96),
       new THREE.MeshBasicMaterial({
-        color: 0xff77c7,
+        color: 0xff8fd1,
         transparent: true,
-        opacity: 0.16
+        opacity: 0.1
       })
     );
-    stageGlow.rotation.x = -Math.PI * 0.5;
-    stageGlow.position.y = -1.2;
-    wrap.add(stageGlow);
+    floor.rotation.x = -Math.PI * 0.5;
+    floor.position.y = -1.14;
+    wrap.add(floor);
 
-    const pulseRing = new THREE.Mesh(
-      new THREE.TorusGeometry(1.28, 0.032, 22, 160),
+    const ringA = new THREE.Mesh(
+      new THREE.TorusGeometry(1.1, 0.018, 16, 120),
       new THREE.MeshBasicMaterial({
-        color: 0xffa0d8,
+        color: 0xffb4de,
         transparent: true,
-        opacity: 0.48
+        opacity: 0.33
       })
     );
-    pulseRing.rotation.x = Math.PI * 0.5;
-    pulseRing.position.y = -1.03;
-    wrap.add(pulseRing);
+    ringA.rotation.x = Math.PI * 0.5;
+    ringA.position.y = -0.96;
+    wrap.add(ringA);
 
-    const pulseRing2 = new THREE.Mesh(
-      new THREE.TorusGeometry(0.94, 0.024, 20, 140),
+    const ringB = new THREE.Mesh(
+      new THREE.TorusGeometry(0.86, 0.014, 16, 100),
       new THREE.MeshBasicMaterial({
-        color: 0xaab9ff,
+        color: 0xb6c4ff,
         transparent: true,
-        opacity: 0.36
+        opacity: 0.28
       })
     );
-    pulseRing2.rotation.x = Math.PI * 0.5;
-    pulseRing2.rotation.z = 0.42;
-    pulseRing2.position.y = -1.01;
-    wrap.add(pulseRing2);
+    ringB.rotation.x = Math.PI * 0.5;
+    ringB.rotation.z = 0.32;
+    ringB.position.y = -0.96;
+    wrap.add(ringB);
 
     const heartGroup = new THREE.Group();
-    heartGroup.position.set(0, 0.28, 0);
+    heartGroup.position.set(0, 0.22, 0);
     wrap.add(heartGroup);
 
     const heartShape = makeHeartShape(THREE);
     const heartGeo = new THREE.ExtrudeGeometry(heartShape, {
-      depth: 0.46,
+      depth: 0.38,
       bevelEnabled: true,
-      bevelSegments: 6,
+      bevelSegments: 5,
       steps: 2,
-      bevelSize: 0.07,
-      bevelThickness: 0.08,
-      curveSegments: 42
+      bevelSize: 0.065,
+      bevelThickness: 0.07,
+      curveSegments: 40
     });
     heartGeo.center();
 
     const heartCore = new THREE.Mesh(
       heartGeo,
       new THREE.MeshPhysicalMaterial({
-        color: 0xff88cc,
-        emissive: 0x2f061d,
-        roughness: 0.1,
-        metalness: 0.24,
-        transmission: 0.55,
-        thickness: 1.35,
+        color: 0xff90d2,
+        emissive: 0x210612,
+        roughness: 0.12,
+        metalness: 0.2,
+        transmission: 0.62,
+        thickness: 1.2,
         clearcoat: 1,
-        clearcoatRoughness: 0.08
+        clearcoatRoughness: 0.09
       })
     );
-    heartCore.scale.set(0.9, 0.9, 0.86);
-    heartCore.rotation.x = 0.2;
+    heartCore.scale.set(0.86, 0.86, 0.82);
+    heartCore.rotation.x = 0.18;
     heartCore.rotation.z = Math.PI;
     heartGroup.add(heartCore);
 
-    const heartOutline = new THREE.LineSegments(
+    const heartWire = new THREE.LineSegments(
       new THREE.EdgesGeometry(heartGeo, 26),
       new THREE.LineBasicMaterial({
-        color: 0xffd9ef,
+        color: 0xffdff2,
         transparent: true,
-        opacity: 0.42
+        opacity: 0.32
       })
     );
-    heartOutline.scale.set(0.95, 0.95, 0.92);
-    heartOutline.rotation.x = 0.2;
-    heartOutline.rotation.z = Math.PI;
-    heartGroup.add(heartOutline);
+    heartWire.scale.set(0.9, 0.9, 0.86);
+    heartWire.rotation.x = 0.18;
+    heartWire.rotation.z = Math.PI;
+    heartGroup.add(heartWire);
 
-    const heartAura = new THREE.Mesh(
-      new THREE.SphereGeometry(1.05, 24, 24),
+    const aura = new THREE.Mesh(
+      new THREE.SphereGeometry(0.96, 20, 20),
       new THREE.MeshBasicMaterial({
-        color: 0xff88cf,
+        color: 0xff9edb,
         transparent: true,
-        opacity: 0.09
+        opacity: 0.075
       })
     );
-    heartAura.position.z = -0.22;
-    heartGroup.add(heartAura);
-
-    const crystalGroup = new THREE.Group();
-    wrap.add(crystalGroup);
-    const crystals = [];
-    const crystalGeo = new THREE.OctahedronGeometry(0.1, 0);
-    for (let i = 0; i < 24; i += 1) {
-      const crystalMat = new THREE.MeshStandardMaterial({
-        color: i % 2 ? 0xff9edb : 0xa5b5ff,
-        emissive: i % 2 ? 0x300a1d : 0x10183a,
-        roughness: 0.18,
-        metalness: 0.54,
-        transparent: true,
-        opacity: 0.74
-      });
-
-      const crystal = new THREE.Mesh(crystalGeo, crystalMat);
-      const radius = 1.26 + Math.random() * 0.74;
-      const angle = (i / 24) * Math.PI * 2 + Math.random() * 0.18;
-      const y = -0.78 + Math.random() * 2.0;
-      crystal.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-      crystal.scale.setScalar(0.76 + Math.random() * 1.05);
-      crystal.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-      crystal.userData.seed = Math.random() * Math.PI * 2;
-      crystal.userData.radius = radius;
-      crystal.userData.height = y;
-      crystals.push(crystal);
-      crystalGroup.add(crystal);
-    }
-
-    const petalGroup = new THREE.Group();
-    wrap.add(petalGroup);
-    const petals = [];
-    const petalGeo = new THREE.PlaneGeometry(0.16, 0.24);
-    for (let i = 0; i < 92; i += 1) {
-      const petalMat = new THREE.MeshBasicMaterial({
-        map: petalTexture,
-        color: i % 3 === 0 ? 0xfff0f8 : 0xff8ed0,
-        transparent: true,
-        opacity: 0.8,
-        side: THREE.DoubleSide,
-        depthWrite: false
-      });
-      const petal = new THREE.Mesh(petalGeo, petalMat);
-      resetPetal(petal, true);
-      petals.push(petal);
-      petalGroup.add(petal);
-    }
+    aura.position.z = -0.22;
+    heartGroup.add(aura);
 
     const starsGeo = new THREE.BufferGeometry();
-    const starCount = 260;
+    const starCount = 120;
     const positions = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount; i += 1) {
-      const r = 1.12 + Math.random() * 1.7;
+      const r = 0.95 + Math.random() * 1.35;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = (r * Math.cos(phi)) * 0.88;
+      positions[i * 3 + 1] = (r * Math.cos(phi)) * 0.8;
       positions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
     }
     starsGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     const stars = new THREE.Points(
       starsGeo,
       new THREE.PointsMaterial({
-        color: 0xffd9ef,
-        size: 0.028,
-        sizeAttenuation: true,
+        color: 0xffe6f5,
+        size: 0.02,
         transparent: true,
-        opacity: 0.68
+        opacity: 0.5,
+        sizeAttenuation: true
       })
     );
     wrap.add(stars);
 
+    const petalGroup = new THREE.Group();
+    wrap.add(petalGroup);
+    const petals = [];
+    const petalGeo = new THREE.PlaneGeometry(0.15, 0.22);
+    for (let i = 0; i < 26; i += 1) {
+      const petal = new THREE.Mesh(
+        petalGeo,
+        new THREE.MeshBasicMaterial({
+          map: petalTexture,
+          color: i % 2 ? 0xfff1f9 : 0xffa4d8,
+          transparent: true,
+          opacity: 0.62,
+          side: THREE.DoubleSide,
+          depthWrite: false
+        })
+      );
+      resetPetal(petal, true);
+      petals.push(petal);
+      petalGroup.add(petal);
+    }
+
     let beatSmooth = 0.22;
     wrap.userData.tick = function (t, smoothX, smoothY) {
       const beat = beatDriver.sample(t);
-      beatSmooth += (beat - beatSmooth) * 0.2;
+      beatSmooth += (beat - beatSmooth) * 0.14;
+      const pulse = 1 + beatSmooth * 0.09;
 
-      const pulse = 1 + beatSmooth * 0.2;
-      heartGroup.position.y = 0.26 + Math.sin(t * 1.25) * 0.06 + beatSmooth * 0.06;
-      heartGroup.rotation.y = smoothX * 0.58;
-      heartGroup.rotation.x = -smoothY * 0.16;
+      heartGroup.position.y = 0.22 + Math.sin(t * 1.0) * 0.03 + beatSmooth * 0.03;
+      heartGroup.rotation.y = smoothX * 0.42;
+      heartGroup.rotation.x = -smoothY * 0.12;
 
-      heartCore.rotation.y = t * 0.62;
-      heartOutline.rotation.y = -t * 0.4;
-      heartCore.scale.setScalar(0.9 + beatSmooth * 0.1);
-      heartOutline.scale.setScalar(0.95 + beatSmooth * 0.12);
+      heartCore.rotation.y = t * 0.34;
+      heartWire.rotation.y = -t * 0.24;
+      heartCore.scale.setScalar(0.86 + beatSmooth * 0.06);
+      heartWire.scale.setScalar(0.9 + beatSmooth * 0.06);
 
-      heartAura.material.opacity = 0.06 + beatSmooth * 0.16;
-      heartAura.scale.setScalar(1 + beatSmooth * 0.22);
+      aura.scale.setScalar(1 + beatSmooth * 0.12);
+      aura.material.opacity = 0.05 + beatSmooth * 0.08;
 
-      pulseRing.scale.setScalar(pulse);
-      pulseRing.material.opacity = 0.2 + beatSmooth * 0.58;
-      pulseRing.rotation.z += 0.008 + beatSmooth * 0.02;
+      ringA.scale.setScalar(pulse);
+      ringA.rotation.z += 0.004 + beatSmooth * 0.006;
+      ringA.material.opacity = 0.22 + beatSmooth * 0.2;
 
-      pulseRing2.scale.setScalar(1 + beatSmooth * 0.15);
-      pulseRing2.material.opacity = 0.18 + beatSmooth * 0.44;
-      pulseRing2.rotation.z -= 0.006 + beatSmooth * 0.016;
+      ringB.scale.setScalar(1 + beatSmooth * 0.06);
+      ringB.rotation.z -= 0.003 + beatSmooth * 0.004;
+      ringB.material.opacity = 0.2 + beatSmooth * 0.14;
 
-      stageGlow.material.opacity = 0.1 + beatSmooth * 0.14;
-      stageGlow.scale.setScalar(1 + beatSmooth * 0.15);
+      floor.material.opacity = 0.07 + beatSmooth * 0.08;
+      floor.scale.setScalar(1 + beatSmooth * 0.08);
 
-      stars.rotation.y = -t * (0.12 + beatSmooth * 0.06);
-      stars.rotation.x = Math.sin(t * 0.24) * 0.1;
-
-      for (let i = 0; i < crystals.length; i += 1) {
-        const c = crystals[i];
-        const seed = c.userData.seed || 0;
-        const radius = c.userData.radius || 1.5;
-        const height = c.userData.height || 0;
-        const ang = seed + t * (0.24 + beatSmooth * 0.18) + i * 0.018;
-        c.position.x = Math.cos(ang) * (radius + beatSmooth * 0.1);
-        c.position.z = Math.sin(ang) * (radius + beatSmooth * 0.1);
-        c.position.y = height + Math.sin(t * 1.6 + seed) * (0.09 + beatSmooth * 0.07);
-        c.rotation.x += 0.01 + beatSmooth * 0.01;
-        c.rotation.y += 0.012 + beatSmooth * 0.012;
-      }
+      stars.rotation.y = -t * 0.08;
 
       for (let i = 0; i < petals.length; i += 1) {
         const p = petals[i];
         const u = p.userData;
-        p.position.y -= u.fall + beatSmooth * 0.009;
-        p.position.x += Math.sin(t * u.swing + u.phase) * 0.0034 * u.drift;
-        p.position.z += Math.cos(t * u.swing * 0.72 + u.phase) * 0.0023 * u.drift;
-        p.rotation.x += u.spin * 0.72;
-        p.rotation.y += u.spin;
-        p.rotation.z += u.spin * 0.52;
+        p.position.y -= u.fall + beatSmooth * 0.0026;
+        p.position.x += Math.sin(t * u.swing + u.phase) * 0.002 * u.drift;
+        p.position.z += Math.cos(t * u.swing * 0.6 + u.phase) * 0.0015 * u.drift;
+        p.rotation.x += u.spin * 0.5;
+        p.rotation.y += u.spin * 0.72;
+        p.rotation.z += u.spin * 0.4;
 
-        if (p.position.y < -1.58 || Math.abs(p.position.x) > 2.7 || Math.abs(p.position.z) > 2.2) {
+        if (p.position.y < -1.5 || Math.abs(p.position.x) > 2.4 || Math.abs(p.position.z) > 1.95) {
           resetPetal(p, false);
         }
       }
@@ -728,26 +688,25 @@
     function resetPetal(petal, initial) {
       const u = petal.userData;
       u.phase = Math.random() * Math.PI * 2;
-      u.fall = 0.004 + Math.random() * 0.005;
-      u.spin = (Math.random() * 2 - 1) * 0.045;
-      u.swing = 0.8 + Math.random() * 1.6;
-      u.drift = 0.6 + Math.random() * 1.2;
-
-      const s = 0.62 + Math.random() * 1.15;
+      u.fall = 0.0024 + Math.random() * 0.0025;
+      u.spin = (Math.random() * 2 - 1) * 0.028;
+      u.swing = 0.7 + Math.random() * 1.1;
+      u.drift = 0.6 + Math.random() * 0.8;
+      const s = 0.72 + Math.random() * 0.72;
       petal.scale.setScalar(s);
-      petal.position.x = (Math.random() * 2 - 1) * 2.15;
-      petal.position.z = -1.1 + Math.random() * 2.2;
-      petal.position.y = initial ? -1.25 + Math.random() * 3.55 : 1.95 + Math.random() * 0.85;
+      petal.position.x = (Math.random() * 2 - 1) * 1.9;
+      petal.position.z = -0.9 + Math.random() * 1.8;
+      petal.position.y = initial ? -1.0 + Math.random() * 2.7 : 1.58 + Math.random() * 0.5;
       petal.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
     }
 
     function makeHeartShape(THREERef) {
       const shape = new THREERef.Shape();
-      shape.moveTo(0, 0.2);
-      shape.bezierCurveTo(0, -0.45, -0.9, -0.45, -0.9, 0.25);
-      shape.bezierCurveTo(-0.9, 0.92, -0.22, 1.28, 0, 1.55);
-      shape.bezierCurveTo(0.22, 1.28, 0.9, 0.92, 0.9, 0.25);
-      shape.bezierCurveTo(0.9, -0.45, 0, -0.45, 0, 0.2);
+      shape.moveTo(0, 0.14);
+      shape.bezierCurveTo(0, -0.4, -0.82, -0.4, -0.82, 0.2);
+      shape.bezierCurveTo(-0.82, 0.78, -0.2, 1.12, 0, 1.38);
+      shape.bezierCurveTo(0.2, 1.12, 0.82, 0.78, 0.82, 0.2);
+      shape.bezierCurveTo(0.82, -0.4, 0, -0.4, 0, 0.14);
       return shape;
     }
   }
