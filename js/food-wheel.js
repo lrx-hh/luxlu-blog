@@ -125,6 +125,7 @@
     const state = {
       angle: 0,
       spinning: false,
+      lastWinnerIndex: -1,
       options: pickRandomItems(FOOD_POOL[mealKey], SEGMENT_COUNT)
     };
 
@@ -153,7 +154,7 @@
   function runSpinAnimation(ctx, canvas, state, onDone) {
     state.spinning = true;
     const arc = TWO_PI / state.options.length;
-    const targetIndex = Math.floor(Math.random() * state.options.length);
+    const targetIndex = randomWinnerIndex(state.options.length, state.lastWinnerIndex);
     const centerOffset = (targetIndex + 0.5) * arc;
     const baseFinal = -Math.PI / 2 - centerOffset;
     const turns = 5 + Math.floor(Math.random() * 3);
@@ -175,6 +176,7 @@
       } else {
         state.spinning = false;
         state.angle = normalizeAngle(state.angle);
+        state.lastWinnerIndex = targetIndex;
         onDone(state.options[targetIndex]);
       }
     }
@@ -244,7 +246,7 @@
   function pickRandomItems(source, count) {
     const arr = source.slice();
     for (let i = arr.length - 1; i > 0; i -= 1) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = randomInt(i + 1);
       const tmp = arr[i];
       arr[i] = arr[j];
       arr[j] = tmp;
@@ -256,6 +258,32 @@
     let a = rad % TWO_PI;
     if (a < 0) a += TWO_PI;
     return a;
+  }
+
+  function randomWinnerIndex(total, lastIndex) {
+    if (total <= 1) return 0;
+    let idx = randomInt(total);
+    if (idx === lastIndex) idx = (idx + 1 + randomInt(total - 1)) % total;
+    return idx;
+  }
+
+  function randomInt(maxExclusive) {
+    if (!Number.isFinite(maxExclusive) || maxExclusive <= 0) return 0;
+    const max = Math.floor(maxExclusive);
+    if (max <= 1) return 0;
+
+    if (window.crypto && window.crypto.getRandomValues) {
+      const arr = new Uint32Array(1);
+      const limit = Math.floor(0xffffffff / max) * max;
+      let x = 0;
+      do {
+        window.crypto.getRandomValues(arr);
+        x = arr[0];
+      } while (x >= limit);
+      return x % max;
+    }
+
+    return Math.floor(Math.random() * max);
   }
 
   document.addEventListener("DOMContentLoaded", initFoodWheels);
