@@ -3359,4 +3359,118 @@ Ctrl+V 粘贴密码
         <tag>Forensics</tag>
       </tags>
   </entry>
+  <entry>
+    <title>pwn0-4 Test_your_nc</title>
+    <url>/posts/pwn0-4-test-your-nc/</url>
+    <content><![CDATA[<h1 id="pwn0"><a href="#pwn0" class="headerlink" title="pwn0"></a>pwn0</h1><!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1775115400642-a455495c-f861-45e5-b55e-fdb8bc04d81d.png"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh ctfshow@pwn.challenge.ctf.show -p28110</span><br></pre></td></tr></table></figure>
+
+<p>等待程序跑完</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /ctfshow_flag</span><br><span class="line"><span class="comment"># 把ctfshow_flag这个文件里的内容输出到终端</span></span><br></pre></td></tr></table></figure>
+
+<p>获得flag</p>
+<h1 id="pwn1"><a href="#pwn1" class="headerlink" title="pwn1"></a>pwn1</h1><p>010打开附件 是ELF文件</p>
+<p>在虚拟机运行<code>checksec pwn1</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ctfshow@ubuntu:~/Desktop/pwn1wjj$ checksec pwn1</span><br><span class="line">[*] <span class="string">&#x27;/home/ctfshow/Desktop/pwn1wjj/pwn1&#x27;</span></span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Full RELRO</span><br><span class="line">    Stack:    No canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      PIE enabled</span><br><span class="line">ctfshow@ubuntu:~/Desktop/pwn1wjj$ </span><br></pre></td></tr></table></figure>
+
+<p><code>checksec</code>查看二进制启用了哪些安全机制。判断该走什么利用方式。</p>
+<p>可以看到是64位仅关闭Canary保护</p>
+<ul>
+<li><font style="color:rgb(13, 13, 13);">NX</font><font style="color:rgb(13, 13, 13);">: 不能直接执行栈上的 shellcode，通常走</font><font style="color:rgb(13, 13, 13);"> </font><font style="color:rgb(13, 13, 13);">ROP&#x2F;ret2libc</font><font style="color:rgb(13, 13, 13);">。</font></li>
+<li><font style="color:rgb(13, 13, 13);">Canary</font><font style="color:rgb(13, 13, 13);">: 有金丝雀，溢出必须先泄露或绕过。</font></li>
+<li><font style="color:rgb(13, 13, 13);">PIE</font><font style="color:rgb(13, 13, 13);">: 程序地址随机化，需要先泄露地址。</font></li>
+<li><font style="color:rgb(13, 13, 13);">RELRO: 影响 GOT 能否被写，用于判断能不能改 GOT</font></li>
+</ul>
+<p>打开附件后反编译可直接看到关键命令：</p>
+<ul>
+<li><code>cat /ctfshow_flag</code></li>
+<li>以及提示语：<code>You only need to connect to the remote address with NC to get the flag!</code></li>
+</ul>
+<p>表明连接后不用操作，程序会直接执行<code>cat</code>读取flag</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1775116462589-5be8510a-f921-4167-8734-a1fcfe1cf3e0.png?x-oss-process=image/format,webp"></p>
+<p><code>&lt;font style=&quot;color:rgb(13, 13, 13);&quot;&gt;checksec&lt;/font&gt;</code><font style="color:rgb(13, 13, 13);">仅用于了解保护情况，但本题不需要利用链，发现s</font><code>&lt;font style=&quot;color:rgb(13, 13, 13);&quot;&gt;ystem(&quot;cat /ctfshow_flag&quot;)&lt;/font&gt;</code><font style="color:rgb(13, 13, 13);">后直接连接即可</font></p>
+<p>直接在虚拟机nc连接即可获得flag</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1775115915886-6cee9557-340b-42cf-9cfb-72f4ab8a108c.png?x-oss-process=image/format,webp"></p>
+<h1 id="pwn2"><a href="#pwn2" class="headerlink" title="pwn2"></a>pwn2</h1><p>反编译附件后看到</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1775119513264-abee236a-7268-4e66-a028-5bcf325760b0.png"></p>
+<p><code>system(&quot;/bin/sh&quot;)</code>直接启动一个后门。连上远程以后直接进入shell环境。然后自己执行<code>cat /ctfshow_flag</code>就可以读flag</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1775119362142-3d3c28af-4d55-4dbf-b570-3a9654247f08.png"></p>
+<h1 id="pwn3"><a href="#pwn3" class="headerlink" title="pwn3"></a>pwn3</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">You can call the following <span class="keyword">function</span>:</span><br><span class="line">1._start</span><br><span class="line">2.main</span><br><span class="line">3.hello_ctfshow</span><br><span class="line">4.ctfshow(<span class="string">&#x27;echo /ctfshow_flag&#x27;</span>)</span><br><span class="line">5.<span class="built_in">print</span>(<span class="string">&#x27;/ctfshow_flag&#x27;</span>)</span><br><span class="line">6.system(<span class="string">&#x27;cat /ctfshow_flag&#x27;</span>)</span><br><span class="line">7.puts(<span class="string">&#x27;/ctfshow_flag&#x27;</span>)</span><br><span class="line">8.<span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+
+<p>4 5 7都是打印路径字符串</p>
+<p>只有6是读取文件内容</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1775121528753-d24039ad-dddd-4afe-bcb1-80c3d95a54a2.png"></p>
+<h1 id="pwn4"><a href="#pwn4" class="headerlink" title="pwn4"></a>pwn4</h1><p>打开附件 反编译</p>
+<h2 id="字符串比较口令校验"><a href="#字符串比较口令校验" class="headerlink" title="字符串比较口令校验"></a><strong><font style="color:rgb(13, 13, 13);">字符串比较口令校验</font></strong></h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv, <span class="type">const</span> <span class="type">char</span> **envp)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">char</span> s1[<span class="number">11</span>];</span><br><span class="line">  <span class="type">char</span> s2[<span class="number">12</span>];</span><br><span class="line">  <span class="type">unsigned</span> __int64 v6;</span><br><span class="line"></span><br><span class="line">  v6 = __readfsqword(<span class="number">0x28u</span>);</span><br><span class="line">  setvbuf(_bss_start, <span class="number">0LL</span>, <span class="number">2</span>, <span class="number">0LL</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0LL</span>, <span class="number">2</span>, <span class="number">0LL</span>);</span><br><span class="line">  <span class="built_in">strcpy</span>(s1, <span class="string">&quot;CTFshowPWN&quot;</span>);</span><br><span class="line">  logo();</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;find the secret !&quot;</span>);</span><br><span class="line">  __isoc99_scanf(<span class="string">&quot;%s&quot;</span>, s2);</span><br><span class="line">  <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(s1, s2) )</span><br><span class="line">    execve_func();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>C语言的反编译版本。IDA把机器代码“猜回”C，所以名字看上去奇怪。本质上还是C语言</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">int __fastcall main(int argc, const char **argv, const char **envp)</span><br></pre></td></tr></table></figure>
+
+<p><code>main</code>是程序固定入口</p>
+<p><code>int</code>：<code>main</code>最后会返回一个整数（0表示正常结束）</p>
+<p><code>argc/argv/envp</code>是命令行参数（这里可以不用管</p>
+<p><code>_fastcall</code>是编译器用的调用方式，对题目逻辑没影响</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">char</span> s1[<span class="number">11</span>];</span><br><span class="line"><span class="type">char</span> s2[<span class="number">12</span>];</span><br><span class="line"><span class="type">unsigned</span> __int64 v6;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&lt;font style=&quot;color:rgb(13, 13, 13);&quot;&gt;char s1[11]&lt;/font&gt;</code><font style="color:rgb(13, 13, 13);">;<br></font><font style="color:rgb(13, 13, 13);">开一块能放11个字符的空间</font></li>
+<li><code>&lt;font style=&quot;color:rgb(13, 13, 13);&quot;&gt;char s2[12]&lt;/font&gt;</code><font style="color:rgb(13, 13, 13);">;<br></font><font style="color:rgb(13, 13, 13);">开一块能放12个字符的空间</font></li>
+<li><code>&lt;font style=&quot;color:rgb(13, 13, 13);&quot;&gt;unsigned __int64 v6&lt;/font&gt;</code><font style="color:rgb(13, 13, 13);">;<br></font><font style="color:rgb(13, 13, 13);">一个 64 位无符号整数。<br></font><font style="color:rgb(13, 13, 13);">这个是栈保护值，暂时理解为安全锁</font></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">v6 = __readfsqword(<span class="number">0x28u</span>);</span><br></pre></td></tr></table></figure>
+
+<p>读取栈保护值。是编译器加的，防止栈溢出攻击。和题目逻辑无关</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">setvbuf(_bss_start, <span class="number">0LL</span>, <span class="number">2</span>, <span class="number">0LL</span>);</span><br><span class="line">setvbuf(<span class="built_in">stdin</span>, <span class="number">0LL</span>, <span class="number">2</span>, <span class="number">0LL</span>);</span><br></pre></td></tr></table></figure>
+
+<p>让输入输出立刻显示，不等缓冲，这样交互更流畅</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="built_in">strcpy</span>(s1, <span class="string">&quot;CTFshowPWN&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>strcpy</code>是把右边字符串复制到左边的数组里</p>
+<p>所以<code>s1</code>现在是<code>CTFshowPWN</code></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">logo();</span><br><span class="line"><span class="built_in">puts</span>(<span class="string">&quot;find the secret !&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><code>logo()</code>是打印题目banner</p>
+<p><code>puts()</code>是打印一句话</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__isoc99_scanf(<span class="string">&quot;%s&quot;</span>, s2);</span><br></pre></td></tr></table></figure>
+
+<p><code>&quot;%s&quot;</code>是“读入一个字符串”</p>
+<p>你的输入会被存进<code>s2</code></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(s1, s2) )</span><br><span class="line">    execve_func();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&lt;font style=&quot;color:rgb(13, 13, 13);&quot;&gt;strcmp(s1, s2)&lt;/font&gt;</code><font style="color:rgb(13, 13, 13);">比较两个字符串。</font><ul>
+<li><font style="color:rgb(13, 13, 13);">如果相同，返回0</font></li>
+<li><font style="color:rgb(13, 13, 13);">如果不同，返回非0</font></li>
+</ul>
+</li>
+<li><code>&lt;font style=&quot;color:rgb(13, 13, 13);&quot;&gt;!strcmp(...)&lt;/font&gt;</code><font style="color:rgb(13, 13, 13);"> 的意思是“如果它们相同”</font></li>
+<li><font style="color:rgb(13, 13, 13);">如果相同，执行 </font><code>&lt;font style=&quot;color:rgb(13, 13, 13);&quot;&gt;execve_func()&lt;/font&gt;</code></li>
+</ul>
+<p><font style="color:rgb(13, 13, 13);"></font></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>程序结束正常退出</p>
+<p>因此这里要输入<code>s1</code>数值，你输入的内容就存入<code>s2</code>，与真实的<code>s1</code>比较，相同则执行<code>&lt;font style=&quot;color:rgb(13, 13, 13);&quot;&gt;execve_func()&lt;/font&gt;</code></p>
+<p><font style="color:rgb(13, 13, 13);">反编译</font><code>&lt;font style=&quot;color:rgb(13, 13, 13);&quot;&gt;execve_func()&lt;/font&gt;</code><font style="color:rgb(13, 13, 13);">，发现就是进入一个shell</font></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">CTFshowPWN</span><br><span class="line">cat /ctfshow_flag</span><br></pre></td></tr></table></figure>
+
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1775140076304-b9c40ed4-40e0-4855-ad87-996f4bbf9cb7.png"></p>
+]]></content>
+      <categories>
+        <category>Pwn</category>
+        <category>CTFShow</category>
+      </categories>
+      <tags>
+        <tag>CTF</tag>
+        <tag>Pwn</tag>
+        <tag>Writeup</tag>
+      </tags>
+  </entry>
 </search>
