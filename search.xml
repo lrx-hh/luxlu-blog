@@ -3477,9 +3477,9 @@ Ctrl+V 粘贴密码
     <url>/posts/pre-basic-5-12/</url>
     <content><![CDATA[<style>
 #post {
-  background: rgba(255, 255, 255, 0.97) !important;
-  border: 1px solid rgba(255, 79, 163, 0.32) !important;
-  box-shadow: 0 14px 34px rgba(255, 79, 163, 0.14) !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(255, 122, 182, 0.2) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08) !important;
   position: relative;
   z-index: 6;
 }
@@ -3488,31 +3488,32 @@ Ctrl+V 粘贴密码
 #article-container p,
 #article-container li,
 #article-container strong {
-  color: #b4257c !important;
+  color: #2f2f36 !important;
 }
 
 #article-container h1,
 #article-container h2,
 #article-container h3,
 #article-container h4 {
-  color: #ea3c9e !important;
+  color: #d53d8f !important;
 }
 
 #article-container code {
-  background: #ffe8f5 !important;
-  color: #c51e7a !important;
+  background: #fff6fb !important;
+  color: #4a4a54 !important;
+  border: 1px solid #ffd6ea;
 }
 
 #article-container pre,
 #article-container pre code {
-  background: #fff6fc !important;
-  color: #c51e7a !important;
-  border: 1px solid #ffc2e5 !important;
+  background: #fcfdff !important;
+  color: #2f2f36 !important;
+  border: 1px solid #f0d9e8 !important;
 }
 
 #article-container blockquote {
-  background: #fff3fa !important;
-  border-left: 4px solid #ff62b3 !important;
+  background: #fff8fc !important;
+  border-left: 4px solid #f56fb3 !important;
 }
 
 #article-container img {
@@ -3521,7 +3522,13 @@ Ctrl+V 粘贴密码
   height: auto;
   margin: 16px auto;
   border-radius: 12px;
-  border: 1px solid #ffc2e5;
+  border: 1px solid #f0d9e8;
+}
+
+#article-container font[style*="#DF2A3F"],
+#article-container font[style*="#D22D8D"] {
+  color: #d53d8f !important;
+  font-weight: 700;
 }
 
 #page-header,
