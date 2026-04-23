@@ -55,6 +55,21 @@
   color: #ffffff !important;
 }
 
+#page-header #nav a,
+#page-header #nav span,
+#page-header #nav i,
+#page-header #nav .site-page {
+  color: #ffffff !important;
+}
+
+#post-info .post-meta,
+#post-info .post-meta *,
+#post-info .post-meta a,
+#post-info .post-meta span,
+#post-info .post-meta i {
+  color: #ffffff !important;
+}
+
 #nav .menus_item > .site-page:hover,
 #nav #search-button:hover > span,
 #nav #site-name:hover {
@@ -67,6 +82,10 @@
 
 /* Hide large hero title text like "luxlu.top" */
 #page-header #site-title {
+  display: none !important;
+}
+
+#page-header #site-subtitle {
   display: none !important;
 }
 
