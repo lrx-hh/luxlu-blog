@@ -3477,9 +3477,11 @@ Ctrl+V 粘贴密码
     <url>/posts/pre-basic-5-12/</url>
     <content><![CDATA[<style>
 #post {
-  background: #ffffff !important;
-  border: 1px solid rgba(255, 122, 182, 0.2) !important;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)),
+    rgba(28, 10, 34, 0.92) !important;
+  border: 1px solid rgba(255, 122, 182, 0.28) !important;
+  box-shadow: 0 16px 34px rgba(255, 79, 163, 0.14) !important;
   position: relative;
   z-index: 6;
 }
@@ -3488,32 +3490,32 @@ Ctrl+V 粘贴密码
 #article-container p,
 #article-container li,
 #article-container strong {
-  color: #2f2f36 !important;
+  color: #fff7fc !important;
 }
 
 #article-container h1,
 #article-container h2,
 #article-container h3,
 #article-container h4 {
-  color: #d53d8f !important;
+  color: #ff7fc4 !important;
 }
 
 #article-container code {
-  background: #fff6fb !important;
-  color: #4a4a54 !important;
-  border: 1px solid #ffd6ea;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffe7f6 !important;
+  border: 1px solid rgba(255, 143, 199, 0.36);
 }
 
 #article-container pre,
 #article-container pre code {
-  background: #fcfdff !important;
-  color: #2f2f36 !important;
-  border: 1px solid #f0d9e8 !important;
+  background: rgba(16, 6, 21, 0.78) !important;
+  color: #fff1fa !important;
+  border: 1px solid rgba(255, 143, 199, 0.26) !important;
 }
 
 #article-container blockquote {
-  background: #fff8fc !important;
-  border-left: 4px solid #f56fb3 !important;
+  background: rgba(255, 79, 163, 0.12) !important;
+  border-left: 4px solid #ff76bf !important;
 }
 
 #article-container img {
@@ -3522,12 +3524,12 @@ Ctrl+V 粘贴密码
   height: auto;
   margin: 16px auto;
   border-radius: 12px;
-  border: 1px solid #f0d9e8;
+  border: 1px solid rgba(255, 143, 199, 0.45);
 }
 
 #article-container font[style*="#DF2A3F"],
 #article-container font[style*="#D22D8D"] {
-  color: #d53d8f !important;
+  color: #ff8dcb !important;
   font-weight: 700;
 }
 
