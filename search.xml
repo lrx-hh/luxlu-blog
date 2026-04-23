@@ -3490,7 +3490,7 @@ Ctrl+V 粘贴密码
 #article-container p,
 #article-container li,
 #article-container strong {
-  color: #fff7fc !important;
+  color: #ffffff !important;
 }
 
 #article-container h1,
@@ -3502,14 +3502,14 @@ Ctrl+V 粘贴密码
 
 #article-container code {
   background: rgba(255, 255, 255, 0.08) !important;
-  color: #ffe7f6 !important;
+  color: #ffffff !important;
   border: 1px solid rgba(255, 143, 199, 0.36);
 }
 
 #article-container pre,
 #article-container pre code {
   background: rgba(16, 6, 21, 0.78) !important;
-  color: #fff1fa !important;
+  color: #ffffff !important;
   border: 1px solid rgba(255, 143, 199, 0.26) !important;
 }
 
