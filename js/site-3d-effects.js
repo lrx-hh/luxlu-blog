@@ -64,7 +64,7 @@
     initZipperIntro();
     initReveal3D();
     initHeadingDepth();
-    initBlenderDock(fxMode);
+    destroyBlenderDock();
 
     if (fxMode === "lite") return;
 
