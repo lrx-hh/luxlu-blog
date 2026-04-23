@@ -44,6 +44,32 @@
   text-shadow: 0 0 18px rgba(255, 79, 163, 0.34);
 }
 
+/* Header readability: pure white text on dark/pink header */
+#nav #site-name,
+#nav .menus_item > .site-page,
+#nav #search-button > span,
+#nav #toggle-menu,
+#post-info .post-title,
+#post-info #post-meta,
+#post-info #post-meta * {
+  color: #ffffff !important;
+}
+
+#nav .menus_item > .site-page:hover,
+#nav #search-button:hover > span,
+#nav #site-name:hover {
+  color: #ffffff !important;
+}
+
+#post-info {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Hide large hero title text like "luxlu.top" */
+#page-header #site-title {
+  display: none !important;
+}
+
 #site-info .site-title {
   letter-spacing: 0.06em;
 }
