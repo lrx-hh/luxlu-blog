@@ -2,7 +2,7 @@
   const STORAGE_KEY = "luxlu_calendar_events_v2";
   const CLOUD_NAMESPACE = "calendar";
   const OWNER_HASH_POOL = [
-    "bec5a521c92f5edc7b6cf176d70ca44611d9889775b0b2850f3fb4ebd820d9f4"
+    "b50d8a97def18579aabe303821f6256bb4f8edf7caf756d83ed48e49796224d7"
   ];
   const DEFAULT_COLOR = "#ff4fa3";
   const AUTH_POLICY = {

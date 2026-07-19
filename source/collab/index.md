@@ -6,7 +6,7 @@ top_img: /img/black-pink-cover.svg
 description: 队友协作写作与文件上传工作台
 ---
 
-<link rel="stylesheet" href="/css/collab-workbench.css?v=20260329c3">
+<link rel="stylesheet" href="/css/collab-workbench.css?v=20260402a1">
 
 <section class="collab-shell">
 <div class="collab-glow glow-a"></div>
@@ -110,8 +110,8 @@ description: 队友协作写作与文件上传工作台
 </div>
 </article>
 
-<article class="collab-card admin-only hidden">
-<h2>8) 管理员像素画板（Piskel 风格）</h2>
+<article class="collab-card editor-only hidden">
+<h2>8) 像素画板（队友可提交 / 管理员可直传）</h2>
 <div class="stack pixel-editor-shell">
 <div class="row-grid pixel-controls">
 <label>网格尺寸
@@ -134,20 +134,29 @@ description: 队友协作写作与文件上传工作台
 <button id="pixel-tool-eraser" class="collab-btn role-btn" type="button">橡皮</button>
 <button id="pixel-clear-btn" class="collab-btn" type="button">清空画布</button>
 <button id="pixel-download-btn" class="collab-btn" type="button">下载 PNG</button>
-<button id="pixel-save-btn" class="collab-btn primary" type="button">保存到仓库</button>
+<button id="pixel-save-btn" class="collab-btn primary" type="button">保存 / 提交</button>
 </div>
 <div class="pixel-canvas-wrap">
 <canvas id="pixel-canvas" width="640" height="640" aria-label="pixel editor"></canvas>
 </div>
-<p id="pixel-result" class="small-note">仅管理员可见。保存路径：source/uploads/team/pixel-art/</p>
+<p id="pixel-result" class="small-note">队友保存后会进入待审核；管理员可直接发布到画廊。</p>
 </div>
 </article>
 
+<article class="collab-card admin-only hidden">
+<h2>9) 像素画审核队列（仅管理员）</h2>
+<div class="btn-row">
+<button id="pixel-review-refresh" class="collab-btn" type="button">刷新待审核</button>
+</div>
+<p class="small-note">队友提交路径：source/uploads/team/pixel-review/pending/。审核通过后发布到画廊。</p>
+<div id="pixel-review-list" class="pixel-review-list"></div>
+</article>
+
 <article class="collab-card">
-<h2>9) 操作日志</h2>
+<h2>10) 操作日志</h2>
 <pre id="collab-log" class="log-box">[ready] wait for action</pre>
 </article>
 </section>
 </section>
 
-<script src="/js/collab-workbench.js?v=20260329c3"></script>
+<script src="/js/collab-workbench.js?v=20260402a2"></script>

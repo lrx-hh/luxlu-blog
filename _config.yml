@@ -1,6 +1,6 @@
 title: luxlu
-subtitle: ??? CTF Misc ??
-description: ?? CTF Misc ?????????????
+subtitle: CTF Misc
+description: CTF Misc Forensics Stego Writeup?
 keywords:
   - CTF
   - Misc
@@ -65,7 +65,7 @@ date_format: YYYY-MM-DD
 time_format: HH:mm:ss
 updated_option: 'mtime'
 
-per_page: 8
+per_page: 0
 pagination_dir: page
 
 include:
@@ -81,7 +81,7 @@ search:
   format: html
 deploy:
   type: git
-  repo: https://github.com/lrx-hh/luxlu-blog.git
+  repo: git@github.com:lrx-hh/luxlu-blog.git
   branch: gh-pages
   message: "site update: {{ now('yyyy-MM-dd HH:mm:ss') }}"
   name: lrx-hh

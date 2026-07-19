@@ -279,6 +279,13 @@
   gap: 12px;
 }
 
+.pixel-review-list {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
 .pixel-gallery-item {
   border: 1px solid rgba(255, 130, 202, 0.24);
   border-radius: 12px;
@@ -327,6 +334,12 @@
 
 .pixel-gallery-actions .pixel-del-btn {
   width: 100%;
+}
+
+.pixel-review-actions {
+  padding: 0 10px 10px;
+  display: grid;
+  gap: 8px;
 }
 
 .pixel-gallery-empty {

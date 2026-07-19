@@ -6,6 +6,7 @@
     "/diary/": "日记",
     "/archives/": "归档",
     "/tools/": "工具箱",
+    "/eat/": "今天吃什么",
     "/music/": "音乐",
     "/roadmap/": "还没想好欸",
     "/categories/": "分类",

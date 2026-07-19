@@ -12,7 +12,6 @@ description: 安知鱼风格介绍页
 <header class="az-head">
 <p class="az-eyebrow">ANZHIYU STYLE</p>
 <h1 class="az-title">谢谢你来看我^^</h1>
-<p class="az-desc">这页是安知鱼风格的介绍页，保留你博客的主题、特效和内容体系。</p>
 </header>
 
 <div class="az-grid">
@@ -20,30 +19,14 @@ description: 安知鱼风格介绍页
 <h2>基本信息</h2>
 <dl class="az-kv">
 <dt>昵称</dt><dd>luxlu</dd>
-<dt>方向</dt><dd>CTF Misc / 取证 / 隐写</dd>
-<dt>身份</dt><dd>大一学生</dd>
+<dt>方向</dt><dd>Misc / Pwn</dd>
 </dl>
-</article>
-
-<article class="az-card">
-<h2>技能栈</h2>
-<div class="az-tags">
-<span class="az-tag">USB/HID 流量</span>
-<span class="az-tag">图片隐写</span>
-<span class="az-tag">取证分析</span>
-<span class="az-tag">Python 脚本</span>
-<span class="az-tag">CyberChef</span>
-<span class="az-tag">Hexo</span>
-</div>
 </article>
 
 <article class="az-card az-full">
 <h2>成长时间线</h2>
 <ul class="az-timeline">
-<li><span class="time">2026.03</span>搭建 <code>luxlu.top</code>，完成 Butterfly 黑粉风格定制。</li>
-<li><span class="time">2026.03</span>上线私人日历、协作项目页、管理员像素画板。</li>
-<li><span class="time">2026.03</span>接入网易云音乐页面并固定个人歌单。</li>
-<li><span class="time">Next</span>持续更新题解与工具页，优化移动端体验与性能。</li>
+<li><span class="time">2026.03</span>搭建 <code>luxlu.top</code></li>
 </ul>
 </article>
 
