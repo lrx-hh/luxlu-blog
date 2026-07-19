@@ -2,12 +2,12 @@
 title: 前置基础5-12
 date: 2026-04-19 21:40:00
 tags:
-cover: /img/jpg/10.jpg
   - Pwn
   - Writeup
   - CTFShow
 categories:
   - Pwn
+cover: /img/jpg/10.jpg
 comments: true
 top_img: /img/black-pink-cover.svg
 description: 前置基础 5-12 寻址方式与地址读取分析

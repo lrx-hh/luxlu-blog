@@ -2,13 +2,13 @@
 title: pwn0-4 Test_your_nc
 date: 2026-04-02 16:45:00
 categories:
-cover: /img/jpg/11.jpg
   - Pwn
   - CTFShow
 tags:
   - Pwn
   - CTF
   - Writeup
+cover: /img/jpg/11.jpg
 ---
 
 # pwn0

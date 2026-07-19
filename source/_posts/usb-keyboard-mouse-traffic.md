@@ -2,13 +2,13 @@
 title: USB协议 键盘流量 鼠标流量
 date: 2026-03-28 21:00:00
 categories:
-cover: /img/jpg/12.jpg
   - Misc
 tags:
   - CTF
   - USB
   - HID
   - Forensics
+cover: /img/jpg/12.jpg
 ---
 # 捋一下知识点
 ## 一、USB 协议基础概念
