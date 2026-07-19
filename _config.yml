@@ -52,7 +52,7 @@ prismjs:
 
 index_generator:
   path: ''
-  per_page: 8
+  per_page: 0
   order_by: -date
 
 default_category: misc
