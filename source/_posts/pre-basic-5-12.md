@@ -2,6 +2,7 @@
 title: 前置基础5-12
 date: 2026-04-19 21:40:00
 tags:
+cover: /img/jpg/10.jpg
   - Pwn
   - Writeup
   - CTFShow
