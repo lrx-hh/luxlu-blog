@@ -2,8 +2,8 @@
 title: pwn0-4 Test_your_nc
 date: 2026-04-02 16:45:00
 categories:
+  - CTF
   - Pwn
-  - CTFShow
 tags:
   - Pwn
   - CTF

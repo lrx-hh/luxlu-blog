@@ -5,12 +5,12 @@ categories:
   - CTF
   - Misc
   - 比赛复现
-  - hgame
+  - 2026.2.2hgame
 tags:
   - CTF
   - Misc
   - Writeup
-  - hgame
+  - 2026.2.2hgame
   - Web
   - Crypto
 ---

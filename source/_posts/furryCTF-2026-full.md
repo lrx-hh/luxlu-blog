@@ -5,12 +5,12 @@ categories:
   - CTF
   - Misc
   - 比赛复现
-  - furryCTF
+  - 2026.1.30furryCTF
 tags:
   - CTF
   - Misc
   - Writeup
-  - furryCTF
+  - 2026.1.30furryCTF
 ---
 # <font style="color:rgb(37, 37, 37);">Misc-CyberChef</font>
 chef语言

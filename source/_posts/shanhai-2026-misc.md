@@ -5,12 +5,12 @@ categories:
   - CTF
   - Misc
   - 比赛复现
-  - 山海杯
+  - 2026.2.2山海杯
 tags:
   - CTF
   - Misc
   - Writeup
-  - 山海杯
+  - 2026.2.2山海杯
 ---
 # 阶段一
 ## Evan
