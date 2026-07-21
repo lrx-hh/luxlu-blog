@@ -20,7 +20,7 @@ emoji解码 也是base100
 [https://ctf.bugku.com/tool/base100](https://ctf.bugku.com/tool/base100)
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1769999520693-21bb9f78-bcfa-452b-b0c1-49aae02a4226.png)
+![](/img/yuque/1769999520693-21bb9f78-bcfa-452b-b0c1-49aae02a4226.png)
 
 ```bash
 Base混合多重解码:
@@ -134,7 +134,7 @@ print("反转图片已保存为 qr_matrix_inverted.png")
 ```
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770984363755-cdc315e3-4bb1-4782-9afb-cd43d3bb978f.png)
+![](/img/yuque/1770984363755-cdc315e3-4bb1-4782-9afb-cd43d3bb978f.png)
 
 好像出了点问题 右上角那块就明显不对 纠错等级达到L `W0RTH_1T?`
 
@@ -144,7 +144,7 @@ print("反转图片已保存为 qr_matrix_inverted.png")
 从EXIF中提取隐藏的JSON配置（采样参数）
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770084365882-da844c2f-b4c6-4eec-8134-f589c0971414.png)
+![](/img/yuque/1770084365882-da844c2f-b4c6-4eec-8134-f589c0971414.png)
 
 图片上看到像素点 想到最近邻下采样
 
@@ -155,7 +155,7 @@ exif数据写明 从坐标`(10,10)`开始，步长是7
 用GIMP工具查看 也能看出像素点是从`(10,10)`开始 步长为7
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770084613034-d27a4a32-a91f-45e2-8aa4-fd6b89fb2532.png)
+![](/img/yuque/1770084613034-d27a4a32-a91f-45e2-8aa4-fd6b89fb2532.png)
 
 从`shiori.png`中提取EXIF数据中嵌入的配置，保存为`config.json`
 
@@ -300,12 +300,12 @@ if __name__ == "__main__":
 获得密码`This_is_a_key_for_u`解压zip文件
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770295834152-bc224ecd-fd7f-4a32-a5a3-430a74371c6f.png)
+![](/img/yuque/1770295834152-bc224ecd-fd7f-4a32-a5a3-430a74371c6f.png)
 
 得到`shiori?.jpg`stegsolve LSB获得flag
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770295909591-a0ffc4fc-5d94-4fc7-8dd8-c8111bf27c50.png)
+![](/img/yuque/1770295909591-a0ffc4fc-5d94-4fc7-8dd8-c8111bf27c50.png)
 
 `hgame{bec0use_lilies_are_7he_b1st}`
 
@@ -316,7 +316,7 @@ if __name__ == "__main__":
 在编辑处查看黑框遮盖的内容 
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770125603842-eb54479f-235a-4f49-9489-ed83fbd5454d.png)
+![](/img/yuque/1770125603842-eb54479f-235a-4f49-9489-ed83fbd5454d.png)
 
 `1：PAR4D0X`
 
@@ -326,7 +326,7 @@ if __name__ == "__main__":
 - [x] **点击下隐藏的框即可，通过PDF中嵌入的JavaScript代码触发显示**
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770134625821-ecc76ee5-c138-430e-9307-e37f8195ad5f.png)
+![](/img/yuque/1770134625821-ecc76ee5-c138-430e-9307-e37f8195ad5f.png)
 
 `2:AllCl3asToPr0ceed`
 
@@ -336,7 +336,7 @@ if __name__ == "__main__":
 - [x] **保存下来那张有涂抹的图片，图片中使用LSB隐写术隐藏数据**
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770126076468-3643a86e-4d84-44e2-831c-2f0fe1c7c413.png)
+![](/img/yuque/1770126076468-3643a86e-4d84-44e2-831c-2f0fe1c7c413.png)
 
 `Target Problem3:Sh4m1R`
 
@@ -359,7 +359,7 @@ Processing: manual.pdf
 ```
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770126307158-939ab3e9-0a57-479e-a5c2-508bb234ca5f.png)
+![](/img/yuque/1770126307158-939ab3e9-0a57-479e-a5c2-508bb234ca5f.png)
 
 `4:D0cR3qu3st3r_Tutu`
 
@@ -776,7 +776,7 @@ Web-魔理沙的魔法目录
 在Network也看到`/login``/record``/check`
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770278550259-c11e1d41-353b-46e6-9643-71da8462e050.png)
+![](/img/yuque/1770278550259-c11e1d41-353b-46e6-9643-71da8462e050.png)
 
 ## 推测工作流程
 用户访问网站时生成一个随机用户名
@@ -919,7 +919,7 @@ div.innerHTML = `<div class="msg-content">${m.content}</div>`;
 上传（挂马）点击 然后呼叫临梦 点击后会触发`POST/api/report`
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770273520807-32b66ebd-afce-4f0d-a50a-1a378bd99317.png)
+![](/img/yuque/1770273520807-32b66ebd-afce-4f0d-a50a-1a378bd99317.png)
 
 获得flag`Hgame{th3-sECrEt_oF-h4KuRei_jlnJ41f3faa88}`
 

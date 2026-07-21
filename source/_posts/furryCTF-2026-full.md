@@ -18,7 +18,7 @@ chef语言
 [https://tio.run/#chef](https://tio.run/#chef)
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770709798546-e468d675-cc4d-4650-80d7-eff28e5de7a9.png)
+![](/img/yuque/1770709798546-e468d675-cc4d-4650-80d7-eff28e5de7a9.png)
 
 base64解码获得flag
 
@@ -33,7 +33,7 @@ QSSTV获得一张二维码
 
 # Misc-学习资料
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770363793091-9edd14d6-5a57-4029-bc05-cb3b3bdabb29.png)
+![](/img/yuque/1770363793091-9edd14d6-5a57-4029-bc05-cb3b3bdabb29.png)
 
 构造文件头最方便的方法就是自己创建一个`.docx`文件 然后把固定的文件头摘录下来
 
@@ -70,12 +70,12 @@ C:\Users\13964\Desktop\Misc\bkcrack>
 #   
 <font style="color:rgb(37, 37, 37);">Misc-AA哥的JAVA</font>
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770710431980-e2aefecf-3f3b-4f84-81cd-fa734ccae833.png)
+![](/img/yuque/1770710431980-e2aefecf-3f3b-4f84-81cd-fa734ccae833.png)
 
 vscode打开后看到很多箭头 sublime text打开
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770710481192-4b453cf7-0fa6-4ccd-97cb-e4ca0c4fc9f8.png)
+![](/img/yuque/1770710481192-4b453cf7-0fa6-4ccd-97cb-e4ca0c4fc9f8.png)
 
 在wps>文件>选项>把制表符 空格勾出来
 
@@ -88,7 +88,7 @@ vscode打开后看到很多箭头 sublime text打开
 ```
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770711158601-f845fd5f-b734-4261-85c8-faf0e643afaf.png)
+![](/img/yuque/1770711158601-f845fd5f-b734-4261-85c8-faf0e643afaf.png)
 
 `pofp{HuAm1_tru1y_c4nn0t_m4ke_sense_0f_J4v4}`
 
@@ -218,7 +218,7 @@ if __name__ == "__main__":
 ```
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770695495307-f2ab54f2-53b6-4ec2-84fd-7b0ea7de19d0.png)
+![](/img/yuque/1770695495307-f2ab54f2-53b6-4ec2-84fd-7b0ea7de19d0.png)
 
 eg:
 
@@ -366,11 +366,11 @@ print("\n=== Length:", len(exec_call), "characters ===")
 ```
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770695960647-c756a65e-57b7-4ac8-9928-f3ce362366e7.png)
+![](/img/yuque/1770695960647-c756a65e-57b7-4ac8-9928-f3ce362366e7.png)
 
 `furryCTF{b37bc8c8a3fe_jUSt_RUN_0Ut_Fr0M_thE_sand60x_WiTH_unIC0De}`
 
 # <font style="color:rgb(37, 37, 37);">Web-PyEditor</font>
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1769754273929-94ebf826-487c-46b1-8048-677deab71644.png)
+![](/img/yuque/1769754273929-94ebf826-487c-46b1-8048-677deab71644.png)
 

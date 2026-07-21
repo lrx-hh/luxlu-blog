@@ -281,13 +281,13 @@ if __name__ == "__main__":
 下载附件获得`ez_usb.pcapng`
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768809688892-101f06c1-c582-4c53-a28e-93c43a52ad84.png)<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768809820489-da4b4a70-3d0a-4808-8673-e409a0875cec.png)
+![](/img/yuque/1768809688892-101f06c1-c582-4c53-a28e-93c43a52ad84.png)<!-- 这是一张图片，ocr 内容为： -->
+![](/img/yuque/1768809820489-da4b4a70-3d0a-4808-8673-e409a0875cec.png)
 
 `Protocol`列看到大量的`USB`和`USBHID`协议
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768810616723-8e837b53-933e-40a0-9730-853ae44b815d.png)
+![](/img/yuque/1768810616723-8e837b53-933e-40a0-9730-853ae44b815d.png)
 
 随便看一条 看到`HID Data:0400000000000000`八字节
 
@@ -322,7 +322,7 @@ if __name__ == "__main__":
 
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768827476986-68a0dc84-7d04-4a83-a64d-1c70011ad9e3.png)
+![](/img/yuque/1768827476986-68a0dc84-7d04-4a83-a64d-1c70011ad9e3.png)
 
 `2.4.1.txt`中的数据只有7个字节 不是键盘的数据包 放弃
 
@@ -444,7 +444,7 @@ output:526172211A0700[unknown]C[unknown]F907300000D00000000000000C45274249435003
 删除`[unknown]`和`C[DEL]`
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768829480066-dd5868d0-4d49-47b7-b2df-ab67f6d1fc7e.png)
+![](/img/yuque/1768829480066-dd5868d0-4d49-47b7-b2df-ab67f6d1fc7e.png)
 
 是一个`rar`文件 用winrar打开 密码就是另一个output 但是改成小写 因为实际上没有按`cap lock`键 仍然是小写 嗯嗯！
 
@@ -460,7 +460,7 @@ output:526172211A0700[unknown]C[unknown]F907300000D00000000000000C45274249435003
 确认文件类型是流量包 在后缀加`.pcapng`
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768879043284-5f0576fe-d309-474e-a0c2-7c221a6d3f0b.png)
+![](/img/yuque/1768879043284-5f0576fe-d309-474e-a0c2-7c221a6d3f0b.png)
 
 tshark抓取原始数据
 
@@ -471,7 +471,7 @@ tshark抓取原始数据
 运行脚本还原字符串
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768882224749-b197d3dc-49ec-45d3-81fc-ac78ef8057ca.png)
+![](/img/yuque/1768882224749-b197d3dc-49ec-45d3-81fc-ac78ef8057ca.png)
 
 ```python
 UJKONJK,TFVBHYHJIPOKRDCVGRDCVGPOKQWSZTFVBHUJKOWAZXDQASEWSDRPOKXDFVIKLPNJKWSDRRFGYRDCVGUHNMKBHJMYHJI
@@ -495,14 +495,14 @@ im gulf flag is welcome t fjnu
 ```
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768898081712-4f7cc44e-dda6-47bc-82d7-3edddbe0721c.png)
+![](/img/yuque/1768898081712-4f7cc44e-dda6-47bc-82d7-3edddbe0721c.png)
 
 `MOECTF{Learned-a6ou7-USB-tr2ffic}`
 
 但是不是flag 我回头才发现那个脚本忽略了modifier
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768898856287-8108d5db-a6d6-4b7d-9eea-e84f6f055ee9.png)
+![](/img/yuque/1768898856287-8108d5db-a6d6-4b7d-9eea-e84f6f055ee9.png)
 
 脚本我又改了改 会自动完成del 增加了modifier key 还有shift按住等操作 
 
@@ -513,7 +513,7 @@ im gulf flag is welcome t fjnu
 在一个wp看到了一把梭软件 `CTF-NetA-V0.3.0`
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768898704988-86dce36c-09c4-4e7d-9610-90fdc0e695f3.png)
+![](/img/yuque/1768898704988-86dce36c-09c4-4e7d-9610-90fdc0e695f3.png)
 
 
 
@@ -521,17 +521,17 @@ im gulf flag is welcome t fjnu
 据说是生日 还是四位数字 爆破
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768900351634-95ec3365-29d7-4dff-b80d-6b7551e80a54.png)
+![](/img/yuque/1768900351634-95ec3365-29d7-4dff-b80d-6b7551e80a54.png)
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768900656545-1e5923cb-fa5f-445e-93ec-5ea24c2feb3a.png)
+![](/img/yuque/1768900656545-1e5923cb-fa5f-445e-93ec-5ea24c2feb3a.png)
 
 应该是出题人的QQ号捏 搜了一下 啥也没有 看了一眼wp 出题人之前有一个个性签名`WW91IGxvdmUgbWUsIEkgbG92ZSB5b3U=`现在换掉了嗯嗯
 
 `From Base64`之后获得`You love me, I love you`是第二层的密码
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768901039900-42c8b872-6622-49d9-b835-d583b828b576.png)打开流量包 可以看到只有地址为`1.2.1`的`Info`是`URB_INTERUPT in`其他都比较杂乱 不符合标准
+![](/img/yuque/1768901039900-42c8b872-6622-49d9-b835-d583b828b576.png)打开流量包 可以看到只有地址为`1.2.1`的`Info`是`URB_INTERUPT in`其他都比较杂乱 不符合标准
 
 过滤器：`usb.data_len == 8 and usb.src =="1.2.1"`
 
@@ -640,15 +640,15 @@ print("✅ 图像已保存为 out.png")
 ```
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768903099843-897e1140-984a-4d1a-8f7c-157698bf6062.png)
+![](/img/yuque/1768903099843-897e1140-984a-4d1a-8f7c-157698bf6062.png)
 
 `7724774CTF`是`F1111AG.jpg*`的密码<!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/jpeg/61758892/1768902981070-11209e1b-52d9-4d5c-9c0d-03fa82715d33.jpeg)
+![](/img/yuque/1768902981070-11209e1b-52d9-4d5c-9c0d-03fa82715d33.jpeg)
 
 010末尾获得flag
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768903411405-13643852-d3d6-4191-9ba5-1417b2caf986.png)
+![](/img/yuque/1768903411405-13643852-d3d6-4191-9ba5-1417b2caf986.png)
 
 `NSSCTF{this_is_rea1_fllllll11ag}`
 
@@ -658,7 +658,7 @@ print("✅ 图像已保存为 out.png")
 图片经过LSB 压缩包形式 `save bin`
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768910744415-388d7e6a-060c-4366-98f6-d1525fcab4d9.png)
+![](/img/yuque/1768910744415-388d7e6a-060c-4366-98f6-d1525fcab4d9.png)
 
 过滤器`usb.data_len == 8 and usb.src =="1.1.1"`
 
@@ -671,7 +671,7 @@ print("✅ 图像已保存为 out.png")
 跑脚本
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768911602695-d9a1c141-1ec0-4938-830b-c5552042f358.png)
+![](/img/yuque/1768911602695-d9a1c141-1ec0-4938-830b-c5552042f358.png)
 
 搜了一下
 
@@ -730,7 +730,7 @@ kali运行outguess
 很常规的操作
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768918691753-ae790569-579f-4bef-a371-e75e58a1e773.png)
+![](/img/yuque/1768918691753-ae790569-579f-4bef-a371-e75e58a1e773.png)
 
 `moectf{D@m3daNe_D4me_yoooooo}`
 
@@ -738,7 +738,7 @@ kali运行outguess
 鼠标流量 同样方法绘制出轨迹
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768919507642-6a52858e-34fb-4fb4-a61f-bab6b3e52571.png)
+![](/img/yuque/1768919507642-6a52858e-34fb-4fb4-a61f-bab6b3e52571.png)
 
 水平翻折获得`868F-83BD-FF`是文本的密码
 
@@ -747,7 +747,7 @@ kali运行outguess
 [https://hidden-word.top/](https://hidden-word.top/)
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1768920066613-fbd6f4fa-0adf-468c-88a9-cce46a32a407.png)
+![](/img/yuque/1768920066613-fbd6f4fa-0adf-468c-88a9-cce46a32a407.png)
 
 `LitCTF{39553317-df30-4951-8aad-fcaf3028ca9d}`
 
@@ -989,7 +989,7 @@ print('output :' + output)
 ```
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1769417159053-ff65d047-a103-4360-81e4-eceaa2575863.png)
+![](/img/yuque/1769417159053-ff65d047-a103-4360-81e4-eceaa2575863.png)
 
 事实证明 如果不把`alphabet.txt`看懂是无法写出脚本的
 
@@ -1006,16 +1006,16 @@ print('output :' + output)
 
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1771898184768-8bc631bb-5156-466b-a88e-d6474c483954.png)
+![](/img/yuque/1771898184768-8bc631bb-5156-466b-a88e-d6474c483954.png)
 
 
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1771898324602-045f3c03-1a14-4747-b00a-d08fb7e13245.png)
+![](/img/yuque/1771898324602-045f3c03-1a14-4747-b00a-d08fb7e13245.png)
 
 另存为jpg图片
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/jpeg/61758892/1771898638488-f38c903a-2772-46a2-9445-5a54cb170f33.jpeg)
+![](/img/yuque/1771898638488-f38c903a-2772-46a2-9445-5a54cb170f33.jpeg)
 
 

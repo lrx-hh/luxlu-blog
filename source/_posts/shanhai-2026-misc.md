@@ -22,7 +22,7 @@ binwalk提取 然后修复伪加密
 
 ## office
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770019120976-df88a297-75d8-4184-9b23-eb5b321db0ff.png)
+![](/img/yuque/1770019120976-df88a297-75d8-4184-9b23-eb5b321db0ff.png)
 
 `SHCTF{MS_Office_is_the_best_office_software.wps}`
 
@@ -32,12 +32,12 @@ binwalk提取 然后修复伪加密
 
 ## Open my puff
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770019243606-1d2c63f5-fc6a-48dc-ab00-48a6abdd066e.png)
+![](/img/yuque/1770019243606-1d2c63f5-fc6a-48dc-ab00-48a6abdd066e.png)
 
 图片在010末尾
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770019364134-4af536f0-5a0b-4c73-8b0b-7421b3a3d281.png)
+![](/img/yuque/1770019364134-4af536f0-5a0b-4c73-8b0b-7421b3a3d281.png)
 
 安装openpuff 4.01版本 
 
@@ -50,7 +50,7 @@ keyA至少也要八字节 原来说是45678 那在键盘上就是12345678
 提取获得一个加密文档 已知明文攻击
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770028007906-058980d3-9d3a-4f7e-b42c-1d71a7b4bedc.png)
+![](/img/yuque/1770028007906-058980d3-9d3a-4f7e-b42c-1d71a7b4bedc.png)
 
 `SHCTF{N3ur4l_Gl1tch_1n_Th3_5yst3m}`
 
@@ -83,12 +83,12 @@ Base混合多重解码:
 base64解码括号里的内容
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770021491782-33976de0-145b-4113-9382-acb5989118f4.png)
+![](/img/yuque/1770021491782-33976de0-145b-4113-9382-acb5989118f4.png)
 
 一开始没看好好看题干在那里瞎蒙方法 实际上是 元素周期表加密
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/jpeg/61758892/1770378326411-4f36a1ec-d149-4e9c-809f-5489ea2e4861.jpeg)
+![](/img/yuque/1770378326411-4f36a1ec-d149-4e9c-809f-5489ea2e4861.jpeg)
 
 `SHCTF{H_O_W_CA_N_U_S_B_AR_O_N}`
 
@@ -98,7 +98,7 @@ EXE文件默认加密情况下，不太会以store方式被加密，但它文件
 大部分exe中都有这相同一段，且偏移固定为64：
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1771400814793-66da911a-994a-4c5a-bd9a-f8ccdbb31899.png)
+![](/img/yuque/1771400814793-66da911a-994a-4c5a-bd9a-f8ccdbb31899.png)
 
 ```bash
 C:\Users\13964>cd C:\Users\13964\Desktop\Misc\bkcrack
@@ -132,7 +132,7 @@ C:\Users\13964\Desktop\Misc\bkcrack>
 # 阶段二
 ## ezAI
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1773820200928-d4743d06-f403-41bf-9ca5-9aff34672534.png)
+![](/img/yuque/1773820200928-d4743d06-f403-41bf-9ca5-9aff34672534.png)
 
 
 
@@ -1071,7 +1071,7 @@ print("🎉 图像已保存为 flag.png，请用图片查看器打开！")
 获得二维码
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1770298327005-49d8028f-8985-424d-a473-663d36b71cc4.png)
+![](/img/yuque/1770298327005-49d8028f-8985-424d-a473-663d36b71cc4.png)
 
 扫描 base64解码获得flag
 
@@ -1340,7 +1340,7 @@ PS C:\Users\13964\Desktop\shsolver>
 先消除空格 再把获得内容反转 获得flag
 
 <!-- 这是一张图片，ocr 内容为： -->
-![](https://cdn.nlark.com/yuque/0/2026/png/61758892/1771125501228-ec214829-c9ec-43fe-a3f7-70df585f66de.png)
+![](/img/yuque/1771125501228-ec214829-c9ec-43fe-a3f7-70df585f66de.png)
 
 `SHCTF{M@K3_y0UR_cOmPUtEr_A_h31P1uL_pa1}`
 
