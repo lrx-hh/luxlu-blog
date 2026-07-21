@@ -67,8 +67,7 @@ C:\Users\13964\Desktop\Misc\bkcrack>
 
 `furryCTF{Ho0w_D1d_You_C0mE_H9re_xwx}`
 
-#   
-<font style="color:rgb(37, 37, 37);">Misc-AA哥的JAVA</font>
+## Misc-AA哥的JAVA
 <!-- 这是一张图片，ocr 内容为： -->
 ![](/img/yuque/1770710431980-e2aefecf-3f3b-4f84-81cd-fa734ccae833.png)
 
@@ -92,8 +91,7 @@ vscode打开后看到很多箭头 sublime text打开
 
 `pofp{HuAm1_tru1y_c4nn0t_m4ke_sense_0f_J4v4}`
 
-#   
-<font style="color:rgb(37, 37, 37);">PPC-flagReader</font>
+## PPC-flagReader
 ```bash
 import requests
 import time
