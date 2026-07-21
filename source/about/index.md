@@ -3,8 +3,6 @@ title: 关于
 date: 2026-07-21 15:00:00
 ---
 
-你好，我是 luxlu。
-
 CTF Misc
 
 最近在学 pwn
