@@ -179,31 +179,32 @@ body {
 }
 
 /* 侧边栏统计卡片：整齐排列 */
-#aside-content .card-info-data {
+#aside-content .site-data {
   display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 10px 6px !important;
-  text-align: center !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap: 6px !important;
   padding: 8px 4px !important;
 }
 
-#aside-content .card-info-data .card-info-data-item {
+#aside-content .site-data > a {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   gap: 2px !important;
-  padding: 6px 4px !important;
+  padding: 8px 4px !important;
   border-radius: 6px;
   background: rgba(140, 80, 110, 0.05);
+  color: inherit !important;
+  text-decoration: none !important;
 }
 
-#aside-content .card-info-data .headline {
+#aside-content .site-data .headline {
   font-size: 0.75rem !important;
   color: #88808c !important;
   font-weight: 400 !important;
 }
 
-#aside-content .card-info-data .length-num {
+#aside-content .site-data .length-num {
   font-size: 1.05rem !important;
   font-weight: 600 !important;
   color: #c8b8c0 !important;
@@ -449,28 +450,25 @@ div#archive::before {
 #footer {
   padding: 32px 0 !important;
   text-align: center;
-  color: #a098a8;
   font-size: 0.82rem;
   background: transparent !important;
 }
 
-#footer a {
-  color: #b8a8b8;
-}
-
-#footer a:hover {
-  color: #d0c0d0;
-}
-
+#footer,
+#footer div,
+#footer span,
+#footer p,
+#footer a,
+#footer .footer_custom_text,
 #footer .framework-info,
-#footer .footer_custom_text {
-  background: transparent !important;
-}
-
 #footer .framework-info a,
 #footer .framework-info span {
   color: #a098a8 !important;
   background: transparent !important;
+}
+
+#footer a:hover {
+  color: #c0b8c0 !important;
 }
 
 /* ── 评论 ── */
