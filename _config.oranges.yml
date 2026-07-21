@@ -1,0 +1,73 @@
+# ── 网站图标 ──
+favicon:
+  enable: true
+  icon: /img/sleepy-cat-favicon.jpg
+  touch_icon: /img/sleepy-cat-favicon.jpg
+
+# ── 头像 ──
+avatar:
+  author_photo: /img/avatar.jpg
+  author_nickname: luxlu
+  path: /
+
+# ── RSS ──
+rss:
+  enable: true
+
+# ── 导航 ──
+navbar:
+  - { name: 主页, enable: true, path: /, key: home }
+  - { name: 归档, enable: true, path: /archives/, key: archives }
+  - { name: 分类, enable: true, path: /categories/, key: categories }
+  - { name: 标签, enable: true, path: /tags/, key: tags }
+  - { name: 友链, enable: true, path: /friends/, key: friends }
+  - { name: 关于, enable: true, path: /about/, key: about }
+
+# ── 目录 ──
+catalog:
+  enable: true
+
+# ── 上一篇/下一篇 ──
+prevnext:
+  enable: true
+
+# ── 友链 ──
+friends:
+  - { nickname: Hurkin, site: https://www.hurkin.top/, meta: Escape in the sun }
+  - { nickname: LamentXU, site: https://lamentxu.top/, meta: LamentXU 的开发笔记 }
+  - { nickname: Misaki, site: https://misaki.wiki/, meta: IoT 固件安全 }
+
+# ── 页脚 ──
+footer:
+  social:
+    - { name: github, icon: github, path: https://github.com/lrx-hh }
+    - { name: email, icon: envelope, path: mailto:luxlu667@gmail.com }
+  more:
+    - { name: 'Copyright © {thisYear} luxlu', path: https://luxlu.top }
+    - { name: Theme by Oranges | Powered by Hexo, path: https://github.com/zchengsite/hexo-theme-oranges }
+  views:
+    enable: true
+
+# ── 搜索 ──
+search:
+  enable: true
+  placeholder: 搜索...
+
+# ── 配色切换 ──
+colorSwitch:
+  enable: true
+
+# ── 文章分享 ──
+postShare:
+  enable: true
+  twitter: { enable: false }
+  facebook: { enable: false }
+
+# ── 代码块 ──
+codeBlock:
+  style: 'mac-black'
+  copy:
+    enable: true
+
+# ── 主题色 ──
+themeColor: '#808080'
