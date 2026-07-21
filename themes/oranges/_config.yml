@@ -21,13 +21,13 @@
 # 网站图标
 favicon:
   enable: true
-  icon: /images/favicon.png
-  touch_icon: /images/favicon.png
+  icon: /img/sleepy-cat-favicon.jpg
+  touch_icon: /img/sleepy-cat-favicon.jpg
 
 # 用户头像与昵称
 avatar:
-  author_photo: /images/avatar.png
-  author_nickname: Oranges
+  author_photo: /img/avatar.jpg
+  author_nickname: luxlu
   path: /
 
 # Google 分析
@@ -110,16 +110,17 @@ prevnext:
 
 # 友链详细信息：支持多个友链
 friends:
-  # nickname: 昵称
-  # site: 地址
-  # meta: 描述
   -
-    nickname: Zcheng
-    site: https://zcheng.site/
+    nickname: Hurkin
+    site: https://www.hurkin.top/
     meta:
   -
-    nickname: Hexo
-    site: https://hexo.io/
+    nickname: LamentXU
+    site: https://lamentxu.top/
+    meta:
+  -
+    nickname: Misaki
+    site: https://misaki.wiki/
     meta:
 
 # 页脚信息
@@ -135,49 +136,22 @@ footer:
     -
       name: github
       icon: github
-      path: https://github.com/zchengsite/hexo-theme-oranges
-    # -
-    #   name: email
-    #   icon: envelope
-    #   path: 
-    # -
-    #   name: facebook
-    #   icon: facebooksquare
-    #   path:
-    # -
-    #   name: twitter
-    #   icon: twitter
-    #   path:
-    # -
-    #   name: wechat
-    #   icon: wechat
-    #   path:
-    # -
-    #   name: weibo
-    #   icon: weibo
-    #   path:
-    # -
-    #   # rss需安装 hexo-generator-feed 插件
-    #   # 具体参照https://github.com/hexojs/hexo-generator-feed
-    #   name: rss
-    #   icon: rss
-    #   path: /atom.xml
+      path: https://github.com/lrx-hh
+    -
+      name: email
+      icon: envelope
+      path: mailto:luxlu667@gmail.com
 
   more:
-    # 支持变量显示，可自定义扩展，具体见主题/layout/_partial/footer.ejs
-    # 一般用来显示根据各种场景需要切换的文本，如时间年份
-    # 如：{thisYear} 会被替换为今年年份
     -
-      name: Copyright © {thisYear} Oranges
-      path: https://github.com/zchengsite/hexo-theme-oranges
+      name: Copyright © {thisYear} luxlu
+      path: https://luxlu.top
     -
       name: Theme by Oranges | Powered by Hexo
       path: https://github.com/zchengsite/hexo-theme-oranges
 
-  # 浏览量统计
-  # http://busuanzi.ibruce.info/
   views:
-    enable: false
+    enable: true
     provider: '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js'
     item:
       -
@@ -270,4 +244,4 @@ cdns:
       url: https://cdn.jsdelivr.net/npm/@waline/client@2.5.1/dist/legacy.min.js
 
 # 主题色
-themeColor: '#e8c4d4'
+themeColor: '#808080'
