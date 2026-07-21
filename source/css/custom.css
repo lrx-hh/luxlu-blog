@@ -178,6 +178,37 @@ body {
   color: #a098a4;
 }
 
+/* 侧边栏统计卡片：整齐排列 */
+#aside-content .card-info-data {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px 6px !important;
+  text-align: center !important;
+  padding: 8px 4px !important;
+}
+
+#aside-content .card-info-data .card-info-data-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 2px !important;
+  padding: 6px 4px !important;
+  border-radius: 6px;
+  background: rgba(140, 80, 110, 0.05);
+}
+
+#aside-content .card-info-data .headline {
+  font-size: 0.75rem !important;
+  color: #88808c !important;
+  font-weight: 400 !important;
+}
+
+#aside-content .card-info-data .length-num {
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
+  color: #c8b8c0 !important;
+}
+
 /* ── 文章列表：清爽卡片 ── */
 #recent-posts {
   display: flex !important;
