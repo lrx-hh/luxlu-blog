@@ -415,6 +415,7 @@ div#archive::before {
   text-align: center;
   color: #706878;
   font-size: 0.82rem;
+  background: transparent !important;
 }
 
 #footer a {
@@ -423,6 +424,17 @@ div#archive::before {
 
 #footer a:hover {
   color: #c0a8b8;
+}
+
+#footer .framework-info,
+#footer .footer_custom_text {
+  background: transparent !important;
+}
+
+#footer .framework-info a,
+#footer .framework-info span {
+  color: #706878 !important;
+  background: transparent !important;
 }
 
 /* ── 评论 ── */
