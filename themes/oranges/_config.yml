@@ -110,18 +110,6 @@ prevnext:
 
 # 友链详细信息：支持多个友链
 friends:
-  -
-    nickname: Hurkin
-    site: https://www.hurkin.top/
-    meta:
-  -
-    nickname: LamentXU
-    site: https://lamentxu.top/
-    meta:
-  -
-    nickname: Misaki
-    site: https://misaki.wiki/
-    meta:
 
 # 页脚信息
 footer:
