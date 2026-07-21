@@ -4,7 +4,6 @@
   归档: /archives/ || fas fa-box-archive
   工具箱: /tools/ || fas fa-screwdriver-wrench
   分类: /categories/ || fas fa-folder-open
-  介绍页: /intro/ || fas fa-id-card
 
 nav:
   logo:
@@ -103,7 +102,7 @@ darkmode:
 
 inject:
   head:
-    - <link rel="stylesheet" href="/css/custom.css?v=20260721d">
+    - <link rel="stylesheet" href="/css/custom.css?v=20260721e">
   bottom:
     - <script src="/js/site-3d-effects.js?v=20260721a"></script>
     - <script src="/js/tab-title.js?v=20260329a"></script>

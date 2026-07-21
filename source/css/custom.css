@@ -91,6 +91,11 @@ body {
   display: none !important;
 }
 
+/* ── 头像慢转 ── */
+.avatar-img {
+  animation-duration: 24s !important;
+}
+
 /* ── 导航栏 ── */
 #page-header #nav {
   border-bottom: 1px solid rgba(140, 80, 110, 0.12);
