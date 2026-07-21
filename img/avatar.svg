@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" role="img" aria-label="luxlu Avatar">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff4fa3"/>
+      <stop offset="100%" stop-color="#ff1f8d"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="320" rx="48" fill="#0b0610"/>
+  <circle cx="160" cy="160" r="120" fill="url(#g)" opacity="0.28"/>
+  <circle cx="160" cy="160" r="96" fill="none" stroke="#ff88c7" stroke-width="4"/>
+  <text x="95" y="188" fill="#ffe2f2" font-family="Segoe UI, sans-serif" font-size="82" font-weight="700">LL</text>
+</svg>

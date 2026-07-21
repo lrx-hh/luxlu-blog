@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="author" content="luxlu" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <!-- 文章页 -->
+  <meta name="description" content="前置基础 5-12 寻址方式与地址读取分析" />
+  
+  
+  
+  <title>
+    
+      [ pwn 学习 ] CTFshow-前置基础 5-12 
+      
+      
+      |
+    
+     luxlu
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/img/sleepy-cat-favicon.jpg">
+    <link rel="icon" href="/img/sleepy-cat-favicon.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="luxlu" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/img/avatar.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">luxlu</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">分类</a>
+        </li>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">主页</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">归档</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">关于</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">[ pwn 学习 ] CTFshow-前置基础 5-12</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2026-07-21 20:11:50
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="分类"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/" title="CTF">
+                    <b>#</b> CTF
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Pwn/" title="Pwn">
+                    <b>#</b> Pwn
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Pwn/%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80/" title="前置基础">
+                    <b>#</b> 前置基础
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Pwn/%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80/Pwn/" title="Pwn">
+                    <b>#</b> Pwn
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <style>
+#post {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)),
+    rgba(28, 10, 34, 0.92) !important;
+  border: 1px solid rgba(255, 122, 182, 0.28) !important;
+  box-shadow: 0 16px 34px rgba(255, 79, 163, 0.14) !important;
+  position: relative;
+  z-index: 6;
+}
+
+#article-container,
+#article-container p,
+#article-container li,
+#article-container strong {
+  color: #ffffff !important;
+}
+
+#article-container h1,
+#article-container h2,
+#article-container h3,
+#article-container h4 {
+  color: #ff7fc4 !important;
+}
+
+#article-container code {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 143, 199, 0.36);
+}
+
+#article-container pre,
+#article-container pre code {
+  background: rgba(16, 6, 21, 0.78) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 143, 199, 0.26) !important;
+}
+
+#article-container blockquote {
+  background: rgba(255, 79, 163, 0.12) !important;
+  border-left: 4px solid #ff76bf !important;
+}
+
+#article-container img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 16px auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 143, 199, 0.45);
+}
+
+#article-container font[style*="#DF2A3F"],
+#article-container font[style*="#D22D8D"] {
+  color: #ff8dcb !important;
+  font-weight: 700;
+}
+
+#page-header,
+#post-info {
+  position: relative;
+  z-index: 7;
+}
+
+[id^="fx-"],
+.fx-cursor,
+.fx-cursor-dot {
+  display: none !important;
+}
+</style>
+<p>地址类十六进制字母尽量按照题目要求大写。</p>
+<h1 id="1-题干"><a href="#1-题干" class="headerlink" title="1.题干"></a>1.题干</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">5）运行此文件，将得到的字符串以ctfshow&#123;xxxxx&#125;提交。 </span><br><span class="line">如：运行文件后 输出的内容为 Hello_World</span><br><span class="line">提交的flag值为：ctfshow&#123;Hello_World&#125;</span><br><span class="line">注：计组原理题型后续的flag中地址字母大写</span><br><span class="line"></span><br><span class="line">6）立即寻址方式结束后eax寄存器的值为？</span><br><span class="line"></span><br><span class="line">7）寄存器寻址方式结束后edx寄存器的值为？</span><br><span class="line"></span><br><span class="line">8）直接寻址方式结束后ecx寄存器的值为？</span><br><span class="line"></span><br><span class="line">9）寄存器间接寻址方式结束后eax寄存器的值为？</span><br><span class="line"></span><br><span class="line">10）寄存器相对寻址方式结束后eax寄存器的值为？</span><br><span class="line"></span><br><span class="line">11）基址变址寻址方式结束后的eax寄存器的值为？</span><br><span class="line"></span><br><span class="line">12）相对基址变址寻址方式结束后eax寄存器的值为？</span><br></pre></td></tr></table></figure>
+
+<p>表面上考了很多知识点：</p>
+<ul>
+<li>立即寻址</li>
+<li>寄存器寻址</li>
+<li>直接寻址</li>
+<li>寄存器间接寻址</li>
+<li>寄存器相对寻址</li>
+<li>基址变址寻址</li>
+<li>相对基址变址寻址</li>
+</ul>
+<p>但本质上反复做的事只有：先算出一个地址，再从这个地址读几个字节。</p>
+<h1 id="2-流水线"><a href="#2-流水线" class="headerlink" title="2.流水线"></a>2.流水线</h1><p><code>ELF 文件</code> -&gt;<code>操作系统加载到内存</code> -&gt;<code>CPU 执行指令</code> -&gt; <code>寄存器里暂存数据</code> -&gt; <code>按地址去内存读字符串</code></p>
+<p>实际上反复发生的操作只有**<font style="color:#DF2A3F;">“先算出一个地址，再从这个地址读几个字节”</font>**</p>
+<h1 id="3-最小概念表"><a href="#3-最小概念表" class="headerlink" title="3.最小概念表"></a>3.最小概念表</h1><h2 id="2-1-CPU"><a href="#2-1-CPU" class="headerlink" title="2.1 CPU"></a>2.1 CPU</h2><p>CPU 就是执行指令的硬件。<br>你可以先把它想成“真正动手干活的人”</p>
+<h2 id="2-2-寄存器"><a href="#2-2-寄存器" class="headerlink" title="2.2 寄存器"></a>2.2 寄存器</h2><p>寄存器是 CPU 里面很小、很快的临时小格子，比如：</p>
+<ul>
+<li><code>eax</code></li>
+<li><code>ebx</code></li>
+<li><code>ecx</code></li>
+<li><code>edx</code></li>
+<li><code>esi</code></li>
+</ul>
+<p>它们容量很小，但速度很快，专门放“马上要用”的值。</p>
+<h2 id="2-3-内存"><a href="#2-3-内存" class="headerlink" title="2.3 内存"></a>2.3 内存</h2><p>内存比寄存器大得多，用来放：</p>
+<ul>
+<li>程序代码</li>
+<li>字符串</li>
+<li>变量</li>
+<li>栈上的数据</li>
+</ul>
+<h2 id="2-4-地址"><a href="#2-4-地址" class="headerlink" title="2.4 地址"></a>2.4 地址</h2><p>地址就是内存里某个位置的门牌号，比如 <code>0x080490E8</code>。</p>
+<h2 id="2-5-读内存"><a href="#2-5-读内存" class="headerlink" title="2.5 读内存"></a>2.5 读内存</h2><p>“读内存”就是：</p>
+<ul>
+<li>先拿到一个地址</li>
+<li>再去那个地址取内容</li>
+</ul>
+<h2 id="2-6-ELF"><a href="#2-6-ELF" class="headerlink" title="2.6 ELF"></a>2.6 ELF</h2><p>ELF 是 Linux 可执行文件格式。<br>可以把它理解成“Linux 下程序文件的标准包装盒”</p>
+<p>它会告诉系统：</p>
+<ul>
+<li>这是个什么文件</li>
+<li>代码放在哪</li>
+<li>数据放在哪</li>
+<li>每一段加载到内存后应该放到什么地址</li>
+</ul>
+<h2 id="2-7-section"><a href="#2-7-section" class="headerlink" title="2.7 section"></a>2.7 section</h2><p>ELF 会分很多 section<br>这题你最关心两个：</p>
+<ul>
+<li><code>.text</code>：放机器指令</li>
+<li><code>.data</code>：放已经初始化好的数据</li>
+</ul>
+<h2 id="2-8-偏移"><a href="#2-8-偏移" class="headerlink" title="2.8 偏移"></a>2.8 偏移</h2><p>偏移不是绝对地址，而是“从某个起点往后走了多远”</p>
+<p>比如：</p>
+<ul>
+<li>文件偏移：从文件开头往后数多少字节</li>
+<li><code>msg + 4</code>：从 <code>msg</code> 往后走 4 个字节</li>
+</ul>
+<h2 id="2-9-小端序"><a href="#2-9-小端序" class="headerlink" title="2.9 小端序"></a>2.9 小端序</h2><p>x86 是小端序。<br>最容易看到的现象是：</p>
+<ul>
+<li>内存里四个字节是 <code>57 65 6C 63</code></li>
+<li>读进 32 位寄存器后常写成 <code>0x636C6557</code></li>
+</ul>
+<p>也就是：字节在内存里的排布顺序，和把它整体看成 32 位数时的显示顺序，不是同一个视角</p>
+<h1 id="4-为什么总要读内存"><a href="#4-为什么总要读内存" class="headerlink" title="4.为什么总要读内存"></a>4.为什么总要读内存</h1><p>因为寄存器太小了</p>
+<p>比如字符串 <code>Welcome_to_CTFshow_PWN</code> 很长，不可能整串都塞进 <code>eax</code> 这种小寄存器里。<br>所以字符串会放在内存里，而寄存器里通常只放：</p>
+<ul>
+<li>一个数字</li>
+<li>或一个地址</li>
+</ul>
+<p>所以</p>
+<ul>
+<li><code>mov ecx, msg</code> ≠把整串字符串<code>msg</code>塞进 <code>ecx</code></li>
+<li><code>mov ecx, msg</code> &#x3D;把 <code>msg</code> 的地址放进 <code>ecx</code></li>
+</ul>
+<p>而<code>mov eax, [esi]</code></p>
+<p>才是</p>
+<ul>
+<li>去 <code>esi</code> 里存的那个地址</li>
+<li>从那个地址开始读内容</li>
+<li>把读出来的值放进 <code>eax</code></li>
+</ul>
+<h2 id="是这题最关键的符号"><a href="#是这题最关键的符号" class="headerlink" title="[] 是这题最关键的符号"></a><code>[]</code> 是这题最关键的符号</h2><ul>
+<li>没有 <code>[]</code>：通常拿的是数字 &#x2F; 地址本身</li>
+<li>有 <code>[]</code>：通常拿的是“那个地址里的内容”</li>
+</ul>
+<h1 id="5-msg-是什么"><a href="#5-msg-是什么" class="headerlink" title="5. msg 是什么"></a>5. <code>msg</code> 是什么</h1><p>在 <code>Welcome_to_CTFshow.asm</code> 里：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">section .data</span><br><span class="line">    msg db &quot;Welcome_to_CTFshow_PWN&quot;, 0</span><br></pre></td></tr></table></figure>
+
+<p>它的意思是：</p>
+<ul>
+<li>用 <code>db</code> 一字节一字节地放数据</li>
+<li>放进去的数据是字符串 <code>&quot;Welcome_to_CTFshow_PWN&quot;</code></li>
+<li>最后再补一个结尾的 <code>0</code></li>
+<li><code>**&lt;font style=&quot;color:#DF2A3F;&quot;&gt;msg&lt;/font&gt;**</code><strong><font style="color:#DF2A3F;"> 只是这串字节起始位置的标签</font></strong></li>
+</ul>
+<p>你可以把 <code>msg</code> 想成“这排柜子的第一个格子叫 <code>msg</code>”</p>
+<h1 id="6-把字符串拆成字节-看上去就好点了"><a href="#6-把字符串拆成字节-看上去就好点了" class="headerlink" title="6. 把字符串拆成字节  看上去就好点了^^"></a>6. 把字符串拆成字节  看上去就好点了^^</h1><p>字符串是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Welcome_to_CTFshow_PWN</span><br></pre></td></tr></table></figure>
+
+<p>前面的字节表如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">偏移</th>
+<th align="left">字符</th>
+<th align="left">十六进制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>msg+0</code></td>
+<td align="left"><code>W</code></td>
+<td align="left"><code>57</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+1</code></td>
+<td align="left"><code>e</code></td>
+<td align="left"><code>65</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+2</code></td>
+<td align="left"><code>l</code></td>
+<td align="left"><code>6C</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+3</code></td>
+<td align="left"><code>c</code></td>
+<td align="left"><code>63</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+4</code></td>
+<td align="left"><code>o</code></td>
+<td align="left"><code>6F</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+5</code></td>
+<td align="left"><code>m</code></td>
+<td align="left"><code>6D</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+6</code></td>
+<td align="left"><code>e</code></td>
+<td align="left"><code>65</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+7</code></td>
+<td align="left"><code>_</code></td>
+<td align="left"><code>5F</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+8</code></td>
+<td align="left"><code>t</code></td>
+<td align="left"><code>74</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+9</code></td>
+<td align="left"><code>o</code></td>
+<td align="left"><code>6F</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+10</code></td>
+<td align="left"><code>_</code></td>
+<td align="left"><code>5F</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+11</code></td>
+<td align="left"><code>C</code></td>
+<td align="left"><code>43</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+12</code></td>
+<td align="left"><code>T</code></td>
+<td align="left"><code>54</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+13</code></td>
+<td align="left"><code>F</code></td>
+<td align="left"><code>46</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+14</code></td>
+<td align="left"><code>s</code></td>
+<td align="left"><code>73</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+15</code></td>
+<td align="left"><code>h</code></td>
+<td align="left"><code>68</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+16</code></td>
+<td align="left"><code>o</code></td>
+<td align="left"><code>6F</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+17</code></td>
+<td align="left"><code>w</code></td>
+<td align="left"><code>77</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+18</code></td>
+<td align="left"><code>_</code></td>
+<td align="left"><code>5F</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+19</code></td>
+<td align="left"><code>P</code></td>
+<td align="left"><code>50</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+20</code></td>
+<td align="left"><code>W</code></td>
+<td align="left"><code>57</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+21</code></td>
+<td align="left"><code>N</code></td>
+<td align="left"><code>4E</code></td>
+</tr>
+<tr>
+<td align="left"><code>msg+22</code></td>
+<td align="left"><code>\0</code></td>
+<td align="left"><code>00</code></td>
+</tr>
+</tbody></table>
+<p>这张表很重要，因为第 8-12 题本质上都是在这张表上找起点，再连续取 4 个字节。</p>
+<h1 id="7-这题里的-ELF-结构怎么帮你找到-msg"><a href="#7-这题里的-ELF-结构怎么帮你找到-msg" class="headerlink" title="7. 这题里的 ELF 结构怎么帮你找到 msg"></a>7. 这题里的 ELF 结构怎么帮你找到 <code>msg</code></h1><p>这题不只是能从源码看出字符串，还能从 ELF 文件里机械地推出地址。</p>
+<h2 id="7-1-先取-ELF-头里的-4-个字段"><a href="#7-1-先取-ELF-头里的-4-个字段" class="headerlink" title="7.1 先取 ELF 头里的 4 个字段"></a>7.1 先取 ELF 头里的 4 个字段</h2><p>在这个 ELF32 文件里，固定偏移位置有这几个值：</p>
+<ul>
+<li>文件偏移 <code>0x20</code>：<code>e_shoff</code></li>
+<li>文件偏移 <code>0x2E</code>：<code>e_shentsize</code></li>
+<li>文件偏移 <code>0x30</code>：<code>e_shnum</code></li>
+<li>文件偏移 <code>0x32</code>：<code>e_shstrndx</code></li>
+</ul>
+<img src="/uploads/posts/pre-basic-5-12/memory-layout.png" width="565" title="" crop="0,0,1,1" id="EGeke" class="ne-image">
+
+<p>本题实际字节是：</p>
+<ul>
+<li><code>0x20</code>：<code>18 01 00 00</code> -&gt; 小端 -&gt; <code>0x118</code></li>
+<li><code>0x2E</code>：<code>28 00</code> -&gt; <code>0x28</code></li>
+<li><code>0x30</code>：<code>04 00</code> -&gt; <code>4</code></li>
+<li><code>0x32</code>：<code>03 00</code> -&gt; <code>3</code></li>
+</ul>
+<p>意思是：</p>
+<ul>
+<li>section header 表从文件偏移 <code>0x118</code> 开始</li>
+<li>每项大小 <code>0x28</code></li>
+<li>一共 <code>4</code> 项</li>
+<li>第 <code>3</code> 项是 section 名字字符串表</li>
+</ul>
+<h2 id="7-2-算出-section-header-每项的起点"><a href="#7-2-算出-section-header-每项的起点" class="headerlink" title="7.2 算出 section header 每项的起点"></a>7.2 算出 section header 每项的起点</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">第 n 项起始偏移 = e_shoff + n * e_shentsize</span><br></pre></td></tr></table></figure>
+
+<p>已经算出：</p>
+<ul>
+<li><code>e_shoff</code> &#x3D; <code>0x118</code></li>
+<li><code>e_shentsize</code> &#x3D; <code>0x28</code></li>
+</ul>
+<p>直接代入</p>
+<p><strong>∴第 0 项</strong></p>
+<p><code>0x118 + 0 * 0x28 = 0x118</code></p>
+<p><strong>第 1 项</strong></p>
+<p><code>0x118 + 1 * 0x28 = 0x118 + 0x28 = 0x140</code></p>
+<p><strong>第 2 项</strong></p>
+<p><code>0x118 + 2 * 0x28 = 0x118 + 0x50 = 0x168</code></p>
+<p>因为：</p>
+<p><code>2 * 0x28 = 0x50</code></p>
+<p><strong>第 3 项</strong></p>
+<p><code>0x118 + 3 * 0x28 = 0x118 + 0x78 = 0x190</code></p>
+<p>因为：</p>
+<p><code>3 * 0x28 = 0x78</code></p>
+<p><strong>为什么可以这么算</strong><br>因为：</p>
+<ul>
+<li><code>e_shoff</code> 是整个 section header 表的开头</li>
+<li><code>e_shentsize</code> 是“每一项占多少字节”</li>
+<li>所以第 n 项，就是从表开头往后跳 n 个“项宽度”</li>
+</ul>
+<h2 id="7-3-找-text-和-data"><a href="#7-3-找-text-和-data" class="headerlink" title="7.3 找 .text 和 .data"></a>7.3 找 <code>.text</code> 和 <code>.data</code></h2><p>ELF32 的 section header 里：</p>
+<ul>
+<li><code>sh_name</code> 在该项起始 <code>+0x00</code></li>
+<li><code>sh_addr</code> 在该项起始 <code>+0x0C</code></li>
+<li><code>sh_offset</code> 在该项起始 <code>+0x10</code></li>
+</ul>
+<p>第 1 项：</p>
+<ul>
+<li><code>sh_name = 0x0B</code></li>
+<li><code>sh_addr = 0x08048080</code></li>
+<li><code>sh_offset = 0x80</code></li>
+</ul>
+<p>第 2 项：</p>
+<ul>
+<li><code>sh_name = 0x11</code></li>
+<li><code>sh_addr = 0x080490E8</code></li>
+<li><code>sh_offset = 0xE8</code></li>
+</ul>
+<p>第 3 项是字符串表，它的 <code>sh_offset = 0xFF</code>。<br>跳到文件偏移 <code>0xFF</code>，可以看到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">00 .shstrtab 00 .text 00 .data 00</span><br></pre></td></tr></table></figure>
+
+<p>于是：</p>
+<ul>
+<li>偏移 <code>0x0B</code> 对应 <code>.text</code></li>
+<li>偏移 <code>0x11</code> 对应 <code>.data</code></li>
+</ul>
+<p>所以：</p>
+<ul>
+<li><code>.text</code> 加载地址是 <code>0x08048080</code></li>
+<li><code>.data</code> 加载地址是 <code>0x080490E8</code></li>
+</ul>
+<h2 id="7-4-为什么-msg-0x080490E8"><a href="#7-4-为什么-msg-0x080490E8" class="headerlink" title="7.4 为什么 msg = 0x080490E8"></a>7.4 为什么 <code>msg = 0x080490E8</code></h2><p>因为 <code>msg</code> 就定义在 <code>.data</code> 开头，而 <code>.data</code> 的加载地址正好是 <code>0x080490E8</code>。<br>所以：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msg = 0x080490E8</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="7-5-为什么文件偏移-0xE8-对应内存地址-0x080490E8"><a href="#7-5-为什么文件偏移-0xE8-对应内存地址-0x080490E8" class="headerlink" title="7.5 为什么文件偏移 0xE8 对应内存地址 0x080490E8"></a>7.5 为什么文件偏移 <code>0xE8</code> 对应内存地址 <code>0x080490E8</code></h2><p>对于同一个 section 里的字节，有一个很好用的换算关系：</p>
+<p>text</p>
+<p>目标文件偏移 &#x3D; sh_offset + (目标内存地址 - sh_addr)</p>
+<p>在本题里：</p>
+<ul>
+<li><code>.data</code> 的 <code>sh_offset = 0xE8</code></li>
+<li><code>.data</code> 的 <code>sh_addr = 0x080490E8</code></li>
+</ul>
+<p>如果目标地址正好就是 <code>.data</code> 开头：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">目标文件偏移 = 0xE8 + (0x080490E8 - 0x080490E8) = 0xE8</span><br></pre></td></tr></table></figure>
+
+<p>所以内存里的 <code>msg</code> 开头，正好对应文件偏移 <code>0xE8</code>。</p>
+<h2 id="什么是偏移"><a href="#什么是偏移" class="headerlink" title="什么是偏移"></a>什么是偏移</h2><p>偏移就是“从某个起点往后数几格”。</p>
+<p>例如：</p>
+<ul>
+<li>msg + 4：从 msg 的起始地址往后走 4 个字节</li>
+<li>也就是从第 5 个字符开始</li>
+</ul>
+<p>因为字节编号通常从 0 开始：</p>
+<ul>
+<li>第 0 个字节：W</li>
+<li>第 1 个字节：e</li>
+<li>第 2 个字节：l</li>
+<li>第 3 个字节：c</li>
+<li>第 4 个字节：o</li>
+</ul>
+<p>所以 msg + 4 会指到 o</p>
+<h2 id="什么是-ELF"><a href="#什么是-ELF" class="headerlink" title="什么是 ELF"></a>什么是 ELF</h2><p>ELF 就是程序文件的组织方式。会告诉系统：</p>
+<ul>
+<li>这文件是不是可执行程序</li>
+<li>代码在哪一段</li>
+<li>数据在哪一段</li>
+<li>各段加载到内存后应该放到什么地址</li>
+</ul>
+<p>所以去找 .data、找 sh_addr、找 sh_offset，本质上是在做这件事：</p>
+<p>“先在文件里找到这段数据，再弄清它加载到内存后会出现在什么地址。”</p>
+<h2 id="最容易混淆的-3-组东西"><a href="#最容易混淆的-3-组东西" class="headerlink" title="最容易混淆的 3 组东西"></a>最容易混淆的 3 组东西</h2><p>地址 和 地址里的值 不是一回事。</p>
+<p>msg 是地址，[msg] 才是那个地址里的内容。</p>
+<p>文件偏移 和 内存地址 不是一回事。</p>
+<p>一个是在硬盘文件里数位置，一个是在内存里数位置。</p>
+<p>字节顺序 和 整数显示 不是一回事。</p>
+<p>内存里是 <code>57 65 6C 63</code>，显示成 32 位整数会变成 <code>0x636C6557</code></p>
+<h1 id="做题"><a href="#做题" class="headerlink" title="做题"></a>做题</h1><p>附件是一个<code>Welcome_to_CTFshow``(ELF)</code>和<code>Welcome_to_CTFshow.asm</code></p>
+<p><code>asm</code> 是汇编源代码文件，纯文本格式</p>
+<p>它不是可执行文件，而是给汇编器（如 <code>nasm</code>）编译成机器码用的</p>
+<p>这段代码主要是演示不同寻址方式，最后输出字符串</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">section .data</span><br><span class="line">    msg db &quot;Welcome_to_CTFshow_PWN&quot;, 0</span><br><span class="line"></span><br><span class="line">section .text</span><br><span class="line">    global _start</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line"></span><br><span class="line">; 立即寻址方式</span><br><span class="line">    mov eax, 11         ; 将11赋值给eax</span><br><span class="line">    add eax, 114504     ; eax加上114504</span><br><span class="line">    sub eax, 1          ; eax减去1</span><br><span class="line"></span><br><span class="line">; 寄存器寻址方式</span><br><span class="line">    mov ebx, 0x36d      ; 将0x36d赋值给ebx</span><br><span class="line">    mov edx, ebx        ; 将ebx的值赋值给edx</span><br><span class="line"></span><br><span class="line">; 直接寻址方式</span><br><span class="line">    mov ecx, msg      ; 将msg的地址赋值给ecx</span><br><span class="line"></span><br><span class="line">; 寄存器间接寻址方式</span><br><span class="line">    mov esi, msg        ; 将msg的地址赋值给esi</span><br><span class="line">    mov eax, [esi]      ; 将esi所指向的地址的值赋值给eax</span><br><span class="line"></span><br><span class="line">; 寄存器相对寻址方式</span><br><span class="line">    mov ecx, msg        ; 将msg的地址赋值给ecx</span><br><span class="line">    add ecx, 4          ; 将ecx加上4</span><br><span class="line">    mov eax, [ecx]      ; 将ecx所指向的地址的值赋值给eax</span><br><span class="line"></span><br><span class="line">; 基址变址寻址方式</span><br><span class="line">    mov ecx, msg        ; 将msg的地址赋值给ecx</span><br><span class="line">    mov edx, 2          ; 将2赋值给edx</span><br><span class="line">    mov eax, [ecx + edx*2]  ; 将ecx+edx*2所指向的地址的值赋值给eax</span><br><span class="line"></span><br><span class="line">; 相对基址变址寻址方式</span><br><span class="line">    mov ecx, msg        ; 将msg的地址赋值给ecx</span><br><span class="line">    mov edx, 1          ; 将1赋值给edx</span><br><span class="line">    add ecx, 8          ; 将ecx加上8</span><br><span class="line">    mov eax, [ecx + edx*2 - 6]  ; 将ecx+edx*2-6所指向的地址的值赋值给eax</span><br><span class="line"></span><br><span class="line">; 输出字符串</span><br><span class="line">    mov eax, 4          ; 系统调用号4代表输出字符串</span><br><span class="line">    mov ebx, 1          ; 文件描述符1代表标准输出</span><br><span class="line">    mov ecx, msg        ; 要输出的字符串的地址</span><br><span class="line">    mov edx, 22         ; 要输出的字符串的长度</span><br><span class="line">    int 0x80            ; 调用系统调用</span><br><span class="line"></span><br><span class="line">; 退出程序</span><br><span class="line">    mov eax, 1          ; 系统调用号1代表退出程序</span><br><span class="line">    xor ebx, ebx        ; 返回值为0</span><br><span class="line">    int 0x80            ; 调用系统调用</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<img src="/uploads/posts/pre-basic-5-12/memory-layout.png" width="611.5" title="" crop="0,0,1,1" id="lfiLh" class="ne-image">
+
+
+
+<p>先记住4 个字段（ELF32 固定位置）</p>
+<p><code>e_shoff</code>在文件偏移<code>0x20</code>，4 字节</p>
+<p><code>e_shentsize</code>在 <code>0x2E</code>，2 字节</p>
+<p><code>e_shnum</code>在<code>0x30</code>，2 字节</p>
+<p><code>e_shstrndx</code>在 <code>0x32</code>，2 字节</p>
+<h1 id="pwn5"><a href="#pwn5" class="headerlink" title="pwn5"></a>pwn5</h1><p><strong><font style="color:#D22D8D;">看程序最后执行了什么系统调用</font></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mov eax, 4</span><br><span class="line">mov ebx, 1</span><br><span class="line">mov ecx, msg</span><br><span class="line">mov edx, 22</span><br><span class="line">int 0x80</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>eax = 4</code>：Linux 32 位下，系统调用号 <code>4</code> 是 <code>write</code></li>
+<li><code>ebx = 1</code>：文件描述符 <code>1</code> 代表标准输出，也就是屏幕</li>
+<li><code>ecx = msg</code>：从 <code>msg</code> 开始输出</li>
+<li><code>edx = 22</code>：输出 22 个字节</li>
+</ul>
+<p>为什么正好是这串字符串</p>
+<p><code>&quot;Welcome_to_CTFshow_PWN&quot;</code> 长度正好是 22</p>
+<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><p>复制两个文件到ubuntu</p>
+<h3 id="1-安装工具"><a href="#1-安装工具" class="headerlink" title="1.安装工具"></a>1.安装工具</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install -y nasm binutils</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-进入桌面目录并列出当前目录文件"><a href="#2-进入桌面目录并列出当前目录文件" class="headerlink" title="2.进入桌面目录并列出当前目录文件"></a>2.进入桌面目录并列出当前目录文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ~/Desktop</span><br><span class="line">ls</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-汇编：把-asm变成-o"><a href="#3-汇编：把-asm变成-o" class="headerlink" title="3.汇编：把.asm变成.o"></a>3.汇编：把<code>.asm</code>变成<code>.o</code></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nasm -f elf32 Welcome_to_CTFshow.asm -o Welcome_to_CTFshow.o</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>nasm</code>：汇编器</li>
+<li><code>-f elf32</code>：是生成32位ELF目标文件</li>
+<li><code>Welcome_to_CTFshow.asm</code>：是 输入内容</li>
+<li><code>-o Welcome_to_CTFshow.o</code>：输出的半成品机器码</li>
+</ul>
+<p>结果就会生成文件<code>Welcome_to_CTFshow.o</code></p>
+<h3 id="4-链接：把-o变成可执行文件-并运行"><a href="#4-链接：把-o变成可执行文件-并运行" class="headerlink" title="4.链接：把.o变成可执行文件 并运行"></a>4.链接：把<code>.o</code>变成可执行文件 并运行</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ld -m elf_i386 -s -o Welcome_to_CTFshow Welcome_to_CTFshow.o</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>ld</code>：链接器</li>
+<li><code>-m elf_i386</code>：生成 32 位可执行文件</li>
+<li><code>-s</code>：去掉符号表（让文件更小）</li>
+<li><code>-o Welcome_to_CTFshow</code>：输出可执行文件名</li>
+<li><code>Welcome_to_CTFshow.o</code>：输入目标文件</li>
+</ul>
+<p>结果就会生成可执行的<code>Welcome_to_CTFshow</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./Welcome_to_CTFshow</span><br></pre></td></tr></table></figure>
+
+<p><code>./</code>表示当前目录下</p>
+<p>运行后输出<code>Welcome_to_CTFshow_PWN</code></p>
+<p>因为这串字符串已经写死在数据段中<br><code>ctfshow&#123;Welcome_to_CTFshow_PWN&#125;</code></p>
+<h1 id="pwn6：立即寻址"><a href="#pwn6：立即寻址" class="headerlink" title="pwn6：立即寻址"></a>pwn6：立即寻址</h1><p><strong><font style="color:#D22D8D;">立即寻址就是 指令里直接写死一个数 CPU直接拿来用</font></strong></p>
+<p>逐步计算即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov eax, 11</span><br><span class="line">add eax, 114504</span><br><span class="line">sub eax, 1</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><code>eax=11</code></li>
+<li><code>eax=11+114504=114515</code></li>
+<li><code>eax=114515-1=114514</code></li>
+</ol>
+<p><code>ctfshow&#123;114514&#125;</code></p>
+<h1 id="pwn7-寄存器寻址"><a href="#pwn7-寄存器寻址" class="headerlink" title="pwn7:寄存器寻址"></a>pwn7:寄存器寻址</h1><p><strong><font style="color:#D22D8D;">寄存器寻址就是从寄存器里取值，而不是从内存中取</font></strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov ebx, 0x36d</span><br><span class="line">mov edx, ebx</span><br></pre></td></tr></table></figure>
+
+<p><code>ebx=0x36d</code></p>
+<p>而<code>edx</code>直接从<code>ebx</code>复制值</p>
+<p>所以<code>edx=0x36d</code></p>
+<p><code>ctfshow&#123;0x36D&#125;</code></p>
+<h1 id="pwn8-直接寻址"><a href="#pwn8-直接寻址" class="headerlink" title="pwn8:直接寻址"></a>pwn8:直接寻址</h1><p><strong><font style="color:#D22D8D;">直接寻址就是 地址直接写在指令里。</font></strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov ecx, dword ptr [<span class="number">0x080490E8</span>]</span><br></pre></td></tr></table></figure>
+
+<p>这题地址就直接写成了<code>0x080490E8</code></p>
+<p>实际上就会</p>
+<ol>
+<li>去内存地址<code>0x080490E8</code></li>
+<li>从这里连续读4个字节</li>
+<li>放入<code>ecx</code></li>
+</ol>
+<p>前面从ELF的<code>.data</code>段可以推出</p>
+<p><code>msg=0x080490E8</code></p>
+<p>也就是说这段内存地址就是字符串的起点</p>
+<p>从<code>msg</code>读取四个字节就是<code>W``e``l``c</code></p>
+<p>也就是<code>57 65 6C 63</code></p>
+<p>小端读入寄存器：<code>0x636C6557</code></p>
+<p><code>ctfshow&#123;0x636C6557&#125;</code></p>
+<h1 id="pwn9-寄存器间接寻址"><a href="#pwn9-寄存器间接寻址" class="headerlink" title="pwn9:寄存器间接寻址"></a>pwn9:寄存器间接寻址</h1><p><strong><font style="color:#D22D8D;">寄存器间接寻址就是 地址先放在寄存器里，再通过这个寄存器去访问内存</font></strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov esi, msg</span><br><span class="line">mov eax, [esi]</span><br></pre></td></tr></table></figure>
+
+<p>先把<code>msg</code>地址放进<code>esi</code></p>
+<p>再通过<code>esi</code>间接访问内存取4字节到<code>eax</code></p>
+<p>还是读取<code>57 65 6C 63</code>&gt;<code>0x636C6557</code></p>
+<p><code>ctfshow&#123;0x636C6557&#125;</code></p>
+<p>和第八题的区别就是</p>
+<ul>
+<li>第8题是地址直接写在指令里</li>
+<li>第9题是地址先放进<code>esi</code>，再通过<code>esi</code>去读</li>
+</ul>
+<p>读到的仍然是同一个地方</p>
+<h1 id="pwn10-寄存器相对寻址"><a href="#pwn10-寄存器相对寻址" class="headerlink" title="pwn10:寄存器相对寻址"></a>pwn10:寄存器相对寻址</h1><p><strong><font style="color:#D22D8D;">寄存器相对寻址就是 现有一个基准地址，再在这个地址基础上加一个偏移</font></strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov ecx, msg</span><br><span class="line">add ecx, <span class="number">4</span></span><br><span class="line">mov eax, [ecx]</span><br></pre></td></tr></table></figure>
+
+<p><code>ecx</code>从<code>msg</code>起始地址偏移到<code>msg+4</code></p>
+<p>读取<code>msg+4</code>起始4字节<code>6F 6D 65 5F</code>(<code>o``m``e``_</code>)</p>
+<p>小端结果<code>0x5F656D6F</code></p>
+<p><code>ctfshow&#123;0x5F656D6F&#125;</code></p>
+<h1 id="pwn11：基址变址寻址"><a href="#pwn11：基址变址寻址" class="headerlink" title="pwn11：基址变址寻址"></a>pwn11：基址变址寻址</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov ecx, msg</span><br><span class="line">mov edx, 2</span><br><span class="line">mov eax, [ecx + edx*2]</span><br></pre></td></tr></table></figure>
+
+<p>基址变址寻址 此处</p>
+<ul>
+<li><code>ecx</code>是基址</li>
+<li><code>edx</code>是变址寄存器</li>
+<li><code>edx*2</code>是缩放后的偏移</li>
+<li>所以最后访问的地址是<code>[ecx + edx*2]</code></li>
+</ul>
+<p>逐步计算</p>
+<ol>
+<li><code>ecx=msg</code></li>
+<li><code>edx=2</code></li>
+<li>有效地址<code>ecx+edx*2</code></li>
+<li>代入得到<code>msg+2*2=msg+4</code></li>
+</ol>
+<p>读取<code>msg+4</code>起始4字节<code>6F 6D 65 5F</code></p>
+<p><code>ctfshow&#123;0x5F656D6F&#125;</code></p>
+<h1 id="pwn12：相对基址变址寻址"><a href="#pwn12：相对基址变址寻址" class="headerlink" title="pwn12：相对基址变址寻址"></a>pwn12：相对基址变址寻址</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mov ecx, msg</span><br><span class="line">mov edx, 1</span><br><span class="line">add ecx, 8</span><br><span class="line">mov eax, [ecx + edx*2 - 6]</span><br></pre></td></tr></table></figure>
+
+<p><strong><font style="color:#D22D8D;">相对基址变址寻址 就是在“基址变址”的基础上再额外加减一个常量偏移</font></strong></p>
+<p>逐步计算</p>
+<ol>
+<li><code>ecx=msg</code></li>
+<li><code>edx=1</code></li>
+<li><code>ecx=msg+8</code></li>
+</ol>
+<p>最终有效地址<code>msg+8+1*2-6=msg+4</code></p>
+<p>仍然是从<code>msg</code>读4个字节</p>
+<p><code>ctfshow&#123;0x5F656D6F&#125;</code></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/pwn0-4-test-your-nc/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2026-07-21 20:11:50
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="分类"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/" title="CTF">
+                        <b>#</b> CTF
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Pwn/" title="Pwn">
+                        <b>#</b> Pwn
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Pwn/%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80/" title="前置基础">
+                        <b>#</b> 前置基础
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Pwn/%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80/Pwn/" title="Pwn">
+                        <b>#</b> Pwn
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/zeroG-ctf-moonlight-radio/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E9%A2%98%E5%B9%B2"><span class="toc-text">1.题干</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-text">2.流水线</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%9C%80%E5%B0%8F%E6%A6%82%E5%BF%B5%E8%A1%A8"><span class="toc-text">3.最小概念表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-CPU"><span class="toc-text">2.1 CPU</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-text">2.2 寄存器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E5%86%85%E5%AD%98"><span class="toc-text">2.3 内存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-%E5%9C%B0%E5%9D%80"><span class="toc-text">2.4 地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-%E8%AF%BB%E5%86%85%E5%AD%98"><span class="toc-text">2.5 读内存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-6-ELF"><span class="toc-text">2.6 ELF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7-section"><span class="toc-text">2.7 section</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-%E5%81%8F%E7%A7%BB"><span class="toc-text">2.8 偏移</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-9-%E5%B0%8F%E7%AB%AF%E5%BA%8F"><span class="toc-text">2.9 小端序</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%80%BB%E8%A6%81%E8%AF%BB%E5%86%85%E5%AD%98"><span class="toc-text">4.为什么总要读内存</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%AF%E8%BF%99%E9%A2%98%E6%9C%80%E5%85%B3%E9%94%AE%E7%9A%84%E7%AC%A6%E5%8F%B7"><span class="toc-text">[] 是这题最关键的符号</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-msg-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">5. msg 是什么</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-%E6%8A%8A%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8B%86%E6%88%90%E5%AD%97%E8%8A%82-%E7%9C%8B%E4%B8%8A%E5%8E%BB%E5%B0%B1%E5%A5%BD%E7%82%B9%E4%BA%86"><span class="toc-text">6. 把字符串拆成字节  看上去就好点了^^</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-%E8%BF%99%E9%A2%98%E9%87%8C%E7%9A%84-ELF-%E7%BB%93%E6%9E%84%E6%80%8E%E4%B9%88%E5%B8%AE%E4%BD%A0%E6%89%BE%E5%88%B0-msg"><span class="toc-text">7. 这题里的 ELF 结构怎么帮你找到 msg</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#7-1-%E5%85%88%E5%8F%96-ELF-%E5%A4%B4%E9%87%8C%E7%9A%84-4-%E4%B8%AA%E5%AD%97%E6%AE%B5"><span class="toc-text">7.1 先取 ELF 头里的 4 个字段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-2-%E7%AE%97%E5%87%BA-section-header-%E6%AF%8F%E9%A1%B9%E7%9A%84%E8%B5%B7%E7%82%B9"><span class="toc-text">7.2 算出 section header 每项的起点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-3-%E6%89%BE-text-%E5%92%8C-data"><span class="toc-text">7.3 找 .text 和 .data</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-4-%E4%B8%BA%E4%BB%80%E4%B9%88-msg-0x080490E8"><span class="toc-text">7.4 为什么 msg &#x3D; 0x080490E8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-5-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB-0xE8-%E5%AF%B9%E5%BA%94%E5%86%85%E5%AD%98%E5%9C%B0%E5%9D%80-0x080490E8"><span class="toc-text">7.5 为什么文件偏移 0xE8 对应内存地址 0x080490E8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%81%8F%E7%A7%BB"><span class="toc-text">什么是偏移</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-ELF"><span class="toc-text">什么是 ELF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%AE%B9%E6%98%93%E6%B7%B7%E6%B7%86%E7%9A%84-3-%E7%BB%84%E4%B8%9C%E8%A5%BF"><span class="toc-text">最容易混淆的 3 组东西</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%81%9A%E9%A2%98"><span class="toc-text">做题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn5"><span class="toc-text">pwn5</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95"><span class="toc-text">操作方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85%E5%B7%A5%E5%85%B7"><span class="toc-text">1.安装工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%BF%9B%E5%85%A5%E6%A1%8C%E9%9D%A2%E7%9B%AE%E5%BD%95%E5%B9%B6%E5%88%97%E5%87%BA%E5%BD%93%E5%89%8D%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6"><span class="toc-text">2.进入桌面目录并列出当前目录文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%B1%87%E7%BC%96%EF%BC%9A%E6%8A%8A-asm%E5%8F%98%E6%88%90-o"><span class="toc-text">3.汇编：把.asm变成.o</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%93%BE%E6%8E%A5%EF%BC%9A%E6%8A%8A-o%E5%8F%98%E6%88%90%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6-%E5%B9%B6%E8%BF%90%E8%A1%8C"><span class="toc-text">4.链接：把.o变成可执行文件 并运行</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn6%EF%BC%9A%E7%AB%8B%E5%8D%B3%E5%AF%BB%E5%9D%80"><span class="toc-text">pwn6：立即寻址</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn7-%E5%AF%84%E5%AD%98%E5%99%A8%E5%AF%BB%E5%9D%80"><span class="toc-text">pwn7:寄存器寻址</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn8-%E7%9B%B4%E6%8E%A5%E5%AF%BB%E5%9D%80"><span class="toc-text">pwn8:直接寻址</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn9-%E5%AF%84%E5%AD%98%E5%99%A8%E9%97%B4%E6%8E%A5%E5%AF%BB%E5%9D%80"><span class="toc-text">pwn9:寄存器间接寻址</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn10-%E5%AF%84%E5%AD%98%E5%99%A8%E7%9B%B8%E5%AF%B9%E5%AF%BB%E5%9D%80"><span class="toc-text">pwn10:寄存器相对寻址</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn11%EF%BC%9A%E5%9F%BA%E5%9D%80%E5%8F%98%E5%9D%80%E5%AF%BB%E5%9D%80"><span class="toc-text">pwn11：基址变址寻址</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pwn12%EF%BC%9A%E7%9B%B8%E5%AF%B9%E5%9F%BA%E5%9D%80%E5%8F%98%E5%9D%80%E5%AF%BB%E5%9D%80"><span class="toc-text">pwn12：相对基址变址寻址</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/lrx-hh">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+            <a title="email" href="mailto:mailto:luxlu667@gmail.com">
+              <i class="iconfont icon-envelope"></i>
+            </a>
+            
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://luxlu.top">Copyright © 2026 luxlu</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+    <div class="footer-views">
+      
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+      
+          本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        
+      
+          本站访客数<span id="busuanzi_value_site_uv"></span>人
+        
+      
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

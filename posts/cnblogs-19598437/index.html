@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="author" content="luxlu" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="CTF Misc Forensics Stego Writeup?" />
+  
+  
+  
+  <title>
+    
+      [ 刷题记录 ] 2026.2.9 刷题记录 
+      
+      
+      |
+    
+     luxlu
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/img/sleepy-cat-favicon.jpg">
+    <link rel="icon" href="/img/sleepy-cat-favicon.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="luxlu" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/img/avatar.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">luxlu</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">分类</a>
+        </li>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">主页</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">归档</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">关于</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">[ 刷题记录 ] 2026.2.9 刷题记录</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2026-07-21 20:11:56
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="分类"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/" title="CTF">
+                    <b>#</b> CTF
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Misc/" title="Misc">
+                    <b>#</b> Misc
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Misc/%E5%88%B7%E9%A2%98%E6%97%A5%E6%9C%9F/" title="刷题日期">
+                    <b>#</b> 刷题日期
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Misc/%E5%88%B7%E9%A2%98%E6%97%A5%E6%9C%9F/20260209/" title="20260209">
+                    <b>#</b> 20260209
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/luxlu/p/19598437">https://www.cnblogs.com/luxlu/p/19598437</a></p>
+<h1 id="swpuctf-2021-新生赛here_is_a_bug"><font style="color: rgba(0, 0, 0, 1)">[SWPUCTF 2021 新生赛]here_is_a_bug</font></h1>
+<p>D盾扫一下</p>
+
+<p><img src="/img/posts/cnblogs/e4f7d19c29973c67c0bff018f4f5f83b7db4b7ee.png" alt="" loading="lazy"></p>
+<p>查看<code>附件&gt;member&gt;zp.php</code></p>
+
+<p><img src="/img/posts/cnblogs/f75623a8f67868866dfd389baba42cf79a66c4d6.png" alt="" loading="lazy"></p>
+<p>这段代码里明确定义了登录密码</p>
+<pre><code class="language-php">//echo encode_pass('angel');exit;
+//angel = oh_you_catch_the_bug
+
+<p>$pass  &#x3D; ‘oh_you_catch_the_bug’; &#x2F;&#x2F;angel</p>
+<p>if($pass) &#123;<br>    if ($act &#x3D;&#x3D; ‘login’) &#123;<br>        if ($pass &#x3D;&#x3D; encode_pass($P[‘password’])) &#123;<br>            scookie(‘loginpass’,encode_pass($P[‘password’]));<br>            @header(‘Location: ‘.SELF);<br>            exit;<br>        &#125;<br>    &#125;<br></code></pre></p>
+<p><code>angel</code>是早期国内非常流行的一款PHP WebShell，默认密码是<code>angel</code>，但为了绕过简单关键字检测，作者讲实际密码设置为<code>oh_you_catch_the_bug</code></p>
+<p><code>NSSCTF&#123;oh_you_catch_the_bug&#125;</code></p>
+<h1 id="litctf-2023easy_shark"><font style="color: rgba(0, 0, 0, 1)">[LitCTF 2023]easy_shark</font></h1>
+<p><strong><font style="color: rgba(51, 51, 51, 1)">卧底小帅在潜伏期间截获了一段非常可疑的流量，为了里面的内容不被泄露出去，小帅将flag进行了加密，你能成功发现犯罪团伙的秘密，并拯救小帅吗？flag格式：NSSCTF{flag_木马连接的key}</font></strong></p>
+<p>伪加密修复</p>
+<p>过滤器：<code>http</code></p>
+<p>追踪流 流2</p>
+
+<p><img src="/img/posts/cnblogs/d0398f46bf8465b70f180122324429d968117b39.png" alt="" loading="lazy"></p>
+<p>黑客上传了webshell,连接key是<code>a</code></p>
+<p>流57</p>
+
+<p><img src="/img/posts/cnblogs/a606d874c9b2e194336f79c6db0fcb71c6d2b22e.png" alt="" loading="lazy"></p>
+<p><code>x^2</code>和<code>x**2</code>都是x的平方 方程的解显然是<code>17</code>和<code>77</code></p>
+<p>想到仿射密码</p>
+<p><a href="http://www.hiencode.com/affine.html" target="_blank" rel="noopener nofollow">http://www.hiencode.com/affine.html</a></p>
+<p>或者用sbzl的附带</p>
+
+<p><img src="/img/posts/cnblogs/8c85c9385d5a87b9d99ed55923f4a41550244469.png" alt="" loading="lazy"></p>
+
+<p><img src="/img/posts/cnblogs/e1bcec23746bd59c4e2c1a92517de5f893078fed.png" alt="" loading="lazy"></p>
+<p>获得flag</p>
+<p><code>NSSCTF&#123;w13e5hake_1s_a_900d_t3a771c_t001_a&#125;</code></p>
+<p>如果实在没看见上面的方程 也可以尝试明文开头爆破 不过不能笃定是仿射密码</p>
+<pre><code class="language-php"># 导入必要的模块
+import math
+
+<h1 id="已知信息"><a href="#已知信息" class="headerlink" title="已知信息"></a>已知信息</h1><p>cipher_head &#x3D; “gezx”  # 密文开头<br>plain_head &#x3D; “flag”   # 明文开头</p>
+<h1 id="找出所有可能的-a-b-密钥对"><a href="#找出所有可能的-a-b-密钥对" class="headerlink" title="找出所有可能的 (a, b) 密钥对"></a>找出所有可能的 (a, b) 密钥对</h1><p>valid_keys &#x3D; []</p>
+<p>for a in range(1, 26):<br>    # 检查 a 是否与 26 互质（仿射密码要求）<br>    if math.gcd(a, 26) !&#x3D; 1:<br>        continue<br>    for b in range(0, 26):<br>        valid &#x3D; True<br>        for i in range(len(plain_head)):<br>            m &#x3D; ord(plain_head[i]) - ord(‘a’)  # 明文字母转数字<br>            c &#x3D; ord(cipher_head[i]) - ord(‘a’) # 密文字母转数字<br>            # 验证加密公式: c ≡ (a*m + b) mod 26<br>            if (a * m + b) % 26 !&#x3D; c:<br>                valid &#x3D; False<br>                break<br>        if valid:<br>            valid_keys.append((a, b))</p>
+<h1 id="计算模逆元的函数"><a href="#计算模逆元的函数" class="headerlink" title="计算模逆元的函数"></a>计算模逆元的函数</h1><p>def modinv(a, m):<br>    for x in range(1, m):<br>        if (a * x) % m &#x3D;&#x3D; 1:<br>            return x<br>    return None</p>
+<h1 id="解密函数"><a href="#解密函数" class="headerlink" title="解密函数"></a>解密函数</h1><p>def decrypt(ciphertext, a, b):<br>    a_inv &#x3D; modinv(a, 26)<br>    if a_inv is None:<br>        return None<br>    plaintext &#x3D; “”<br>    for char in ciphertext:<br>        if ‘a’ &lt;&#x3D; char &lt;&#x3D; ‘z’:<br>            c &#x3D; ord(char) - ord(‘a’)<br>            # 解密公式: m &#x3D; a_inv * (c - b) mod 26<br>            m &#x3D; (a_inv * (c - b)) % 26<br>            plaintext +&#x3D; chr(m + ord(‘a’))<br>        else:<br>            plaintext +&#x3D; char<br>    return plaintext</p>
+<h1 id="主程序"><a href="#主程序" class="headerlink" title="主程序"></a>主程序</h1><p>cipher_full &#x3D; “gezx&#123;j13p5oznp_1t_z_900y_k3z771h_k001&#125;”</p>
+<p>if not valid_keys:<br>    print(“未找到有效密钥”)<br>else:<br>    print(f”找到 &#123;len(valid_keys)&#125; 组有效密钥:”)<br>    for a, b in valid_keys:<br>        decrypted &#x3D; decrypt(cipher_full, a, b)<br>        print(f”a&#x3D;&#123;a&#125;, b&#x3D;&#123;b&#125; → &#123;decrypted&#125;”)<br></code></pre></p>
+<h1 id="swpuctf-2021-新生赛原来你也玩原神"><font style="color: rgba(0, 0, 0, 1)">[SWPUCTF 2021 新生赛]原来你也玩原神</font></h1>
+<p><strong><font style="color: rgba(51, 51, 51, 1)">咦？压缩包不是没设密码吗，怎么打不开了</font></strong></p>
+
+<p><img src="/img/posts/cnblogs/3fb3189a4e447575a04fb74f0cd710e9a8312a75.png" alt="" loading="lazy"></p>
+<p>010打开 <code>FF FB 92 C0</code>是mp4格式 改一下后缀名 用AU打开</p>
+<p>Mp3Stego</p>
+<pre><code class="language-bash">cd C:\Users\13964\Desktop\Misc\虚假的MP3Stego\真实的MP3Stego
+
+<p>他会问你要密码 回车就行 表示空密码<br>Decode.exe -X 文件名</p>
+<p>他不会问你要密码了 这个是无密码的意思<br>Decode.exe -X -P 文件名<br></code></pre></p>
+<p>打开txt文件 改后缀改成<code>.zip</code> 解压</p>
+<p><code>NSSCTF&#123;So_you_also_play_Genshin_impact&#125;</code></p>
+<h1 id="ciscn-2023-初赛被加密的生产流量">[CISCN 2023 初赛]被加密的生产流量</h1>
+<p>流量包的名字叫<code>modbus.pcap</code></p>
+<p>过滤器：<code>modbus</code></p>
+<p>追踪流一条一条看</p>
+
+<p><img src="/img/posts/cnblogs/828edfd1af9c364e08bc47e9ba1df79c0e52f698.png" alt="" loading="lazy"></p>
+<p>提取编码部分<code>MMYWMX3GNEYWOXZRGAYDA===</code></p>
+<p>base32解码获得flag<code>NSSCTF&#123;c1f_fi1g_1000&#125;</code></p>
+<h1 id="闽盾杯-2021dns协议分析"><font style="color: rgba(0, 0, 0, 1)">[闽盾杯 2021]DNS协议分析</font></h1>
+<p>题目名字叫<code>DNS协议分析</code></p>
+<p>过滤器：<code>dns</code></p>
+<p>搜集到几段Base64编码 拼在一起</p>
+<pre><code class="language-bash">ZmxhZ3tlNj.i6ov08.dnslog.cn
+YyYWMxNTRj.i6ov08.dnslog.cn
+YTM3NmUxYz.i6ov08.dnslog.cn
+AwMWVlOGJi.i6ov08.dnslog.cn
+ZTgxMzE4Yn0K.i6ov08.dnslog.cn
+</code></pre>
+<p><code>ZmxhZ3tlNjYyYWMxNTRjYTM3NmUxYzAwMWVlOGJiZTgxMzE4Yn0K</code></p>
+<p><code>NSSCTF&#123;e662ac154ca376e1c001ee8bbe81318b&#125;</code></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/cnblogs-19592265/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2026-07-21 20:11:56
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="分类"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/" title="CTF">
+                        <b>#</b> CTF
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Misc/" title="Misc">
+                        <b>#</b> Misc
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Misc/%E5%88%B7%E9%A2%98%E6%97%A5%E6%9C%9F/" title="刷题日期">
+                        <b>#</b> 刷题日期
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Misc/%E5%88%B7%E9%A2%98%E6%97%A5%E6%9C%9F/20260209/" title="20260209">
+                        <b>#</b> 20260209
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/cnblogs-19600108/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#swpuctf-2021-%E6%96%B0%E7%94%9F%E8%B5%9Bhere_is_a_bug"><span class="toc-text">[SWPUCTF 2021 新生赛]here_is_a_bug</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#litctf-2023easy_shark"><span class="toc-text">[LitCTF 2023]easy_shark</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B7%B2%E7%9F%A5%E4%BF%A1%E6%81%AF"><span class="toc-text">已知信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%BE%E5%87%BA%E6%89%80%E6%9C%89%E5%8F%AF%E8%83%BD%E7%9A%84-a-b-%E5%AF%86%E9%92%A5%E5%AF%B9"><span class="toc-text">找出所有可能的 (a, b) 密钥对</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%A8%A1%E9%80%86%E5%85%83%E7%9A%84%E5%87%BD%E6%95%B0"><span class="toc-text">计算模逆元的函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E5%AF%86%E5%87%BD%E6%95%B0"><span class="toc-text">解密函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BB%E7%A8%8B%E5%BA%8F"><span class="toc-text">主程序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#swpuctf-2021-%E6%96%B0%E7%94%9F%E8%B5%9B%E5%8E%9F%E6%9D%A5%E4%BD%A0%E4%B9%9F%E7%8E%A9%E5%8E%9F%E7%A5%9E"><span class="toc-text">[SWPUCTF 2021 新生赛]原来你也玩原神</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ciscn-2023-%E5%88%9D%E8%B5%9B%E8%A2%AB%E5%8A%A0%E5%AF%86%E7%9A%84%E7%94%9F%E4%BA%A7%E6%B5%81%E9%87%8F"><span class="toc-text">[CISCN 2023 初赛]被加密的生产流量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%BD%E7%9B%BE%E6%9D%AF-2021dns%E5%8D%8F%E8%AE%AE%E5%88%86%E6%9E%90"><span class="toc-text">[闽盾杯 2021]DNS协议分析</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/lrx-hh">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+            <a title="email" href="mailto:mailto:luxlu667@gmail.com">
+              <i class="iconfont icon-envelope"></i>
+            </a>
+            
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://luxlu.top">Copyright © 2026 luxlu</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+    <div class="footer-views">
+      
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+      
+          本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        
+      
+          本站访客数<span id="busuanzi_value_site_uv"></span>人
+        
+      
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

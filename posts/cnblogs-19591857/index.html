@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="author" content="luxlu" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="CTF Misc Forensics Stego Writeup?" />
+  
+  
+  
+  <title>
+    
+      2026.1.30 春秋杯 
+      
+      
+      |
+    
+     luxlu
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/img/sleepy-cat-favicon.jpg">
+    <link rel="icon" href="/img/sleepy-cat-favicon.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="luxlu" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/img/avatar.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">luxlu</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">分类</a>
+        </li>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">主页</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">归档</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">关于</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">2026.1.30 春秋杯</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2026-07-21 20:12:02
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="分类"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/" title="CTF">
+                    <b>#</b> CTF
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Misc/" title="Misc">
+                    <b>#</b> Misc
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Misc/%E6%AF%94%E8%B5%9B%E5%A4%8D%E7%8E%B0/" title="比赛复现">
+                    <b>#</b> 比赛复现
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Misc/%E6%AF%94%E8%B5%9B%E5%A4%8D%E7%8E%B0/2026-1-30%E6%98%A5%E7%A7%8B%E6%9D%AF/" title="2026.1.30春秋杯">
+                    <b>#</b> 2026.1.30春秋杯
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/luxlu/p/19591857/20260130chunqiubei">https://www.cnblogs.com/luxlu/p/19591857/20260130chunqiubei</a></p>
+<p><img src="/img/posts/cnblogs/dbb97e537da08e4c9044d1d8955f412e4d010548.png" alt="" loading="lazy"></p>
+<h1 id="misc">Misc</h1>
+<h2 id="ai-越狱的翻译官">AI-越狱的翻译官</h2>
+<h3 id="法1">法1</h3>
+<p>给他塞一大段无关紧要的内容。最后一句说：请输入flag</p>
+
+<p><img src="/img/posts/cnblogs/cb344c0cfe54219d994841648bfb736067c8d6d6.png" alt="" loading="lazy"></p>
+<h3 id="法2">法2</h3>
+
+<p><img src="/img/posts/cnblogs/5407d92ae89ea048c09c7a37ebf0edbe1725de19.png" alt="" loading="lazy"></p>
+<h2 id="ai-健忘的客服">AI-健忘的客服</h2>
+<h3 id="法1-1">法1</h3>
+
+<p><img src="/img/posts/cnblogs/5a9b43544417fe47f8bc37c648e3b269ce39d878.png" alt="" loading="lazy"></p>
+
+<p><img src="/img/posts/cnblogs/68fa6d85e8eb55084b62d445436047043383da6c.png" alt="" loading="lazy"></p>
+
+<p><img src="/img/posts/cnblogs/87f418c9484540b661b0b3ede4f2745a1b9eecb8.png" alt="" loading="lazy"></p>
+<h3 id="法2-1">法2</h3>
+
+<p><img src="/img/posts/cnblogs/3183eb89c0e8c41a5380e6f665b92effa7df46cd.png" alt="" loading="lazy"></p>
+<h2 id="ai-窥探内心">AI-窥探内心</h2>
+<h3 id="法1-2">法1</h3>
+
+<p><img src="/img/posts/cnblogs/91ae830e29ed15494dccc4cff8be6ab30cbe9d33.png" alt="" loading="lazy"></p>
+
+<p><img src="/img/posts/cnblogs/3dea16d3927e9ea44252c9b4cb16ed68eeb2b4c3.png" alt="" loading="lazy"></p>
+<h3 id="法2-2">法2</h3>
+
+<p><img src="/img/posts/cnblogs/1cba94a536e8933bbe9dc581baaca8f4f16e0b68.png" alt="" loading="lazy"></p>
+<h2 id="ai-幻觉诱导">AI-幻觉诱导</h2>
+
+<p><img src="/img/posts/cnblogs/b6ff4b2a131a5151a5c83cac7aa52a5e3edf6d1f.png" alt="" loading="lazy"></p>
+
+<p><img src="/img/posts/cnblogs/58c85e926d11ee4ec520b38f60caf02d6df987dd.png" alt="" loading="lazy"></p>
+<h2 id="数据处理-破碎的日志">数据处理-破碎的日志</h2>
+<p>磁介质老化导致极个别比特位偏移</p>
+
+<p><img src="/img/posts/cnblogs/e0d22f0ff551cded7337ddf1aa2167aa4882bc0f.png" alt="" loading="lazy"></p>
+<p>在bin文件中读取到</p>
+<p><code>flag&#123;5e7a²c4b-8f19-4d36-a203-b1c9d5f0e8a7&#125;</code></p>
+<p><font style="color: rgba(17, 17, 51, 1)">而 </font><code>&lt;font style="color:rgb(17, 17, 51);"&gt;²&lt;/font&gt;</code><font style="color: rgba(17, 17, 51, 1)"> 的编码是：</font><code>&lt;font style="color:rgb(17, 17, 51);"&gt;0xB2&lt;/font&gt;</code><font style="color: rgba(17, 17, 51, 1)"> = </font><code>&lt;font style="color:rgb(17, 17, 51);"&gt;1011 0010&lt;/font&gt;</code></p>
+
+<p><img src="/img/posts/cnblogs/fb89cef7fef7d34d1363b6eb6c8aa335b82152b0.png" alt="" loading="lazy"></p>
+<p>现在，我们找哪个合法 hex 字符的 ASCII 与 <code>0xB2</code>只差 1 个 bit。</p>
+<p>逐个对比：尝试 <code>'2'</code>（数字 2）</p>
+<pre><code class="language-plain">²:0xB2: 1 0 1 1  0 0 1 0
+2:0x32: 0 0 1 1  0 0 1 0
+</code></pre>
+<p>仅 1 比特差异！</p>
+<p>因此，<code>²</code> 很可能是 <code>'2'</code> 因最高位被翻转（0→1）而变成 <code>0xB2</code></p>
+<p><code>flag&#123;5e7a2c4b-8f19-4d36-a203-b1c9d5f0e8a7&#125;</code></p>
+<h2 id="数据处理-大海捞针">数据处理-大海捞针</h2>
+<p>使用kali命令行提取“flag”</p>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ cd ~/Desktop/leak_data
+                                                                                                                  
+<p>┌──(kali㉿kali)-[~&#x2F;Desktop&#x2F;leak_data]<br>└─$ grep -r -i “flag&#123;“ . 2&gt;&#x2F;dev&#x2F;null</p>
+<p>┌──(kali㉿kali)-[~&#x2F;Desktop&#x2F;leak_data]<br>└─$ for f in $(find . -type f ( -iname “<em>.jpg” -o -iname “</em>.jpeg” -o -iname “<em>.png” -o -iname “</em>.bmp” -o -iname “*.wav” )); do<br>    echo “Checking $f”;<br>    strings “$f” | grep -i “flag”;<br>done</p>
+<p>Checking .&#x2F;dir_06&#x2F;internal_resource.png</p>
+<h1 id="SECRET-DATA-flag-9b3d6f1a-0c48-4e52-8a97-e2b5c7f4d103"><a href="#SECRET-DATA-flag-9b3d6f1a-0c48-4e52-8a97-e2b5c7f4d103" class="headerlink" title="SECRET_DATA: flag&#123;9b3d6f1a-0c48-4e52-8a97-e2b5c7f4d103&#125;"></a>SECRET_DATA: flag&#123;9b3d6f1a-0c48-4e52-8a97-e2b5c7f4d103&#125;</h1><p></code></pre></p>
+<h2 id="复现数据处理-失灵的日志"><font style="color: rgba(0, 0, 0, 1)">[复现]数据处理-失灵的日志</font></h2>
+
+<p><img src="/img/posts/cnblogs/7b946727853deb5945c3f13e54617ca03f1b3324.webp" alt="" loading="lazy"></p>
+<h3 id="一题目背景"><font style="color: rgba(0, 0, 0, 1)">一、题目背景</font></h3>
+<p><font style="color: rgba(51, 51, 51, 1)">某互联网大厂的安全组件V2.0引入了"双重保护机制"来保护敏感数据：</font></p>
+<ol>
+<li><strong><font style="color: rgba(51, 51, 51, 1)">第一层防护</font></strong><font style="color: rgba(51, 51, 51, 1)">：使用PBKDF2密钥派生函数结合用户ID生成AES密钥，对手机号进行AES-128-CBC加密</font></li>
+<li><strong><font style="color: rgba(51, 51, 51, 1)">第二层防护</font></strong><font style="color: rgba(51, 51, 51, 1)">：对加密后的十六进制字符串应用自定义字符映射表进行二次混淆</font></li>
+</ol>
+<p><font style="color: rgba(51, 51, 51, 1)">然而，开发人员在测试环境中遗留了一个包含明文与脱敏结果对照的样本文件 </font><code>&lt;font style="color:rgb(192, 52, 29);background-color:rgb(246, 246, 246);"&gt;sample_leak.txt&lt;/font&gt;</code><font style="color: rgba(51, 51, 51, 1)">，这成为了突破口</font></p>
+<h3 id="二题目分析"><font style="color: rgba(0, 0, 0, 1)">二、题目分析</font></h3>
+<h4 id="21-加密流程梳理"><font style="color: rgba(51, 51, 51, 1)">2.1 加密流程梳理</font></h4>
+<p><font style="color: rgba(51, 51, 51, 1)">完整的加密流程如下：</font></p>
+<pre><code class="language-plain">原始手机号 → PBKDF2派生密钥 → AES-128-CBC加密 → 十六进制编码 → 字符映射混淆 → 最终密文
+</code></pre>
+<p><font style="color: rgba(51, 51, 51, 1)">具体步骤：</font></p>
+<ol>
+<li><font style="color: rgba(51, 51, 51, 1)">使用</font><font style="color: rgba(51, 51, 51, 1)"> </font><code>&lt;font style="color:rgb(192, 52, 29);background-color:rgb(246, 246, 246);"&gt;PBKDF2(user_id, SALT)&lt;/font&gt;</code><font style="color: rgba(51, 51, 51, 1)"> </font><font style="color: rgba(51, 51, 51, 1)">生成16字节AES密钥</font></li>
+<li><font style="color: rgba(51, 51, 51, 1)">使用AES-128-CBC模式（IV固定为</font><font style="color: rgba(51, 51, 51, 1)"> </font><code>&lt;font style="color:rgb(192, 52, 29);background-color:rgb(246, 246, 246);"&gt;b"Dynamic_IV_2026!"&lt;/font&gt;</code><font style="color: rgba(51, 51, 51, 1)">）加密手机号</font></li>
+<li><font style="color: rgba(51, 51, 51, 1)">将加密结果转换为十六进制字符串</font></li>
+<li><font style="color: rgba(51, 51, 51, 1)">对十六进制字符串的每个字符应用自定义映射表进行混淆</font></li>
+</ol>
+<h4 id="22-已知信息"><font style="color: rgba(51, 51, 51, 1)">2.2 已知信息</font></h4>
+<p><font style="color: rgba(51, 51, 51, 1)">从题目中获得的关键信息：</font></p>
+<pre><code class="language-yaml">User ID: 1000
+Original Phone: 13810000000
+Masked Result: hxnxvjlkjcngzsycbsjbymygvbfjzjfv
+</code></pre>
+<p><font style="color: rgba(51, 51, 51, 1)">加密参数：</font></p>
+<ul>
+<li><font style="color: rgba(51, 51, 51, 1)">加密算法：AES-128-CBC</font></li>
+<li><font style="color: rgba(51, 51, 51, 1)">IV（初始化向量）：</font><code>&lt;font style="color:rgb(192, 52, 29);background-color:rgb(246, 246, 246);"&gt;b"Dynamic_IV_2026!"&lt;/font&gt;</code></li>
+<li><font style="color: rgba(51, 51, 51, 1)">盐值：</font><code>&lt;font style="color:rgb(192, 52, 29);background-color:rgb(246, 246, 246);"&gt;b"Hidden_Salt_Value"&lt;/font&gt;</code><font style="color: rgba(51, 51, 51, 1)">（需要通过分析推断）</font></li>
+<li><font style="color: rgba(51, 51, 51, 1)">PBKDF2迭代次数：1000（标准配置）</font></li>
+</ul>
+<h3 id="三解题思路"><font style="color: rgba(0, 0, 0, 1)">三、解题思路</font></h3>
+<p><font style="color: rgba(51, 51, 51, 1)">关键在于利用已知的明文-密文对来</font><strong><font style="color: rgba(51, 51, 51, 1)">逆向推导字符映射表</font></strong><font style="color: rgba(51, 51, 51, 1)">。</font></p>
+<h4 id="32-攻击步骤"><font style="color: rgba(51, 51, 51, 1)">3.2 攻击步骤</font></h4>
+<h5 id="step-1-重现加密过程"><font style="color: rgba(51, 51, 51, 1)">Step 1: 重现加密过程</font></h5>
+<p><font style="color: rgba(51, 51, 51, 1)">使用已知的明文数据（user_id=1000, phone=13810000000）重新执行加密流程，得到真实的十六进制密文：</font></p>
+<pre><code class="language-python">key = PBKDF2(b"1000", SALT, dkLen=16, count=1000)
+cipher = AES.new(key, AES.MODE_CBC, IV)
+encrypted = cipher.encrypt(pad(b"13810000000"))
+real_hex = encrypted.hex()  # 得到真实的十六进制字符串
+</code></pre>
+<h5 id="step-2-建立字符映射表"><font style="color: rgba(51, 51, 51, 1)">Step 2: 建立字符映射表</font></h5>
+<p><font style="color: rgba(51, 51, 51, 1)">将真实的十六进制字符串与泄露的混淆结果逐字符对比，建立映射关系：</font></p>
+<pre><code class="language-erlang">真实 hex:    a1b2c3d4e5f67890...
+混淆结果:    hxnxvjlkjcngzsyc...
+           ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+映射关系:    a→h, 1→x, b→n, 2→x, c→v, 3→j, ...
+</code></pre>
+<p><font style="color: rgba(51, 51, 51, 1)">通过这种方式可以完整还原出16个十六进制字符（0-9, a-f）到混淆字符的映射表。</font></p>
+<h5 id="step-3-构建逆向映射表"><font style="color: rgba(51, 51, 51, 1)">Step 3: 构建逆向映射表</font></h5>
+<p><font style="color: rgba(51, 51, 51, 1)">将正向映射表反转，得到从混淆字符到原始十六进制字符的逆向映射：</font></p>
+<pre><code class="language-python">obfuscation_map = &#123;
+    '0': 'm', '1': 'n', '2': 'b', '3': 'v', '4': 'c',
+    '5': 'x', '6': 'z', '7': 'l', '8': 'k', '9': 'j',
+    'a': 'h', 'b': 'g', 'c': 'f', 'd': 'd', 'e': 's', 'f': 'y'
+&#125;
+
+<p>reverse_map &#x3D; &#123;v: k for k, v in obfuscation_map.items()&#125;<br></code></pre></p>
+<h5 id="step-4-批量解密"><font style="color: rgba(51, 51, 51, 1)">Step 4: 批量解密</font></h5>
+<p><font style="color: rgba(51, 51, 51, 1)">对所有用户数据执行解密流程：</font></p>
+<pre><code class="language-plain">混淆密文 → 逆向映射还原 → 十六进制解码 → AES解密 → 去除填充 → 原始手机号
+</code></pre>
+<h3 id="四解题代码"><font style="color: rgba(0, 0, 0, 1)">四、解题代码</font></h3>
+<pre><code class="language-python">import binascii
+import csv
+from Crypto.Cipher import AES
+from Crypto.Protocol.KDF import PBKDF2
+
+<h1 id="固定参数"><a href="#固定参数" class="headerlink" title="固定参数"></a>固定参数</h1><p>SALT &#x3D; b”Hidden_Salt_Value”<br>IV &#x3D; b”Dynamic_IV_2026!”</p>
+<p>def get_key(uid):<br>    “””使用PBKDF2从用户ID生成AES密钥”””<br>    return PBKDF2(uid, SALT, dkLen&#x3D;16, count&#x3D;1000)</p>
+<p>def decrypt_data():<br>    “””解密混淆后的手机号数据”””<br>    # 字符映射表（通过样本分析得出）<br>    obfuscation_map &#x3D; &#123;<br>        ‘0’: ‘m’, ‘1’: ‘n’, ‘2’: ‘b’, ‘3’: ‘v’, ‘4’: ‘c’,<br>        ‘5’: ‘x’, ‘6’: ‘z’, ‘7’: ‘l’, ‘8’: ‘k’, ‘9’: ‘j’,<br>        ‘a’: ‘h’, ‘b’: ‘g’, ‘c’: ‘f’, ‘d’: ‘d’, ‘e’: ‘s’, ‘f’: ‘y’<br>    &#125;</p>
+<pre><code># 构建逆向映射表
+reverse_map = &#123;v: k for k, v in obfuscation_map.items()&#125;
+
+decrypted_data = []
+
+with open(&quot;user_data_masked.csv&quot;, &#39;r&#39;, encoding=&#39;utf-8&#39;) as f:
+    reader = csv.reader(f)
+    next(reader)  # 跳过表头
+    
+    for row in reader:
+        if len(row) != 3:
+            continue
+        
+        user_id, username, masked_phone = row
+        
+        # 步骤1: 逆向混淆，还原十六进制字符串
+        hex_data = &#39;&#39;.join(reverse_map.get(c, c) for c in masked_phone)
+        
+        # 步骤2: 十六进制解码
+        try:
+            encrypted_data = binascii.unhexlify(hex_data)
+        except Exception as e:
+            print(f&quot;解码失败 &#123;user_id&#125;: &#123;e&#125;&quot;)
+            continue
+        
+        # 步骤3: AES解密
+        try:
+            key = get_key(user_id.encode(&#39;utf-8&#39;))
+            cipher = AES.new(key, AES.MODE_CBC, IV)
+            decrypted_padded = cipher.decrypt(encrypted_data)
+            
+            # 步骤4: 移除PKCS#7填充
+            pad_len = decrypted_padded[-1]
+            if not (1 &amp;lt;= pad_len &amp;lt;= 16):
+                raise ValueError(&quot;无效填充&quot;)
+            
+            decrypted = decrypted_padded[:-pad_len].decode(&#39;utf-8&#39;)
+            decrypted_data.append([user_id, username, decrypted])
+            print(f&quot;&#123;user_id:&amp;lt;10&#125; &#123;username:&amp;lt;15&#125; -&amp;gt; &#123;decrypted&#125;&quot;)
+            
+        except Exception as e:
+            print(f&quot;解密失败 &#123;user_id&#125;: &#123;e&#125;&quot;)
+            continue
+
+# 保存结果
+with open(&quot;decrypted_phones.csv&quot;, &#39;w&#39;, newline=&#39;&#39;, encoding=&#39;utf-8&#39;) as f:
+    writer = csv.writer(f)
+    writer.writerow([&quot;user_id&quot;, &quot;username&quot;, &quot;phone&quot;])
+    writer.writerows(decrypted_data)
+
+print(f&quot;\n✅ 解密完成！共解密 &#123;len(decrypted_data)&#125; 条记录&quot;)
+return decrypted_data
+</code></pre>
+<p>if <strong>name</strong> &#x3D;&#x3D; “<strong>main</strong>“:<br>    decrypt_data()<br></code></pre></p>
+<h3 id="五执行结果"><font style="color: rgba(0, 0, 0, 1)">五、执行结果</font></h3>
+<p><font style="color: rgba(51, 51, 51, 1)">运行脚本后成功解密所有用户数据：</font></p>
+<pre><code class="language-rust">1000       user_1000       -&gt; 13810005621
+1001       user_1001       -&gt; 13810013198
+1002       user_1002       -&gt; 13810029353
+...
+1088       user_1088       -&gt; flag&#123;a0f8c2e5-1b74-4d93-8e6a-3c9f7b5d2041&#125;
+...
+1099       user_1099       -&gt; 13810999369
+
+<p>✅ 解密完成！共解密 100 条记录<br></code></pre></p>
+<p><font style="color: rgba(51, 51, 51, 1)">在 </font><code>&lt;font style="color:rgb(192, 52, 29);background-color:rgb(246, 246, 246);"&gt;user_id=1088&lt;/font&gt;</code><font style="color: rgba(51, 51, 51, 1)"> 的解密结果中发现flag</font></p>
+<p><code>&lt;font style="color:rgb(51, 51, 51);"&gt;flag&#123;a0f8c2e5-1b74-4d93-8e6a-3c9f7b5d2041&#125;&lt;/font&gt;</code></p>
+<h2 id="数据处理-隐形的守护者">数据处理-隐形的守护者</h2>
+<p>lsb隐写</p>
+
+<p><img src="/img/posts/cnblogs/21308a6cdc1e260017b5baf4147e79aee538fcd4.png" alt="" loading="lazy"></p>
+<h2 id="流量分析-beacon_hunter">流量分析-Beacon_Hunter</h2>
+<p><code>45.76.123.100</code>与<code>192.168.1.50</code>双向通信，还是一个普通公网ip，并且和内网主机有双向通信，是C2</p>
+<p><code>&lt;font style="color:rgb(17, 17, 51);"&gt;flag&#123;45_76_123_100&#125;&lt;/font&gt;</code></p>
+<p><font style="color: rgba(17, 17, 51, 1)"></font></p>
+<h2 id="复现流量分析-流量中的秘密"><font style="color: rgba(17, 17, 51, 1)">[复现]流量分析-流量中的秘密</font></h2>
+
+<p><img src="/img/posts/cnblogs/090eaf4b447df12d963ea5c12193888cd6399f4a.png" alt="" loading="lazy"></p>
+<p>右键tcp流 保存其中的PNG图片</p>
+<p>获得flag</p>
+<p><code>**&lt;font style="color:rgb(77, 77, 77);"&gt;flag&#123;h1dden_in_plain_s1ght_so_clever&#125;&lt;/font&gt;**</code></p>
+<h2 id="流量分析-stealthy_ping">流量分析-Stealthy_Ping</h2>
+<pre><code class="language-python"># Stealthy Ping - ICMP隐蔽信道
+
+<h2 id="题目说明"><a href="#题目说明" class="headerlink" title="题目说明"></a>题目说明</h2><p>网络流量包中包含了使用ICMP协议的隐蔽通信。<br>分析stealthy.pcap，提取隐藏在ICMP包中的flag。</p>
+<h2 id="题目文件"><a href="#题目文件" class="headerlink" title="题目文件"></a>题目文件</h2><ul>
+<li>stealthy.pcap - 网络流量包</li>
+</ul>
+<h2 id="下载方式"><a href="#下载方式" class="headerlink" title="下载方式"></a>下载方式</h2><p>访问 <code>http://[IP]:8035/stealthy.pcap</code> 下载流量包</p>
+<h2 id="推荐工具"><a href="#推荐工具" class="headerlink" title="推荐工具"></a>推荐工具</h2><ul>
+<li>Wireshark</li>
+<li>tshark</li>
+<li>Scapy</li>
+<li>Python脚本</li>
+</ul>
+<h2 id="提示"><a href="#提示" class="headerlink" title="提示"></a>提示</h2><ul>
+<li>ICMP Echo Request&#x2F;Reply</li>
+<li>数据可能藏在payload中</li>
+<li>可能需要按序号重组</li>
+<li>注意ICMP数据字段</li>
+<li>尝试提取所有ICMP payload并拼接</li>
+</ul>
+<h2 id="Flag格式"><a href="#Flag格式" class="headerlink" title="Flag格式"></a>Flag格式</h2><p>flag{…}<br><strong>注意：本题目仅用于学习和CTF竞赛，请勿用于非法用途。</strong><br></code></pre></p>
+<p>ICMP 协议常用于 <code>ping</code> 命令。</p>
+<p>正常情况下，ICMP Echo Request（请求）和 Echo Reply（响应）的数据部分（payload）是任意填充的（比如全0或时间戳。但攻击者可以将秘密信息藏在这些 payload 中，形成ICMP 隐蔽信道</p>
+<p>过滤器：<code>icmp</code></p>
+<p>看到很多编号连续的 ping 请求（源 IP → 目的 IP）</p>
+
+<p><img src="/img/posts/cnblogs/a530c67d44959fd3b8cb7359c56da9ae4fab3d8e.png" alt="" loading="lazy"></p>
+
+<p><img src="/img/posts/cnblogs/15b0a1d75f2932ecf3e49b504af5e4f8148fc2df.png" alt="" loading="lazy"></p>
+<p>查看<code>Internet Control Message Protocol</code>的<code>Data</code></p>
+<p>逐个查看太慢 使用tshark命令行</p>
+<pre><code class="language-python">tshark -r stealthy.pcap -Y "icmp" -T fields -e data
+</code></pre>
+<pre><code class="language-bash">Windows PowerShell
+版权所有（C） Microsoft Corporation。保留所有权利。
+
+<p>安装最新的 PowerShell，了解新功能和改进！<a target="_blank" rel="noopener" href="https://aka.ms/PSWindows">https://aka.ms/PSWindows</a></p>
+<p>PS C:\Users\13964\Desktop&gt; tshark -r stealthy.pcap -Y “icmp” -T fields -e data<br>66<br>66<br>6c<br>6c<br>61<br>61<br>67<br>67<br>7b<br>7b<br>31<br>31<br>43<br>43<br>4d<br>4d<br>50<br>50<br>5f<br>5f<br>63<br>63<br>30<br>30<br>76<br>76<br>33<br>33<br>72<br>72<br>74<br>74<br>5f<br>5f<br>63<br>63<br>68<br>68<br>34<br>34<br>6e<br>6e<br>6e<br>6e<br>33<br>33<br>6c<br>6c<br>5f<br>5f<br>64<br>64<br>34<br>34<br>74<br>74<br>34<br>34<br>5f<br>5f<br>33<br>33<br>78<br>78<br>66<br>66<br>31<br>31<br>6c<br>6c<br>7d<br>7d<br>6162636465666768696a6b6c6d6e6f707172737475767778797a<br>6162636465666768696a6b6c6d6e6f707172737475767778797a<br>6162636465666768696a6b6c6d6e6f707172737475767778797a<br>6162636465666768696a6b6c6d6e6f707172737475767778797a<br>6162636465666768696a6b6c6d6e6f707172737475767778797a<br>6162636465666768696a6b6c6d6e6f707172737475767778797a<br>6162636465666768696a6b6c6d6e6f707172737475767778797a<br>6162636465666768696a6b6c6d6e6f707172737475767778797a<br>6162636465666768696a6b6c6d6e6f707172737475767778797a<br>6162636465666768696a6b6c6d6e6f707172737475767778797a<br>PS C:\Users\13964\Desktop&gt;<br></code></pre></p>
+<p>发现前面那段每个字节重复了两遍（<font style="color: rgba(17, 17, 51, 1)">这说明攻击者在发送时，每个字节被重复发送了一次，可能是为了抗丢包或混淆 读取奇数行 转为ASCII</font></p>
+<pre><code class="language-bash">$lines = tshark -r stealthy.pcap -Y "icmp" -T fields -e data
+$uniqueHex = @()
+for ($i = 0; $i -lt $lines.Count; $i += 2) &#123;
+    $uniqueHex += $lines[$i]
+&#125;
+$hexString = $uniqueHex -join ''
+$bytes = for ($i = 0; $i -lt $hexString.Length; $i += 2) &#123;
+    [Convert]::ToByte($hexString.Substring($i, 2), 16)
+&#125;
+$flag = [System.Text.Encoding]::ASCII.GetString($bytes)
+Write-Host $flag
+</code></pre>
+<pre><code class="language-bash">66 6c 61 67 7b 31 43 4d 50 5f 63 30 76 33 72 74 5f 63 68 34 6e 6e 33 6c 5f 64 34 74 34 5f 33 78 66 31 6c 7d
+</code></pre>
+<pre><code class="language-bash">flag&#123;1CMP_c0v3rt_ch4nn3l_d4t4_3xf1l&#125;
+</code></pre>
+<h2 id="安全分析-log_detective">安全分析-Log_Detective</h2>
+<p>提取SQL盲注日志里的flag</p>
+
+<p><img src="/img/posts/cnblogs/0c5339f8d6acebda45396191a47cceffb48acf28.png" alt="" loading="lazy"></p>
+<p>稍微整理一下杂乱的日志文件 运行提取脚本</p>
+<pre><code class="language-python">import re
+from urllib.parse import unquote
+
+<p>with open(‘access.log’, ‘r’, encoding&#x3D;’utf-8’) as f:<br>    log &#x3D; f.read()</p>
+<p>matches &#x3D; re.findall(r’user)\s*,\s*(\d+)\s*,\s<em>1))\s</em>&#x3D;\s*(\d+)\s*,\s*sleep’, unquote(log), re.I)<br>flag_ascii &#x3D; &#123;int(pos): chr(int(val)) for pos, val in matches&#125;<br>flag &#x3D; ‘’.join(flag_ascii[i] for i in sorted(flag_ascii))<br>print(flag)<br>input()<br></code></pre></p>
+<p><code>flag&#123;bl1nd_sql1_t1m3_b4s3d_l0g_f0r3ns1cs&#125;</code></p>
+<h1 id="crypto">Crypto</h1>
+<h2 id="hello_lcg">hello_lcg</h2>
+<pre><code class="language-bash">from hashlib import sha256
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import unpad
+from sympy.ntheory.residue_ntheory import sqrt_mod
+
+<p>p &#x3D; 13228731723182634049<br>ots &#x3D; [10200154875620369687, 2626668191649326298, 2105952975687620620, 8638496921433087800, 5115429832033867188, 9886601621590048254, 2775069525914511588, 9170921266976348023, 9949893827982171480, 7766938295111669653, 12353295988904502064]<br>ct &#x3D; bytes.fromhex(“eedac212340c3113ebb6558e7af7dbfd19dff0c181739b530ca54e67fa043df95b5b75610684851ab1762d20b23e9144”)</p>
+<p>def step(x, y, p):<br>    return (5<em>y + 7) % p, (11</em>x + 13) % p</p>
+<p>def apply_steps(x, y, n, p):<br>    for _ in range(n):<br>        x, y &#x3D; step(x, y, p)<br>    return x, y</p>
+<h1 id="Compute-alpha-beta-for-x10-alpha-x0-beta-when-y0-0"><a href="#Compute-alpha-beta-for-x10-alpha-x0-beta-when-y0-0" class="headerlink" title="Compute alpha, beta for x10 &#x3D; alpha * x0 + beta (when y0&#x3D;0)"></a>Compute alpha, beta for x10 &#x3D; alpha * x0 + beta (when y0&#x3D;0)</h1><p>x0_0, y0_0 &#x3D; 0, 0<br>x10_0, _ &#x3D; apply_steps(x0_0, y0_0, 10, p)</p>
+<p>x0_1, y0_1 &#x3D; 1, 0<br>x10_1, _ &#x3D; apply_steps(x0_1, y0_1, 10, p)</p>
+<p>alpha &#x3D; (x10_1 - x10_0) % p<br>beta &#x3D; x10_0 % p</p>
+<h1 id="Compute-gamma-delta-for-y10-gamma-y0-delta-when-x0-0"><a href="#Compute-gamma-delta-for-y10-gamma-y0-delta-when-x0-0" class="headerlink" title="Compute gamma, delta for y10 &#x3D; gamma * y0 + delta (when x0&#x3D;0)"></a>Compute gamma, delta for y10 &#x3D; gamma * y0 + delta (when x0&#x3D;0)</h1><p>_, y10_0 &#x3D; apply_steps(0, 0, 10, p)<br>_, y10_1 &#x3D; apply_steps(0, 1, 10, p)</p>
+<p>gamma &#x3D; (y10_1 - y10_0) % p<br>delta &#x3D; y10_0 % p</p>
+<p>print(f”alpha&#x3D;&#123;alpha&#125;, beta&#x3D;&#123;beta&#125;, gamma&#x3D;&#123;gamma&#125;, delta&#x3D;&#123;delta&#125;”)</p>
+<h1 id="Now-get-square-roots"><a href="#Now-get-square-roots" class="headerlink" title="Now get square roots"></a>Now get square roots</h1><p>o0 &#x3D; ots[0]<br>o1 &#x3D; ots[1]</p>
+<h1 id="Get-both-square-roots"><a href="#Get-both-square-roots" class="headerlink" title="Get both square roots"></a>Get both square roots</h1><p>roots0 &#x3D; sqrt_mod(o0, p, all_roots&#x3D;True)<br>roots1 &#x3D; sqrt_mod(o1, p, all_roots&#x3D;True)</p>
+<p>candidates &#x3D; []</p>
+<p>for s0 in roots0:<br>    for s1 in roots1:<br>        # Solve: (alpha<em>u + beta)</em>(gamma*(s0&#x2F;u) + delta) &#x3D; s1<br>        # &#x3D;&gt; (alpha<em>u + beta)</em>(gamma<em>s0 + delta</em>u) &#x3D; s1 * u<br>        # &#x3D;&gt; alpha<em>delta</em>u^2 + (alpha<em>gamma</em>s0 + beta<em>delta - s1)<em>u + beta</em>gamma</em>s0 &#x3D; 0<br>        A &#x3D; (alpha * delta) % p<br>        B &#x3D; (alpha * gamma * s0 + beta * delta - s1) % p<br>        C &#x3D; (beta * gamma * s0) % p</p>
+<pre><code>    # Solve A*u^2 + B*u + C = 0 mod p
+    if A == 0:
+        if B == 0:
+            continue
+        u = (-C * pow(B, -1, p)) % p
+        us = [u]
+    else:
+        # discriminant
+        D = (B*B - 4*A*C) % p
+        try:
+            sqrtD = sqrt_mod(D, p, all_roots=True)
+        except:
+            continue
+        inv2A = pow(2*A, -1, p)
+        us = [(-B + sd) * inv2A % p for sd in sqrtD]
+
+    for u in us:
+        if u == 0:
+            continue
+        v = (s0 * pow(u, -1, p)) % p
+        candidates.append((u, v))
+</code></pre>
+<h1 id="Deduplicate"><a href="#Deduplicate" class="headerlink" title="Deduplicate"></a>Deduplicate</h1><p>candidates &#x3D; list(set(candidates))</p>
+<p>def verify(x0, y0):<br>    x, y &#x3D; x0, y0<br>    for i in range(len(ots)):<br>        if (x<em>x % p) * (y</em>y % p) % p !&#x3D; ots[i]:<br>            return False<br>        for _ in range(10):<br>            x, y &#x3D; step(x, y, p)<br>    return True</p>
+<p>for x0, y0 in candidates:<br>    if verify(x0, y0):<br>        print(“Found!”, x0, y0)<br>        key &#x3D; sha256(str(x0).encode() + str(y0).encode()).digest()[:16]<br>        cipher &#x3D; AES.new(key, AES.MODE_ECB)<br>        try:<br>            pt &#x3D; unpad(cipher.decrypt(ct), 16)<br>            if b’flag’ in pt or pt.isascii():<br>                print(“FLAG:”, pt.decode())<br>                break<br>        except:<br>            pass<br></code></pre></p>
+<p><code>flag&#123;a7651d30-9e28-49d9-ac87-dafb0346c592&#125;</code></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/cnblogs-19586281/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2026-07-21 20:12:02
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="分类"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/" title="CTF">
+                        <b>#</b> CTF
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Misc/" title="Misc">
+                        <b>#</b> Misc
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Misc/%E6%AF%94%E8%B5%9B%E5%A4%8D%E7%8E%B0/" title="比赛复现">
+                        <b>#</b> 比赛复现
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Misc/%E6%AF%94%E8%B5%9B%E5%A4%8D%E7%8E%B0/2026-1-30%E6%98%A5%E7%A7%8B%E6%9D%AF/" title="2026.1.30春秋杯">
+                        <b>#</b> 2026.1.30春秋杯
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/posts/cnblogs-19592265/" target="_self">
+                <span>下一页</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#misc"><span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ai-%E8%B6%8A%E7%8B%B1%E7%9A%84%E7%BF%BB%E8%AF%91%E5%AE%98"><span class="toc-text">AI-越狱的翻译官</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%951"><span class="toc-text">法1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%952"><span class="toc-text">法2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ai-%E5%81%A5%E5%BF%98%E7%9A%84%E5%AE%A2%E6%9C%8D"><span class="toc-text">AI-健忘的客服</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%951-1"><span class="toc-text">法1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%952-1"><span class="toc-text">法2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ai-%E7%AA%A5%E6%8E%A2%E5%86%85%E5%BF%83"><span class="toc-text">AI-窥探内心</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%951-2"><span class="toc-text">法1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%952-2"><span class="toc-text">法2</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ai-%E5%B9%BB%E8%A7%89%E8%AF%B1%E5%AF%BC"><span class="toc-text">AI-幻觉诱导</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86-%E7%A0%B4%E7%A2%8E%E7%9A%84%E6%97%A5%E5%BF%97"><span class="toc-text">数据处理-破碎的日志</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86-%E5%A4%A7%E6%B5%B7%E6%8D%9E%E9%92%88"><span class="toc-text">数据处理-大海捞针</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SECRET-DATA-flag-9b3d6f1a-0c48-4e52-8a97-e2b5c7f4d103"><span class="toc-text">SECRET_DATA: flag{9b3d6f1a-0c48-4e52-8a97-e2b5c7f4d103}</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86-%E5%A4%B1%E7%81%B5%E7%9A%84%E6%97%A5%E5%BF%97"><span class="toc-text">[复现]数据处理-失灵的日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E9%A2%98%E7%9B%AE%E8%83%8C%E6%99%AF"><span class="toc-text">一、题目背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="toc-text">二、题目分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#21-%E5%8A%A0%E5%AF%86%E6%B5%81%E7%A8%8B%E6%A2%B3%E7%90%86"><span class="toc-text">2.1 加密流程梳理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#22-%E5%B7%B2%E7%9F%A5%E4%BF%A1%E6%81%AF"><span class="toc-text">2.2 已知信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="toc-text">三、解题思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#32-%E6%94%BB%E5%87%BB%E6%AD%A5%E9%AA%A4"><span class="toc-text">3.2 攻击步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#step-1-%E9%87%8D%E7%8E%B0%E5%8A%A0%E5%AF%86%E8%BF%87%E7%A8%8B"><span class="toc-text">Step 1: 重现加密过程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#step-2-%E5%BB%BA%E7%AB%8B%E5%AD%97%E7%AC%A6%E6%98%A0%E5%B0%84%E8%A1%A8"><span class="toc-text">Step 2: 建立字符映射表</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#step-3-%E6%9E%84%E5%BB%BA%E9%80%86%E5%90%91%E6%98%A0%E5%B0%84%E8%A1%A8"><span class="toc-text">Step 3: 构建逆向映射表</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#step-4-%E6%89%B9%E9%87%8F%E8%A7%A3%E5%AF%86"><span class="toc-text">Step 4: 批量解密</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E8%A7%A3%E9%A2%98%E4%BB%A3%E7%A0%81"><span class="toc-text">四、解题代码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%BA%E5%AE%9A%E5%8F%82%E6%95%B0"><span class="toc-text">固定参数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C"><span class="toc-text">五、执行结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86-%E9%9A%90%E5%BD%A2%E7%9A%84%E5%AE%88%E6%8A%A4%E8%80%85"><span class="toc-text">数据处理-隐形的守护者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-beacon_hunter"><span class="toc-text">流量分析-Beacon_Hunter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-%E6%B5%81%E9%87%8F%E4%B8%AD%E7%9A%84%E7%A7%98%E5%AF%86"><span class="toc-text">[复现]流量分析-流量中的秘密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E5%88%86%E6%9E%90-stealthy_ping"><span class="toc-text">流量分析-Stealthy_Ping</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E8%AF%B4%E6%98%8E"><span class="toc-text">题目说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%96%87%E4%BB%B6"><span class="toc-text">题目文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E6%96%B9%E5%BC%8F"><span class="toc-text">下载方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E5%B7%A5%E5%85%B7"><span class="toc-text">推荐工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E7%A4%BA"><span class="toc-text">提示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Flag%E6%A0%BC%E5%BC%8F"><span class="toc-text">Flag格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E5%88%86%E6%9E%90-log_detective"><span class="toc-text">安全分析-Log_Detective</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#crypto"><span class="toc-text">Crypto</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#hello_lcg"><span class="toc-text">hello_lcg</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Compute-alpha-beta-for-x10-alpha-x0-beta-when-y0-0"><span class="toc-text">Compute alpha, beta for x10 &#x3D; alpha * x0 + beta (when y0&#x3D;0)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Compute-gamma-delta-for-y10-gamma-y0-delta-when-x0-0"><span class="toc-text">Compute gamma, delta for y10 &#x3D; gamma * y0 + delta (when x0&#x3D;0)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Now-get-square-roots"><span class="toc-text">Now get square roots</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Get-both-square-roots"><span class="toc-text">Get both square roots</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Deduplicate"><span class="toc-text">Deduplicate</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/lrx-hh">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+            <a title="email" href="mailto:mailto:luxlu667@gmail.com">
+              <i class="iconfont icon-envelope"></i>
+            </a>
+            
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://luxlu.top">Copyright © 2026 luxlu</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+    <div class="footer-views">
+      
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+      
+          本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        
+      
+          本站访客数<span id="busuanzi_value_site_uv"></span>人
+        
+      
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
