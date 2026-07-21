@@ -1,5 +1,5 @@
 ---
-title: ZeroG CTF 2026 - Moonlight Radio (Misc) Writeup
+title: 2026-07-21 ZeroG CTF 2026
 date: 2026-07-21 14:00:00
 categories:
   - CTF

@@ -1,5 +1,5 @@
 ---
-title: 2026.2.2hgame
+title: 2026.2.2 hgame
 date: 2026-02-02 20:00:00
 categories:
   - CTF

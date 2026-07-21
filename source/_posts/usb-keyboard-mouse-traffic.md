@@ -1,5 +1,5 @@
 ﻿---
-title: USB协议 键盘流量 鼠标流量
+title: "[ misc 知识点 ] 流量分析-USB+键鼠"
 date: 2026-03-28 21:00:00
 categories:
   - CTF

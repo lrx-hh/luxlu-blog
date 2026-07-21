@@ -1,5 +1,5 @@
 ﻿---
-title: pwn0-4 Test_your_nc
+title: "[ pwn 学习 ] CTFshow-Test_your_nc 0-4"
 date: 2026-04-02 16:45:00
 categories:
   - CTF

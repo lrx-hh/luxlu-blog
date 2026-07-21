@@ -1,5 +1,5 @@
 ﻿---
-title: 前置基础5-12
+title: "[ pwn 学习 ] CTFshow-前置基础 5-12"
 date: 2026-04-19 21:40:00
 tags:
   - Pwn
