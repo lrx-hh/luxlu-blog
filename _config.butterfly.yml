@@ -65,7 +65,7 @@ aside:
     category: true
   card_author:
     enable: true
-    description: CTF Misc<br>Hziee<br>计算机科学与技术<br>06年9月
+    description: CTF Misc<br>Hziee<br>计算机科学与技术<br>06年9月<br>luxlu667@gmail.com
     button:
       enable: true
       icon: fab fa-github
