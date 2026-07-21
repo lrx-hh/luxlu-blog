@@ -6,6 +6,9 @@ tags:
   - Writeup
   - CTFShow
 categories:
+  - CTF
+  - Pwn
+  - 前置基础
   - Pwn
 cover: /img/jpg/10.jpg
 comments: true

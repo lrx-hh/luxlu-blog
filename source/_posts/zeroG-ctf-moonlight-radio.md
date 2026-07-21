@@ -4,6 +4,8 @@ date: 2026-07-21 14:00:00
 categories:
   - CTF
   - Misc
+  - 比赛复现
+  - ZeroG2026
 tags:
   - CTF
   - Misc
