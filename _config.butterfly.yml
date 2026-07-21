@@ -1,12 +1,10 @@
 ﻿menu:
   首页: / || fas fa-house
-  日历: /calendar/ || fas fa-calendar-days
   协作: /collab/ || fas fa-pen-nib
   归档: /archives/ || fas fa-box-archive
   工具箱: /tools/ || fas fa-screwdriver-wrench
   音乐: /music/ || fas fa-music
   分类: /categories/ || fas fa-folder-open
-  关于: /about/ || fas fa-heart
   介绍页: /intro/ || fas fa-id-card
 
 nav:
