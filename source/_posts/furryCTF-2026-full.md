@@ -1,5 +1,5 @@
 ---
-title: furryCTF 2026 Misc + Web Writeup
+title: 2026.1.30furryCTF
 date: 2026-01-30 20:00:00
 categories:
   - CTF

@@ -1,5 +1,5 @@
 ---
-title: 山海杯 2026 Misc Writeup
+title: 2026.2.2山海杯
 date: 2026-02-02 10:00:00
 categories:
   - CTF
