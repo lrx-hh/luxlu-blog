@@ -1,130 +1,334 @@
-/* ===== luxlu blog · 简洁暗色主题 ===== */
+/* ===== luxlu blog · 静谧阅读 ===== */
 
+/* ── 根变量 ── */
 :root {
-  --global-bg: #08060a;
-  --font-color: #ddd4dc;
-  --text-highlight-color: #e8dce4;
-  --search-input-color: #ddd4dc;
-  --search-bg: #15101c;
-  --card-bg: rgba(14, 10, 18, 0.88);
-  --card-box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
-  --hr-border: #3a2c36;
-  --hr-before-color: #9e3a66;
-  --blockquote-bg: rgba(150, 70, 110, 0.10);
-  --blockquote-padding-color: #9e3a66;
-  --light-grey: #282028;
-  --scrollbar-color: #8a3a56;
+  --global-bg: #0d0b10;
+  --font-color: #c8c0c6;
+  --text-highlight-color: #e0d8de;
+  --search-input-color: #c8c0c6;
+  --search-bg: #18141e;
+  --card-bg: rgba(18, 14, 24, 0.85);
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+  --card-shadow-hover: 0 4px 16px rgba(0,0,0,0.16);
+  --hr-border: #2a2430;
+  --hr-before-color: #8a4a6a;
+  --blockquote-bg: rgba(140, 80, 110, 0.08);
+  --blockquote-padding-color: #8a4a6a;
+  --light-grey: #24202a;
+  --scrollbar-color: #7a3a56;
 }
 
 [data-theme='dark'] {
-  --global-bg: #08060a;
-  --font-color: #ddd4dc;
-  --card-bg: rgba(12, 8, 16, 0.9);
-  --card-box-shadow: 0 10px 34px rgba(0, 0, 0, 0.35);
-  --blockquote-bg: rgba(150, 70, 110, 0.12);
-  --blockquote-padding-color: #9e3a66;
+  --global-bg: #0d0b10;
+  --font-color: #c8c0c6;
+  --card-bg: rgba(18, 14, 24, 0.88);
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  --card-shadow-hover: 0 4px 18px rgba(0,0,0,0.22);
+  --blockquote-bg: rgba(140, 80, 110, 0.1);
+}
+
+/* ── 基础排版 ── */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 15px;
+  line-height: 1.85;
+  letter-spacing: 0.01em;
+  color: var(--font-color);
+}
+
+#content-inner {
+  padding-top: 32px;
+  padding-bottom: 48px;
 }
 
 /* ── 背景 ── */
 #web_bg {
   background-image:
-    linear-gradient(145deg, rgba(8, 5, 12, 0.2), rgba(10, 6, 16, 0.32)),
+    linear-gradient(170deg, rgba(10, 7, 16, 0.6), rgba(14, 10, 22, 0.7)),
     url("/img/bg.jpg") !important;
   background-size: cover !important;
   background-position: center center !important;
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
-  filter: saturate(1.05) contrast(1.03);
+  filter: saturate(0.92) contrast(1.02) brightness(0.95);
+}
+
+/* ── 首页 Header：紧凑、安静 ── */
+#page-header {
+  height: 200px !important;
+  background-image: none !important;
 }
 
 #page-header::before {
-  background-color: rgba(6, 4, 11, 0.32) !important;
+  background: linear-gradient(180deg, rgba(14, 10, 22, 0.85), rgba(18, 14, 26, 0.7)) !important;
 }
 
-/* ── 导航栏文字（白色） ── */
-#nav #site-name,
-#nav .menus_item > .site-page,
-#nav #search-button > span,
-#nav #toggle-menu,
-#post-info .post-title,
-#post-info #post-meta,
-#post-info #post-meta * {
-  color: #ffffff !important;
+#page-header #site-info {
+  padding-top: 60px;
 }
 
-#page-header #nav a,
-#page-header #nav span,
-#page-header #nav i,
-#page-header #nav .site-page {
-  color: #ffffff !important;
+#page-header #site-title {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  display: block !important;
 }
 
-#post-info .post-meta,
-#post-info .post-meta *,
-#post-info .post-meta a,
-#post-info .post-meta span,
-#post-info .post-meta i {
-  color: #ffffff !important;
-}
-
-#nav .menus_item > .site-page:hover,
-#nav #search-button:hover > span,
-#nav #site-name:hover {
-  color: #ffffff !important;
-}
-
-#post-info {
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-}
-
-/* 隐藏首页大字标题 */
-#page-header #site-title,
 #page-header #site-subtitle {
   display: none !important;
 }
 
-#site-info .site-title {
-  letter-spacing: 0.06em;
+/* 首页不显示 scroll-down 箭头 */
+#page-header #scroll-down,
+.scroll-down,
+.headertop-down {
+  display: none !important;
 }
 
-/* ── 卡片样式 ── */
-#aside-content .card-widget,
-#recent-posts > .recent-post-item,
-div#post,
-div#page,
-div#archive {
-  border: 1px solid rgba(140, 60, 100, 0.2);
-  backdrop-filter: blur(4px);
+/* 隐藏多余的社交/装饰 */
+#page-header .social-share,
+#page-header #site-social {
+  display: none !important;
+}
+
+/* ── 导航栏 ── */
+#page-header #nav {
+  border-bottom: 1px solid rgba(140, 80, 110, 0.12);
+  background: rgba(14, 11, 21, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#nav #site-name {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+#nav .menus_items .menus_item .site-page {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #c0b8be !important;
+  transition: color 0.2s, background 0.2s;
+}
+
+#nav .menus_items .menus_item .site-page:hover {
+  color: #f0d0e0 !important;
+  background: rgba(140, 80, 110, 0.12);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+#nav .site-page:not(.child):after {
+  display: none !important;  /* 去导航下划线动画 */
+}
+
+#page-header #nav::after {
+  display: none !important;  /* 去导航底部粉色线 */
+}
+
+/* ── 内容区宽度：居中、舒适 ── */
+.layout {
+  max-width: 760px !important;
+  margin: 0 auto !important;
+}
+
+#content-inner {
+  max-width: 760px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+/* ── 侧边栏：统一风格 ── */
+#aside-content {
+  padding: 0 !important;
+}
+
+#aside-content .card-widget {
+  margin-bottom: 24px;
+  padding: 20px 18px;
+  border-radius: 10px !important;
+  background: var(--card-bg) !important;
+  border: 1px solid rgba(140, 80, 110, 0.08) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+#aside-content .card-widget::before {
+  display: none !important;  /* 去卡片内发光 */
+}
+
+#aside-content .item-headline {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(140, 80, 110, 0.1);
+}
+
+#aside-content .author-info-description {
+  text-align: center !important;
+  line-height: 1.8;
+  font-size: 0.88rem;
+  color: #a098a4;
+}
+
+/* ── 文章列表：清爽卡片 ── */
+#recent-posts {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 28px !important;
 }
 
 #recent-posts > .recent-post-item {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100% !important;
+  margin-top: 0 !important;
+  height: auto !important;
+  border-radius: 10px !important;
+  background: var(--card-bg) !important;
+  border: 1px solid rgba(140, 80, 110, 0.07) !important;
+  box-shadow: var(--card-shadow) !important;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  overflow: hidden;
 }
 
 #recent-posts > .recent-post-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 35px rgba(140, 45, 85, 0.24);
+  box-shadow: var(--card-shadow-hover) !important;
+  transform: translateY(-2px);
 }
 
-#aside-content .card-info #card-info-btn {
-  border-radius: 999px;
+#recent-posts > .recent-post-item::before {
+  display: none !important;
 }
 
-::selection {
-  background: rgba(140, 45, 85, 0.35);
-  color: #fff;
+/* 封面图 */
+#recent-posts > .recent-post-item .post_cover {
+  width: 36% !important;
+  min-width: 180px;
+  max-width: 280px;
+  flex-shrink: 0;
 }
 
-/* ── 头像旋转 ── */
-.avatar-img {
-  -webkit-animation-duration: 9s !important;
-  animation-duration: 9s !important;
+#recent-posts > .recent-post-item .post_cover a,
+#recent-posts > .recent-post-item .post_cover img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
+/* 文字区 */
+#recent-posts > .recent-post-item .recent-post-info {
+  flex: 1;
+  padding: 26px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#recent-posts .article-title,
+#recent-posts .recent-post-info .article-title a {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #e0d6de !important;
+}
+
+#recent-posts .article-meta {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: #88808c;
+}
+
+#recent-posts .article-meta a,
+#recent-posts .article-meta span,
+#recent-posts .article-meta i {
+  color: #908894 !important;
+}
+
+#recent-posts .content {
+  margin-top: 8px;
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: #98909c;
+}
+
+/* ── 文章页：阅读优化 ── */
+div#post,
+div#page {
+  padding: 32px 30px !important;
+  border-radius: 10px !important;
+  background: var(--card-bg) !important;
+  border: 1px solid rgba(140, 80, 110, 0.07) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+div#post::before,
+div#page::before {
+  display: none !important;
+}
+
+#post h1, #post h2, #post h3,
+#page h1, #page h2, #page h3 {
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 2em;
+  margin-bottom: 0.7em;
+  color: #e0d6de;
+}
+
+#post h1, #page h1 { font-size: 1.6rem; }
+#post h2, #page h2 { font-size: 1.3rem; }
+#post h3, #page h3 { font-size: 1.1rem; }
+
+#post p, #page p {
+  margin-bottom: 1.2em;
+  line-height: 1.9;
+}
+
+#post code, #page code {
+  font-family: "Fira Code", "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  font-size: 0.88em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(140, 80, 110, 0.12);
+  color: #d0b8c6;
+}
+
+#post pre, #page pre {
+  border-radius: 8px;
+  margin: 1.5em 0;
+  padding: 18px 20px;
+  background: rgba(12, 8, 18, 0.92) !important;
+  border: 1px solid rgba(140, 80, 110, 0.1);
+}
+
+#post blockquote, #page blockquote {
+  margin: 1.5em 0;
+  padding: 14px 20px;
+  border-left: 3px solid var(--blockquote-padding-color);
+  background: var(--blockquote-bg);
+  border-radius: 0 6px 6px 0;
+  color: #b8a8b4;
+}
+
+#post img, #page img {
+  border-radius: 8px;
+  margin: 1.2em 0;
+}
+
+#post hr, #page hr {
+  margin: 2.5em 0;
+  border: 0;
+  height: 1px;
+  background: rgba(140, 80, 110, 0.15);
 }
 
 /* ── 非首页 header 压缩 ── */
 #page-header.not-home-page {
-  height: 62px !important;
-  margin-bottom: 10px;
+  height: 56px !important;
+  margin-bottom: 18px;
   background: transparent !important;
   background-image: none !important;
 }
@@ -140,8 +344,8 @@ div#archive {
 }
 
 #page-header.not-home-page #nav {
-  background: rgba(13, 9, 20, 0.9);
-  backdrop-filter: blur(6px);
+  background: rgba(14, 11, 21, 0.94);
+  backdrop-filter: blur(8px);
 }
 
 /* ── 进度条 ── */
@@ -150,28 +354,25 @@ div#archive {
   top: 0;
   left: 0;
   width: 100%;
-  height: 4px;
+  height: 3px;
   z-index: 1100;
-  background: rgba(140, 68, 108, 0.12);
-  transform: translateZ(0);
+  background: transparent;
 }
 
 #fx-progress span {
   display: block;
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, #9a3a60, #b06880, #9a3a60);
-  box-shadow: 0 0 18px rgba(140, 55, 95, 0.8);
-  transform-origin: left center;
-  transform: skewX(-18deg);
-  transition: width 0.15s linear;
+  background: linear-gradient(90deg, #8a4a6a, #a06080, #8a4a6a);
+  box-shadow: 0 0 8px rgba(140, 70, 100, 0.5);
+  transition: width 0.2s ease;
 }
 
 /* ── 入场渐显 ── */
 .reveal-3d {
-  opacity: 0.92;
-  transform: translateY(6px);
-  transition: transform 0.45s ease, opacity 0.45s ease;
+  opacity: 0.88;
+  transform: translateY(8px);
+  transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
 .reveal-3d.in-view {
@@ -179,351 +380,107 @@ div#archive {
   transform: translateY(0);
 }
 
-/* ── 卡片内发光 ── */
-#recent-posts > .recent-post-item,
-#aside-content .card-widget,
-div#post,
-div#page,
+/* ── 归档 / 分类页 ── */
 div#archive {
-  position: relative;
-  overflow: hidden;
-  border-radius: 18px !important;
-  background: linear-gradient(145deg, rgba(16, 10, 23, 0.9), rgba(19, 11, 28, 0.8)) !important;
-  box-shadow:
-    0 12px 34px rgba(4, 2, 10, 0.44),
-    inset 0 0 0 1px rgba(140, 76, 115, 0.06) !important;
+  padding: 28px 26px !important;
+  border-radius: 10px !important;
+  background: var(--card-bg) !important;
+  border: 1px solid rgba(140, 80, 110, 0.07) !important;
+  box-shadow: var(--card-shadow) !important;
 }
 
-#recent-posts > .recent-post-item::before,
-#aside-content .card-widget::before,
-div#post::before,
-div#page::before,
 div#archive::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 12% 8%, rgba(140, 72, 112, 0.08), transparent 30%),
-    radial-gradient(circle at 88% 94%, rgba(140, 62, 102, 0.08), transparent 26%);
+  display: none !important;
 }
 
-/* ── 导航栏粉色底线 ── */
-#page-header #nav {
-  position: relative;
-  border-bottom: none !important;
-}
-
-#page-header #nav::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    rgba(160, 100, 130, 0) 0%,
-    rgba(140, 78, 116, 0.9) 20%,
-    rgba(255, 145, 206, 0.95) 50%,
-    rgba(140, 78, 116, 0.9) 80%,
-    rgba(160, 100, 130, 0) 100%
-  );
-}
-
-#nav .site-page:not(.child):after {
-  height: 2px !important;
-  background: linear-gradient(90deg, #ffc7e6, #ffaad8, #ff8fcc, #ffc7e6) !important;
-  box-shadow: 0 0 10px rgba(140, 72, 112, 0.45);
-}
-
-/* ── 导航药丸按钮 ── */
-#nav .menus_items .menus_item .site-page,
-#nav #site-name {
-  border: 1px solid rgba(140, 72, 112, 0.2);
-  background: linear-gradient(140deg, rgba(255, 107, 188, 0.08), rgba(255, 255, 255, 0.02));
-  border-radius: 999px;
-  padding: 6px 12px;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-}
-
-#nav .menus_items .menus_item .site-page:hover,
-#nav #site-name:hover {
-  border-color: rgba(140, 76, 115, 0.42);
-  box-shadow: 0 0 18px rgba(140, 58, 98, 0.2);
-}
-
-/* ── 内容区加宽 ── */
-#content-inner {
-  max-width: 900px !important;
-}
-
-@media (min-width: 1200px) {
-  #content-inner {
-    max-width: 1000px !important;
-  }
-}
-
-/* ── 首页卡片：左侧大图 + 右侧内容 ── */
-#recent-posts {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 20px !important;
-}
-
-#recent-posts > .recent-post-item {
-  display: flex !important;
-  flex-direction: row !important;
-  width: 100% !important;
-  margin-top: 0 !important;
-  height: auto !important;
-}
-
-#recent-posts > .recent-post-item .post_cover {
-  width: 42% !important;
-  min-width: 220px;
-  flex-shrink: 0;
-}
-
-#recent-posts > .recent-post-item .post_cover a,
-#recent-posts > .recent-post-item .post_cover img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover;
-}
-
-#recent-posts > .recent-post-item .recent-post-info {
-  flex: 1;
-  padding: 24px 22px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-@media (max-width: 768px) {
-  #recent-posts > .recent-post-item {
-    flex-direction: column !important;
-  }
-  #recent-posts > .recent-post-item .post_cover {
-    width: 100% !important;
-    min-width: 0;
-    max-height: 200px;
-  }
-}
-
-/* ── 协作入口 ── */
-.category-collab-entry {
-  margin-bottom: 14px;
-  display: grid;
-  gap: 2px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(140, 68, 108, 0.33);
-  background: linear-gradient(135deg, rgba(140, 55, 95, 0.2), rgba(140, 65, 105, 0.1));
-  color: #c8b8be !important;
-  text-decoration: none !important;
-  box-shadow: 0 12px 24px rgba(140, 55, 95, 0.2);
-}
-
-.category-collab-entry .entry-tag {
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  color: #b090a0;
-}
-
-.category-collab-entry strong {
-  font-size: 1.05rem;
-}
-
-.category-collab-entry small {
-  color: #f8d0e7;
-}
-
-.category-collab-entry:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 16px 30px rgba(140, 58, 98, 0.3);
-}
-
-/* ── 关于页 ── */
-.about-luxlu-card {
-  margin: 0 0 18px;
-  padding: 18px;
-  border-radius: 16px;
-  border: 1px solid rgba(140, 68, 108, 0.26);
-  background: linear-gradient(145deg, rgba(18, 11, 27, 0.9), rgba(24, 14, 35, 0.84));
-  box-shadow: 0 12px 28px rgba(140, 55, 95, 0.12);
-}
-
-.about-luxlu-card h2,
-.about-luxlu-card h3 {
-  margin-top: 0;
-  color: #c8b8be;
-}
-
-.about-luxlu-card p {
-  color: #f3cde2;
-}
-
-.luxlu-whisper-form {
-  display: grid;
-  gap: 12px;
-}
-
-.luxlu-whisper-form label {
-  display: grid;
-  gap: 6px;
-  color: #f6d6e8;
-}
-
-.luxlu-whisper-form input,
-.luxlu-whisper-form textarea {
-  border: 1px solid rgba(140, 68, 108, 0.35);
-  border-radius: 10px;
-  background: rgba(30, 19, 43, 0.9);
-  color: #c8b8be;
-  padding: 10px 12px;
-  width: 100%;
-}
-
-.luxlu-whisper-form button {
-  width: fit-content;
-  border: 0;
-  border-radius: 999px;
-  background: linear-gradient(130deg, #9a3a60, #7a2050);
-  color: #d8ccd2;
-  padding: 10px 18px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(140, 55, 95, 0.24);
-}
-
-.about-status {
-  min-height: 20px;
-  margin: 10px 0 0;
-  color: #b090a0;
-}
-
-.luxlu-public-list {
-  list-style: none;
-  padding: 0;
-  margin: 12px 0 0;
-  display: grid;
-  gap: 10px;
-}
-
-.luxlu-public-item,
-.luxlu-public-empty {
-  border: 1px solid rgba(140, 68, 108, 0.24);
-  border-radius: 10px;
-  background: rgba(26, 17, 37, 0.85);
-  padding: 10px 12px;
-}
-
-.luxlu-public-item .meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 6px;
-  font-size: 13px;
-}
-
-.luxlu-public-item .name {
-  color: #c0a8b0;
-  font-weight: 700;
-}
-
-.luxlu-public-item time {
-  color: #d2a9c1;
-}
-
-.luxlu-public-item p {
-  margin: 0;
-  color: #f4d5e7;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.luxlu-public-empty {
-  color: #e9c7dc;
-}
-
-#aside-content .author-info-description {
-  text-align: center !important;
-  line-height: 1.85;
-}
-
-/* ── 代码块倾斜（仅此保留） ── */
+/* ── 代码块轻量倾斜 ── */
 .code-tilt {
-  will-change: transform;
-  transform-style: preserve-3d;
-  transform-origin: center center;
-  transition: transform 0.1s linear, box-shadow 0.3s ease;
+  transition: transform 0.15s ease, box-shadow 0.3s ease;
 }
 
 .code-tilt:hover {
-  box-shadow: 0 12px 26px rgba(140, 55, 95, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
-/* ── 导航横向滚动 ── */
-@media (min-width: 901px) {
-  #nav #menus {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-  }
-
-  #nav #search-button {
-    flex: 0 0 auto;
-    padding-left: 8px;
-  }
-
-  #nav .menus_items {
-    display: flex !important;
-    align-items: center;
-    flex-wrap: nowrap;
-    gap: 8px;
-    white-space: nowrap;
-    overflow-x: auto;
-    max-width: min(74vw, 1140px);
-    min-width: 0;
-    padding-bottom: 4px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 175, 220, 0.55) transparent;
-  }
-
-  #nav .menus_items .menus_item {
-    flex: 0 0 auto;
-    padding-left: 0;
-  }
-
-  #nav .menus_items::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  #nav .menus_items::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-    background: linear-gradient(90deg, rgba(140, 78, 116, 0.7), rgba(140, 72, 112, 0.8));
-  }
+/* ── 文章结尾标签/分类 ── */
+#post .post-copyright,
+#post .post-tags {
+  margin-top: 2em;
+  font-size: 0.85rem;
 }
 
-/* ── 响应式 ── */
-@media (max-width: 1200px) {
-  #recent-posts > .recent-post-item,
-  #aside-content .card-widget {
-    border-radius: 15px;
-  }
-
-  #page .container {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
+/* ── 页脚 ── */
+#footer {
+  padding: 32px 0 !important;
+  text-align: center;
+  color: #706878;
+  font-size: 0.82rem;
 }
 
+#footer a {
+  color: #a08898;
+}
+
+#footer a:hover {
+  color: #c0a8b8;
+}
+
+/* ── 评论 ── */
+#post-comment {
+  margin-top: 32px;
+}
+
+/* ── 页码 ── */
+#pagination {
+  margin-top: 36px;
+}
+
+#pagination .page-number {
+  padding: 6px 12px;
+  border-radius: 5px;
+  color: #a098a4;
+}
+
+#pagination .page-number.current {
+  background: rgba(140, 80, 110, 0.2);
+  color: #e0c8d6;
+}
+
+/* ── 右侧工具按钮 ── */
+#rightside {
+  opacity: 0.7;
+}
+
+#rightside button {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+}
+
+/* ── 滚动条 ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 80, 110, 0.35);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 80, 110, 0.55);
+}
+
+/* ── 选择文本 ── */
+::selection {
+  background: rgba(140, 70, 100, 0.3);
+  color: #f0e0ea;
+}
+
+/* ── 折叠的 sidebar(移动端) ── */
 @media (max-width: 900px) {
   #page-header #nav {
     padding-left: 8px;
@@ -531,121 +488,71 @@ div#archive::before {
     position: sticky;
     top: 0;
     z-index: 1200;
-    background: rgba(10, 6, 16, 0.95);
+    background: rgba(14, 11, 21, 0.96);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
 
-  #nav .site-page {
-    padding: 0 12px !important;
-    font-size: 0.92rem;
+  #page-header {
+    height: 140px !important;
   }
 
-  #nav #menus {
-    display: flex !important;
-    align-items: center;
-    min-width: 0;
-    width: 100%;
-    gap: 6px;
+  #page-header #site-info {
+    padding-top: 40px;
   }
 
+  #page-header #site-title {
+    font-size: 1.3rem !important;
+  }
+
+  #nav #toggle-menu,
   #nav #search-button {
-    display: none !important;
-  }
-
-  #nav #toggle-menu {
     display: none !important;
   }
 
   #nav .menus_items {
     display: flex !important;
-    align-items: center;
     flex-wrap: nowrap;
-    gap: 6px;
-    width: 100%;
+    gap: 4px;
     overflow-x: auto;
-    overflow-y: hidden;
     white-space: nowrap;
-    padding-bottom: 3px;
     scrollbar-width: none;
   }
 
-  #nav .menus_items::-webkit-scrollbar {
-    display: none;
+  #nav .menus_items::-webkit-scrollbar { display: none; }
+  #nav .menus_items .menus_item { flex: 0 0 auto; padding-left: 0; }
+
+  .layout,
+  #content-inner {
+    max-width: 100% !important;
   }
 
-  #nav .menus_items .menus_item {
-    flex: 0 0 auto;
-    padding-left: 0;
-  }
-
-  #site-info {
-    padding: 0 12px;
-  }
-
-  #recent-posts > .recent-post-item,
-  #aside-content .card-widget,
   div#post,
-  div#page,
-  div#archive {
-    border-radius: 14px;
-  }
-}
-
-@media (max-width: 760px) {
-  #page-header #nav {
-    min-height: 56px;
-  }
-
-  #recent-posts {
-    margin-top: 10px;
+  div#page {
+    padding: 20px 16px !important;
   }
 
   #recent-posts > .recent-post-item {
-    margin-bottom: 12px;
+    flex-direction: column !important;
   }
 
-  #aside-content .card-widget {
-    margin-bottom: 12px;
-  }
-
-  #rightside {
-    right: 8px;
-    bottom: 84px;
-  }
-
-  .about-luxlu-card {
-    border-radius: 12px;
-    padding: 14px;
-  }
-
-  .category-collab-entry {
-    padding: 12px 14px;
+  #recent-posts > .recent-post-item .post_cover {
+    width: 100% !important;
+    min-width: 0;
+    max-width: 100%;
+    max-height: 180px;
   }
 }
 
-@media (max-width: 900px), (pointer: coarse) {
-  #luxlu-signature-hero {
-    display: none !important;
+@media (max-width: 1200px) {
+  .layout,
+  #content-inner {
+    max-width: 700px !important;
   }
 }
 
-/* ── 页面层级修复 ── */
-.layout,
-#aside-content,
-#recent-posts,
-#post,
-#page,
-#archive,
-#footer {
-  position: relative;
-  z-index: 1;
-}
-
-#nav,
-#site-info,
-#page-site-info,
-#post-info {
+/* ── 层级 ── */
+#nav, #site-info, #page-site-info, #post-info {
   position: relative;
   z-index: 30;
 }

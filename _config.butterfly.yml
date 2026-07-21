@@ -23,7 +23,7 @@ favicon: /img/sleepy-cat-favicon.jpg
 
 avatar:
   img: /img/avatar.jpg
-  effect: true
+  effect: false
 
 index_img: /img/bg.jpg
 default_top_img: /img/bg.jpg
@@ -33,15 +33,15 @@ category_img: /img/bg.jpg
 footer_img: false
 
 cover:
-  index_enable: true
-  aside_enable: true
-  archives_enable: true
+  index_enable: false
+  aside_enable: false
+  archives_enable: false
   position: left
   default_cover: /img/bg.jpg
 
 subtitle:
   enable: true
-  effect: true
+  effect: false
   source: false
   sub:
     - 会一直更新的吗？咕咕咕！( *｀ω´)
@@ -106,7 +106,7 @@ darkmode:
 
 inject:
   head:
-    - <link rel="stylesheet" href="/css/custom.css?v=20260721a">
+    - <link rel="stylesheet" href="/css/custom.css?v=20260721b">
   bottom:
     - <script src="/js/site-3d-effects.js?v=20260721a"></script>
     - <script src="/js/tab-title.js?v=20260329a"></script>
