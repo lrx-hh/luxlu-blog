@@ -8,8 +8,6 @@ tags:
 categories:
   - CTF
   - Pwn
-  - 前置基础
-  - Pwn
 cover: /img/jpg/10.jpg
 comments: true
 top_img: /img/black-pink-cover.svg
