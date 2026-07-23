@@ -10,7 +10,28 @@
   <rights>All rights reserved 2026, luxlu</rights>
   <subtitle>CTF Misc</subtitle>
   <title>luxlu</title>
-  <updated>2026-07-23T14:48:33.669Z</updated>
+  <updated>2026-07-23T14:53:41.461Z</updated>
+  <entry>
+    <author>
+      <name>luxlu</name>
+    </author>
+    <category term="CTF" scheme="https://luxlu.top/categories/CTF/"/>
+    <category term="Pwn" scheme="https://luxlu.top/categories/CTF/Pwn/"/>
+    <category term="Pwn" scheme="https://luxlu.top/tags/Pwn/"/>
+    <category term="CTFShow" scheme="https://luxlu.top/tags/CTFShow/"/>
+    <category term="CTF" scheme="https://luxlu.top/tags/CTF/"/>
+    <content>
+      <![CDATA[<h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p><img src="/img/yuque/1784814023872-51414c90-8806-4f3f-b54a-b49c7983f5a2.png"></p><p>和 pwn20 唯一区别：<code>RELRO</code> 从 <code>No RELRO</code> 变成 <code>Partial RELRO</code>。</p><h1 id="2-回顾：RELRO-三等级"><a href="#2-回顾：RELRO-三等级" class="headerlink" title="2. 回顾：RELRO 三等级"></a>2. 回顾：RELRO 三等级</h1><table><thead><tr><th>等级</th><th><code>.got</code> 能写？</th><th><code>.got.plt</code> 能写？</th></tr></thead><tbody><tr><td>No RELRO</td><td>✅</td><td>✅</td></tr><tr><td><strong>Partial RELRO</strong></td><td><strong>❌</strong></td><td><strong>✅</strong></td></tr><tr><td>Full RELRO</td><td>❌</td><td>❌</td></tr></tbody></table><p>Partial RELRO 的取舍：</p><ul><li><code>.got</code> 里的数据初始化后不会再变 → 锁掉</li><li><code>.got.plt</code> 因为延迟绑定还要填函数地址 → 留着能写</li></ul><h1 id="3-找两张表地址"><a href="#3-找两张表地址" class="headerlink" title="3. 找两张表地址"></a>3. 找两张表地址</h1><p>段表 <code>-S</code> 说的都能写，<strong>别信</strong>。程序头 <code>-l</code> 里 <code>GNU_RELRO</code> 圈起来那块，运行时会被锁成只读。</p><h2 id="3-1-readelf-S-先看段表"><a href="#3-1-readelf-S-先看段表" class="headerlink" title="3.1 readelf -S 先看段表"></a>3.1 <code>readelf -S</code> 先看段表</h2><p>段表里两张表都标 <code>WA</code>（可写），但段表是静态声明，运行时由程序头决定。</p><p><img src="/img/yuque/1784816242477-59802bf1-8e04-4949-991f-a4f4e3562b45.png"></p><table><thead><tr><th>段名</th><th>地址</th><th>说明</th></tr></thead><tbody><tr><td><code>.got</code></td><td><strong>0x600ff0</strong></td><td>杂项数据</td></tr><tr><td><code>.got.plt</code></td><td><strong>0x601000</strong></td><td>外部函数地址表</td></tr></tbody></table><h2 id="3-2-readelf-l-再看程序头（真正权限）"><a href="#3-2-readelf-l-再看程序头（真正权限）" class="headerlink" title="3.2 readelf -l 再看程序头（真正权限）"></a>3.2 <code>readelf -l</code> 再看程序头（真正权限）</h2><p><code>readelf -l pwn21</code>：</p><p><img src="/img/yuque/1784816191990-c1ff77e0-2857-468c-bda2-590bc4e0145d.png"></p><table><thead><tr><th>字段</th><th>值</th><th>含义</th></tr></thead><tbody><tr><td>VirtAddr</td><td>0x600e10</td><td>保护区起始</td></tr><tr><td>MemSiz</td><td>0x1f0</td><td>保护区大小 &#x3D; 496 字节</td></tr><tr><td>Flags</td><td>R</td><td>只读</td></tr></tbody></table><p><font style="color:#DF2A3F;">保护区范围 &#x3D; [0x600e10, 0x601000)</font></p><p>对照段地址：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">保护区范围：[0x600e10 —————————— 0x601000)</span><br><span class="line">              ↑                      ↑</span><br><span class="line">         .init_array               边界线</span><br><span class="line">         .fini_array                 │</span><br><span class="line">         .dynamic                    │</span><br><span class="line">         .got (0x600ff0) ────────────┘  ← 在保护区内 → 只读 ❌</span><br><span class="line"></span><br><span class="line">.got.plt (0x601000) ───────────────  ← 刚好在边界外 → 可写 ✅</span><br></pre></td></tr></table></figure><p><code>Section to Segment</code> 映射也验证了 <code>.got.plt</code> 不在 <code>GNU_RELRO</code> 内：</p><p><img src="/img/yuque/1784816641569-d0f550d9-80a1-4e0c-a7b0-1644a03237b9.png"></p><h1 id="4-解题"><a href="#4-解题" class="headerlink" title="4. 解题"></a>4. 解题</h1><ul><li><code>Partial RELRO</code> → <code>.got</code> 不可写（0）、<code>.got.plt</code> 可写（1）</li><li><code>.got</code> 地址 → <code>0x600ff0</code></li><li><code>.got.plt</code> 地址 → <code>0x601000</code></li></ul><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctfshow&#123;0_1_0x600ff0_0x601000&#125;</span><br></pre></td></tr></table></figure>]]>
+    </content>
+    <id>https://luxlu.top/posts/ctfshow-pwn21/</id>
+    <link href="https://luxlu.top/posts/ctfshow-pwn21/"/>
+    <published>2026-07-23T14:46:00.000Z</published>
+    <summary>
+      <![CDATA[<h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p><img src="/img/yuque/1784814023872-51414c90-8806-4f3]]>
+    </summary>
+    <title>[ pwn 学习 ] CTFshow-pwn21 Partial RELRO</title>
+    <updated>2026-07-23T14:53:41.461Z</updated>
+  </entry>
   <entry>
     <author>
       <name>luxlu</name>

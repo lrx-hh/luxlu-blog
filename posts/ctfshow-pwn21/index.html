@@ -16,6 +16,11 @@
   
   <title>
     
+      [ pwn 学习 ] CTFshow-pwn21 Partial RELRO 
+      
+      
+      |
+    
      luxlu
   </title>
 
@@ -109,277 +114,243 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn21 Partial RELRO">
-        <div class="time-m-d">2026-07-23</div>
-        <div class="title">
-          <a href="/posts/ctfshow-pwn21/">
-            
-              
-                <span>[ pwn 学习 ] CTFshow-pwn21 Partial RELRO</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">[ pwn 学习 ] CTFshow-pwn21 Partial RELRO</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2026-07-23 22:53:41
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="分类"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/" title="CTF">
+                    <b>#</b> CTF
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Pwn/" title="Pwn">
+                    <b>#</b> Pwn
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn20 RELRO与GOT表">
-        <div class="time-m-d">2026-07-22</div>
-        <div class="title">
-          <a href="/posts/ctfshow-pwn20/">
-            
-              
-                <span>[ pwn 学习 ] CTFshow-pwn20 RELRO与GOT表</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p><img src="/img/yuque/1784814023872-51414c90-8806-4f3f-b54a-b49c7983f5a2.png"></p>
+<p>和 pwn20 唯一区别：<code>RELRO</code> 从 <code>No RELRO</code> 变成 <code>Partial RELRO</code>。</p>
+<h1 id="2-回顾：RELRO-三等级"><a href="#2-回顾：RELRO-三等级" class="headerlink" title="2. 回顾：RELRO 三等级"></a>2. 回顾：RELRO 三等级</h1><table>
+<thead>
+<tr>
+<th>等级</th>
+<th><code>.got</code> 能写？</th>
+<th><code>.got.plt</code> 能写？</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>No RELRO</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Partial RELRO</strong></td>
+<td><strong>❌</strong></td>
+<td><strong>✅</strong></td>
+</tr>
+<tr>
+<td>Full RELRO</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+</tbody></table>
+<p>Partial RELRO 的取舍：</p>
+<ul>
+<li><code>.got</code> 里的数据初始化后不会再变 → 锁掉</li>
+<li><code>.got.plt</code> 因为延迟绑定还要填函数地址 → 留着能写</li>
+</ul>
+<h1 id="3-找两张表地址"><a href="#3-找两张表地址" class="headerlink" title="3. 找两张表地址"></a>3. 找两张表地址</h1><p>段表 <code>-S</code> 说的都能写，<strong>别信</strong>。程序头 <code>-l</code> 里 <code>GNU_RELRO</code> 圈起来那块，运行时会被锁成只读。</p>
+<h2 id="3-1-readelf-S-先看段表"><a href="#3-1-readelf-S-先看段表" class="headerlink" title="3.1 readelf -S 先看段表"></a>3.1 <code>readelf -S</code> 先看段表</h2><p>段表里两张表都标 <code>WA</code>（可写），但段表是静态声明，运行时由程序头决定。</p>
+<p><img src="/img/yuque/1784816242477-59802bf1-8e04-4949-991f-a4f4e3562b45.png"></p>
+<table>
+<thead>
+<tr>
+<th>段名</th>
+<th>地址</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.got</code></td>
+<td><strong>0x600ff0</strong></td>
+<td>杂项数据</td>
+</tr>
+<tr>
+<td><code>.got.plt</code></td>
+<td><strong>0x601000</strong></td>
+<td>外部函数地址表</td>
+</tr>
+</tbody></table>
+<h2 id="3-2-readelf-l-再看程序头（真正权限）"><a href="#3-2-readelf-l-再看程序头（真正权限）" class="headerlink" title="3.2 readelf -l 再看程序头（真正权限）"></a>3.2 <code>readelf -l</code> 再看程序头（真正权限）</h2><p><code>readelf -l pwn21</code>：</p>
+<p><img src="/img/yuque/1784816191990-c1ff77e0-2857-468c-bda2-590bc4e0145d.png"></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>VirtAddr</td>
+<td>0x600e10</td>
+<td>保护区起始</td>
+</tr>
+<tr>
+<td>MemSiz</td>
+<td>0x1f0</td>
+<td>保护区大小 &#x3D; 496 字节</td>
+</tr>
+<tr>
+<td>Flags</td>
+<td>R</td>
+<td>只读</td>
+</tr>
+</tbody></table>
+<p><font style="color:#DF2A3F;">保护区范围 &#x3D; [0x600e10, 0x601000)</font></p>
+<p>对照段地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">保护区范围：[0x600e10 —————————— 0x601000)</span><br><span class="line">              ↑                      ↑</span><br><span class="line">         .init_array               边界线</span><br><span class="line">         .fini_array                 │</span><br><span class="line">         .dynamic                    │</span><br><span class="line">         .got (0x600ff0) ────────────┘  ← 在保护区内 → 只读 ❌</span><br><span class="line"></span><br><span class="line">.got.plt (0x601000) ───────────────  ← 刚好在边界外 → 可写 ✅</span><br></pre></td></tr></table></figure>
+
+<p><code>Section to Segment</code> 映射也验证了 <code>.got.plt</code> 不在 <code>GNU_RELRO</code> 内：</p>
+<p><img src="/img/yuque/1784816641569-d0f550d9-80a1-4e0c-a7b0-1644a03237b9.png"></p>
+<h1 id="4-解题"><a href="#4-解题" class="headerlink" title="4. 解题"></a>4. 解题</h1><ul>
+<li><code>Partial RELRO</code> → <code>.got</code> 不可写（0）、<code>.got.plt</code> 可写（1）</li>
+<li><code>.got</code> 地址 → <code>0x600ff0</code></li>
+<li><code>.got.plt</code> 地址 → <code>0x601000</code></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctfshow&#123;0_1_0x600ff0_0x601000&#125;</span><br></pre></td></tr></table></figure>
+
       </div>
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn19 关闭输出流">
-        <div class="time-m-d">2026-07-22</div>
-        <div class="title">
-          <a href="/posts/pwn19-close-stdout/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>[ pwn 学习 ] CTFshow-pwn19 关闭输出流</span>
-              
+              <a href="/posts/ctfshow-pwn20/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2026-07-23 22:53:41
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="分类"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/" title="CTF">
+                        <b>#</b> CTF
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Pwn/" title="Pwn">
+                        <b>#</b> Pwn
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn18">
-        <div class="time-m-d">2026-07-21</div>
-        <div class="title">
-          <a href="/posts/ctfshow-pwn18/">
-            
-              
-                <span>[ pwn 学习 ] CTFshow-pwn18</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80%E4%BF%A1%E6%81%AF"><span class="toc-text">1. 基础信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E5%9B%9E%E9%A1%BE%EF%BC%9ARELRO-%E4%B8%89%E7%AD%89%E7%BA%A7"><span class="toc-text">2. 回顾：RELRO 三等级</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%89%BE%E4%B8%A4%E5%BC%A0%E8%A1%A8%E5%9C%B0%E5%9D%80"><span class="toc-text">3. 找两张表地址</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-readelf-S-%E5%85%88%E7%9C%8B%E6%AE%B5%E8%A1%A8"><span class="toc-text">3.1 readelf -S 先看段表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-readelf-l-%E5%86%8D%E7%9C%8B%E7%A8%8B%E5%BA%8F%E5%A4%B4%EF%BC%88%E7%9C%9F%E6%AD%A3%E6%9D%83%E9%99%90%EF%BC%89"><span class="toc-text">3.2 readelf -l 再看程序头（真正权限）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E8%A7%A3%E9%A2%98"><span class="toc-text">4. 解题</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn17">
-        <div class="time-m-d">2026-07-21</div>
-        <div class="title">
-          <a href="/posts/ctfshow-pwn17/">
-            
-              
-                <span>[ pwn 学习 ] CTFshow-pwn17</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026-07-21 ZeroG CTF 2026">
-        <div class="time-m-d">2026-07-21</div>
-        <div class="title">
-          <a href="/posts/zeroG-ctf-moonlight-radio/">
-            
-              
-                <span>2026-07-21 ZeroG CTF 2026</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-前置基础 5-12">
-        <div class="time-m-d">2026-04-19</div>
-        <div class="title">
-          <a href="/posts/pre-basic-5-12/">
-            
-              
-                <span>[ pwn 学习 ] CTFshow-前置基础 5-12</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-Test_your_nc 0-4">
-        <div class="time-m-d">2026-04-02</div>
-        <div class="title">
-          <a href="/posts/pwn0-4-test-your-nc/">
-            
-              
-                <span>[ pwn 学习 ] CTFshow-Test_your_nc 0-4</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ misc 知识点 ] 流量分析-USB+键鼠">
-        <div class="time-m-d">2026-03-28</div>
-        <div class="title">
-          <a href="/posts/usb-keyboard-mouse-traffic/">
-            
-              
-                <span>[ misc 知识点 ] 流量分析-USB+键鼠</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ 其他 ] cmd 美化">
-        <div class="time-m-d">2026-03-26</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19775744/">
-            
-              
-                <span>[ 其他 ] cmd 美化</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ 刷题记录 ] 部分 OtterCTF2018(内存取证)">
-        <div class="time-m-d">2026-03-15</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19722235/">
-            
-              
-                <span>[ 刷题记录 ] 部分 OtterCTF2018(内存取证)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ 刷题记录 ] 攻防世界 QR1">
-        <div class="time-m-d">2026-02-11</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19606190/">
-            
-              
-                <span>[ 刷题记录 ] 攻防世界 QR1</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ misc 知识点 ] AI 逃逸">
-        <div class="time-m-d">2026-02-10</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19600108/">
-            
-              
-                <span>[ misc 知识点 ] AI 逃逸</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ 刷题记录 ] 2026.2.9 刷题记录">
-        <div class="time-m-d">2026-02-10</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19598437/">
-            
-              
-                <span>[ 刷题记录 ] 2026.2.9 刷题记录</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ misc 知识点 ] 音视频隐写">
-        <div class="time-m-d">2026-02-08</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19592265/">
-            
-              
-                <span>[ misc 知识点 ] 音视频隐写</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026.1.30 春秋杯">
-        <div class="time-m-d">2026-02-08</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19591857/">
-            
-              
-                <span>2026.1.30 春秋杯</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026.1.24 SpringCTF">
-        <div class="time-m-d">2026-02-06</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19586281/">
-            
-              
-                <span>2026.1.24 SpringCTF</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026.2.2 hgame">
-        <div class="time-m-d">2026-02-02</div>
-        <div class="title">
-          <a href="/posts/hgame-2026-misc/">
-            
-              
-                <span>2026.2.2 hgame</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026.2.2 山海杯">
-        <div class="time-m-d">2026-02-02</div>
-        <div class="title">
-          <a href="/posts/shanhai-2026-misc/">
-            
-              
-                <span>2026.2.2 山海杯</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026.1.30 furryCTF">
-        <div class="time-m-d">2026-01-30</div>
-        <div class="title">
-          <a href="/posts/furryCTF-2026-full/">
-            
-              
-                <span>2026.1.30 furryCTF</span>
-              
-            
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-  <nav class="post-navigation">
-    
-    <span class="page-num">1 / 1</span>
-    
-  </nav>
-</div>
+
 
         
 <div class="footer">
@@ -657,6 +628,16 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
