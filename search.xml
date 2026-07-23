@@ -4669,7 +4669,7 @@ Ctrl+V 粘贴密码
   <entry>
     <title>[ pwn 学习 ] CTFshow-pwn17-20</title>
     <url>/posts/pwn17-20/</url>
-    <content><![CDATA[<h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
+    <content><![CDATA[<h1 id="pwn17"><a href="#pwn17" class="headerlink" title="pwn17"></a>pwn17</h1><h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">checksec pwn17</span><br><span class="line">  Arch:     amd64-<span class="number">64</span>-little</span><br><span class="line">  RELRO:    Full RELRO</span><br><span class="line">  Stack:    Canary found</span><br><span class="line">  NX:       NX enabled</span><br><span class="line">  PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
 
 <p>64 位程序，保护全开（Canary NX PIE 一个不少）</p>
@@ -4893,7 +4893,8 @@ Ctrl+V 粘贴密码
 <li><p>注意 长度限制（本题的 10 字节）、坏字符过滤（如 &#x2F;bin&#x2F;sh 被 ban 用 &#x2F;bin&#x2F;bash 替代）等约束</p>
 </li>
 </ul>
-<h1 id="1-基础信息-1"><a href="#1-基础信息-1" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
+<hr>
+<h1 id="pwn18"><a href="#pwn18" class="headerlink" title="pwn18"></a>pwn18</h1><h1 id="1-基础信息-1"><a href="#1-基础信息-1" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">checksec pwn17</span><br><span class="line">  Arch:     amd64-<span class="number">64</span>-little</span><br><span class="line">  RELRO:    Full RELRO</span><br><span class="line">  Stack:    Canary found</span><br><span class="line">  NX:       NX enabled</span><br><span class="line">  PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
 
 <p>64 位程序，保护全开（Canary NX PIE 一个不少）和 pwn17 一样防护拉满</p>
@@ -4993,7 +4994,8 @@ Ctrl+V 粘贴密码
 <td align="left">不想要输出，只想安静执行</td>
 </tr>
 </tbody></table>
-<h1 id="1-基础信息-2"><a href="#1-基础信息-2" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
+<hr>
+<h1 id="pwn19"><a href="#pwn19" class="headerlink" title="pwn19"></a>pwn19</h1><h1 id="1-基础信息-2"><a href="#1-基础信息-2" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">checksec pwn19</span><br><span class="line">  Arch:     amd64-64-little</span><br><span class="line">  RELRO:    Full RELRO</span><br><span class="line">  Stack:    Canary found</span><br><span class="line">  NX:       NX enabled</span><br><span class="line">  PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
 
 <p>64 位程序，保护全开</p>
@@ -5297,7 +5299,8 @@ Ctrl+V 粘贴密码
 <td><code>exec cat flag 1&gt;&amp;0</code></td>
 </tr>
 </tbody></table>
-<h1 id="1-提交格式"><a href="#1-提交格式" class="headerlink" title="1.提交格式"></a><font style="color:rgb(33, 37, 41);">1.提交格式</font></h1><p><font style="color:rgb(33, 37, 41);">提交</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;ctfshow&#123;【.got表与.got.plt是否可写(可写为1，不可写为0)】,【.got的地址】,【.got.plt的地址】&#125;&lt;/font&gt;</code></p>
+<hr>
+<h1 id="pwn20"><a href="#pwn20" class="headerlink" title="pwn20"></a>pwn20</h1><h1 id="1-提交格式"><a href="#1-提交格式" class="headerlink" title="1.提交格式"></a><font style="color:rgb(33, 37, 41);">1.提交格式</font></h1><p><font style="color:rgb(33, 37, 41);">提交</font><font style="color:rgb(33, 37, 41);">ctfshow{【.got表与.got.plt是否可写(可写为1，不可写为0)】,【.got的地址】,【.got.plt的地址】}</font></p>
 <p><strong><font style="color:rgb(33, 37, 41);">4 个问题 2 个”能不能写” 2 个”地址是多少”</font></strong></p>
 <h1 id="2-IDA"><a href="#2-IDA" class="headerlink" title="2. IDA"></a><strong><font style="color:rgb(33, 37, 41);">2. IDA</font></strong></h1><p><font style="color:rgb(33, 37, 41);">F5 反编译 main 函数，核心逻辑非常短：</font></p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步：打印一大段花里胡哨的横幅（省略）</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;...* CTFshow --- PWN --- ...&quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;...* Hint: What is RELRO protection ? ...&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第二步：把你传的十六进制参数转成地址</span></span><br><span class="line">    <span class="type">long</span> addr = strtol(argv[<span class="number">1</span>], <span class="literal">NULL</span>, <span class="number">16</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第三步：往这个地址写入 &quot;RELR&quot; 四个字符</span></span><br><span class="line">    *(<span class="type">long</span> *)addr = <span class="number">0x52454c52</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第四步：把刚写入的内容读出来打印</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;RELRO: %x&quot;</span>, *(<span class="type">int</span> *)addr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -5313,23 +5316,23 @@ Ctrl+V 粘贴密码
 </tr>
 </thead>
 <tbody><tr>
-<td><font style="color:rgb(33, 37, 41);">打印 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;RELRO: 52454c52&lt;/font&gt;</code></td>
+<td><font style="color:rgb(33, 37, 41);">打印 </font><font style="color:rgb(33, 37, 41);">RELRO: 52454c52</font></td>
 <td><font style="color:rgb(33, 37, 41);">程序直接段错误崩溃</font></td>
 </tr>
 </tbody></table>
 <p><font style="color:rgb(33, 37, 41);">程序本质上就是一个 </font>GOT 表可写性测试器<font style="color:rgb(33, 37, 41);">。</font></p>
 <p><strong><font style="color:rgb(33, 37, 41);"></font></strong></p>
 <h1 id="3-前置基础：程序怎么找到函数"><a href="#3-前置基础：程序怎么找到函数" class="headerlink" title="3.前置基础：程序怎么找到函数"></a><font style="color:rgb(33, 37, 41);">3.前置基础：程序怎么找到函数</font></h1><p><font style="color:rgb(33, 37, 41);">先理解程序怎么调用函数</font></p>
-<p><font style="color:rgb(33, 37, 41);">代码里有一行</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf(&quot;hello&quot;)&lt;/font&gt;</code></p>
-<p><font style="color:rgb(33, 37, 41);">但是</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">的真实代码在哪？它不在程序里，在一个叫</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;libc&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">的公共库里</font></p>
-<p><font style="color:rgb(33, 37, 41);">问题是：编译的时候，编译器根本不知道运行的时候</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;libc&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">会被加载到内存的哪个位置</font></p>
+<p><font style="color:rgb(33, 37, 41);">代码里有一行</font><font style="color:rgb(33, 37, 41);">printf(“hello”)</font></p>
+<p><font style="color:rgb(33, 37, 41);">但是</font><font style="color:rgb(33, 37, 41);">printf</font><font style="color:rgb(33, 37, 41);">的真实代码在哪？它不在程序里，在一个叫</font><font style="color:rgb(33, 37, 41);">libc</font><font style="color:rgb(33, 37, 41);">的公共库里</font></p>
+<p><font style="color:rgb(33, 37, 41);">问题是：编译的时候，编译器根本不知道运行的时候</font><font style="color:rgb(33, 37, 41);">libc</font><font style="color:rgb(33, 37, 41);">会被加载到内存的哪个位置</font></p>
 <p><font style="color:rgb(33, 37, 41);"></font></p>
-<h2 id="3-1-两张表"><a href="#3-1-两张表" class="headerlink" title="3.1 两张表"></a><font style="color:rgb(33, 37, 41);">3.1 两张表</font></h2><p><font style="color:rgb(33, 37, 41);">程序内部准备了两张表 一张是</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;PLT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表 一张是</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表</font></p>
+<h2 id="3-1-两张表"><a href="#3-1-两张表" class="headerlink" title="3.1 两张表"></a><font style="color:rgb(33, 37, 41);">3.1 两张表</font></h2><p><font style="color:rgb(33, 37, 41);">程序内部准备了两张表 一张是</font><font style="color:rgb(33, 37, 41);">PLT</font><font style="color:rgb(33, 37, 41);">表 一张是</font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表</font></p>
 <ul>
-<li><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;PLT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表是中转站，负责任务分发</font></li>
-<li><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表是电话簿，记录每个函数真正的内存地址</font></li>
+<li><font style="color:rgb(33, 37, 41);">PLT</font><font style="color:rgb(33, 37, 41);">表是中转站，负责任务分发</font></li>
+<li><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表是电话簿，记录每个函数真正的内存地址</font></li>
 </ul>
-<h2 id="3-2-GOT表两部分：-got和-got-plt"><a href="#3-2-GOT表两部分：-got和-got-plt" class="headerlink" title="3.2 &lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;表两部分：&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;.got&lt;/font&gt;和&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;.got.plt&lt;/font&gt;"></a><font style="color:rgb(33, 37, 41);">3.2 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表两部分：</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;.got&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">和</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;.got.plt&lt;/font&gt;</code></h2><table>
+<h2 id="3-2-GOT表两部分：-got和-got-plt"><a href="#3-2-GOT表两部分：-got和-got-plt" class="headerlink" title="3.2 GOT表两部分：.got和.got.plt"></a><font style="color:rgb(33, 37, 41);">3.2 </font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表两部分：</font><font style="color:rgb(33, 37, 41);">.got</font><font style="color:rgb(33, 37, 41);">和</font><font style="color:rgb(33, 37, 41);">.got.plt</font></h2><table>
 <thead>
 <tr>
 <th></th>
@@ -5353,30 +5356,30 @@ Ctrl+V 粘贴密码
 <td><strong>是的</strong></td>
 </tr>
 </tbody></table>
-<h2 id="3-3-为什么GOT表需要能写"><a href="#3-3-为什么GOT表需要能写" class="headerlink" title="3.3 为什么&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;表需要能写"></a><font style="color:rgb(33, 37, 41);">3.3 为什么</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表需要能写</font></h2><p><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;Linux&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">为了启动快。默认不会在程序启动时把所有函数地址都查好，而是用到谁再查谁（也就是</font><strong><font style="color:rgb(33, 37, 41);">延迟绑定 Lazy Blinding</font></strong><font style="color:rgb(33, 37, 41);">）</font></p>
+<h2 id="3-3-为什么GOT表需要能写"><a href="#3-3-为什么GOT表需要能写" class="headerlink" title="3.3 为什么GOT表需要能写"></a><font style="color:rgb(33, 37, 41);">3.3 为什么</font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表需要能写</font></h2><p><font style="color:rgb(33, 37, 41);">Linux</font><font style="color:rgb(33, 37, 41);">为了启动快。默认不会在程序启动时把所有函数地址都查好，而是用到谁再查谁（也就是</font><strong><font style="color:rgb(33, 37, 41);">延迟绑定 Lazy Blinding</font></strong><font style="color:rgb(33, 37, 41);">）</font></p>
 <table>
 <thead>
 <tr>
 <th><font style="color:rgb(33, 37, 41);">时机</font></th>
-<th><font style="color:rgb(33, 37, 41);">GOT 表里 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);"> 那一栏写的是</font></th>
+<th><font style="color:rgb(33, 37, 41);">GOT 表里 </font><font style="color:rgb(33, 37, 41);">printf</font><font style="color:rgb(33, 37, 41);"> 那一栏写的是</font></th>
 </tr>
 </thead>
 <tbody><tr>
-<td><font style="color:rgb(33, 37, 41);">程序刚启动，还没调用过 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf&lt;/font&gt;</code></td>
+<td><font style="color:rgb(33, 37, 41);">程序刚启动，还没调用过 </font><font style="color:rgb(33, 37, 41);">printf</font></td>
 <td><font style="color:rgb(33, 37, 41);">“我还没查呢，去找 ld.so 帮忙查”</font></td>
 </tr>
 <tr>
-<td><font style="color:rgb(33, 37, 41);">第一次调用 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf&lt;/font&gt;</code></td>
+<td><font style="color:rgb(33, 37, 41);">第一次调用 </font><font style="color:rgb(33, 37, 41);">printf</font></td>
 <td><font style="color:rgb(33, 37, 41);">ld.so 查到地址，填进 GOT 表</font></td>
 </tr>
 <tr>
-<td><font style="color:rgb(33, 37, 41);">之后再调用 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf&lt;/font&gt;</code></td>
+<td><font style="color:rgb(33, 37, 41);">之后再调用 </font><font style="color:rgb(33, 37, 41);">printf</font></td>
 <td><font style="color:rgb(33, 37, 41);">地址已经在表里了，直接跳转</font></td>
 </tr>
 </tbody></table>
-<p><font style="color:rgb(33, 37, 41);">也就是说</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表在程序运行过程中是需要被写入的（至少第一次调用时）</font></p>
+<p><font style="color:rgb(33, 37, 41);">也就是说</font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表在程序运行过程中是需要被写入的（至少第一次调用时）</font></p>
 <p><font style="color:rgb(33, 37, 41);"></font></p>
-<h1 id="4-漏洞点：GOT劫持"><a href="#4-漏洞点：GOT劫持" class="headerlink" title="4.漏洞点：&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;劫持"></a><font style="color:rgb(33, 37, 41);">4.漏洞点：</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">劫持</font></h1><p><font style="color:rgb(33, 37, 41);">漏洞在于如果</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表是可随意更改的 黑客就可以</font></p>
+<h1 id="4-漏洞点：GOT劫持"><a href="#4-漏洞点：GOT劫持" class="headerlink" title="4.漏洞点：GOT劫持"></a><font style="color:rgb(33, 37, 41);">4.漏洞点：</font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">劫持</font></h1><p><font style="color:rgb(33, 37, 41);">漏洞在于如果</font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表是可随意更改的 黑客就可以</font></p>
 <figure class="highlight basic"><table><tr><td class="code"><pre><span class="line">原来 GOT 表里：  printf → <span class="number">0</span>x7f1234567890 (libc 里 printf 的地址)</span><br><span class="line">                                  ↓ 黑客偷偷改成</span><br><span class="line">改后 GOT 表里：  printf → <span class="number">0</span>x7f9988776655 (<span class="keyword">system</span> 函数的地址)</span><br></pre></td></tr></table></figure>
 
 <p>之后程序只要调用<code>printf(&quot;/bin/sh&quot;)</code>，实际执行的就是<code>system(&quot;/bin/sh&quot;)</code>—— 拿到 shell。</p>
@@ -5445,11 +5448,11 @@ Ctrl+V 粘贴密码
 <h1 id="6-解题"><a href="#6-解题" class="headerlink" title="6.解题"></a>6.解题</h1><h3 id="6-1-可写性"><a href="#6-1-可写性" class="headerlink" title="6.1 可写性"></a>6.1 可写性</h3><p>第一步用<code>checksec</code>看一眼</p>
 <!-- 这是一张图片，ocr 内容为： -->
 <p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784727082855-5541e3aa-c324-450b-a689-7db14ee91aad.png"></p>
-<p><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;RELRO:NO RELRO&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">没有保护</font></p>
-<p><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;NO RELRO&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">就是两张表都能写 所以前两个空填 1 和 1</font></p>
+<p><font style="color:rgb(33, 37, 41);">RELRO:NO RELRO</font><font style="color:rgb(33, 37, 41);">没有保护</font></p>
+<p><font style="color:rgb(33, 37, 41);">NO RELRO</font><font style="color:rgb(33, 37, 41);">就是两张表都能写 所以前两个空填 1 和 1</font></p>
 <p><font style="color:rgb(33, 37, 41);"></font></p>
-<h3 id="6-2-找两张表地址"><a href="#6-2-找两张表地址" class="headerlink" title="6.2 找两张表地址"></a><font style="color:rgb(33, 37, 41);">6.2 找两张表地址</font></h3><p><font style="color:rgb(33, 37, 41);">第二步用</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;readelf&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">找地址</font></p>
-<p><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;readelf -S pwn20 | grep -A &quot;\.got&quot;&lt;/font&gt;</code></p>
+<h3 id="6-2-找两张表地址"><a href="#6-2-找两张表地址" class="headerlink" title="6.2 找两张表地址"></a><font style="color:rgb(33, 37, 41);">6.2 找两张表地址</font></h3><p><font style="color:rgb(33, 37, 41);">第二步用</font><font style="color:rgb(33, 37, 41);">readelf</font><font style="color:rgb(33, 37, 41);">找地址</font></p>
+<p><font style="color:rgb(33, 37, 41);">readelf -S pwn20 | grep -A “.got”</font></p>
 <!-- 这是一张图片，ocr 内容为： -->
 <p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784729947150-b068ab5b-91af-4e28-8d74-3ab3e67f3842.png"></p>
 <p>就知道了<code>.got</code>和<code>.got.plt</code>的地址 并且标志是<code>WA</code>(可写)</p>
@@ -5459,7 +5462,7 @@ Ctrl+V 粘贴密码
 <p><code>52454c52</code>&#x3D;<code>&quot;RELR&quot;</code>写入成功</p>
 <h3 id="写-got-plt表"><a href="#写-got-plt表" class="headerlink" title="写.got.plt表"></a>写<code>.got.plt</code>表</h3><!-- 这是一张图片，ocr 内容为： -->
 <p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784730275999-c7906b73-01ee-4f3f-8921-391c0aead5a9.png"></p>
-<h2 id="6-4-flag"><a href="#6-4-flag" class="headerlink" title="6.4 flag"></a>6.4 flag</h2><p><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;ctfshow&#123;1_1_0x600f18_0x600f28&#125;&lt;/font&gt;</code></p>
+<h2 id="6-4-flag"><a href="#6-4-flag" class="headerlink" title="6.4 flag"></a>6.4 flag</h2><p><font style="color:rgb(33, 37, 41);">ctfshow{1_1_0x600f18_0x600f28}</font></p>
 ]]></content>
       <categories>
         <category>CTF</category>
