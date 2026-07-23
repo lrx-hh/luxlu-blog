@@ -163,7 +163,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2026-07-23 21:40:56
+          2026-07-23 22:47:52
         </span>
         
               <span class="post-categories">
@@ -185,104 +185,85 @@
           
       </div>
       <div class="markdown-body">
-        <h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">checksec pwn17</span><br><span class="line">  Arch:     amd64-<span class="number">64</span>-little</span><br><span class="line">  RELRO:    Full RELRO</span><br><span class="line">  Stack:    Canary found</span><br><span class="line">  NX:       NX enabled</span><br><span class="line">  PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+        <h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">checksec pwn18</span><br><span class="line">  Arch:     amd64-<span class="number">64</span>-little</span><br><span class="line">  RELRO:    Full RELRO</span><br><span class="line">  Stack:    Canary found</span><br><span class="line">  NX:       NX enabled</span><br><span class="line">  PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
 
-<p>64 位程序，保护全开（Canary NX PIE 一个不少）和 pwn17 一样防护拉满</p>
-<h1 id="2-反编译分析（main-函数）"><a href="#2-反编译分析（main-函数）" class="headerlink" title="2.反编译分析（main 函数）"></a>2.反编译分析（main 函数）</h1><p>拖进 IDA F5 反编译 核心逻辑很短</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv, <span class="type">const</span> <span class="type">char</span> **envp)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> v4; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Which is the real flag?&quot;</span>);</span><br><span class="line">    __isoc99_scanf(<span class="string">&quot;%d&quot;</span>, &amp;v4);</span><br><span class="line">    <span class="keyword">if</span> (v4 == <span class="number">9</span>)</span><br><span class="line">        fake();     <span class="comment">// 输入 9 → 走 fake</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        real();     <span class="comment">// 输入其他 → 走 real</span></span><br><span class="line">    <span class="keyword">return</span> system(<span class="string">&quot;cat /ctfshow_flag&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和 pwn17 一样保护拉满。</p>
+<h1 id="2-反编译分析"><a href="#2-反编译分析" class="headerlink" title="2. 反编译分析"></a>2. 反编译分析</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv, <span class="type">const</span> <span class="type">char</span> **envp)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> v4;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Which is the real flag?&quot;</span>);</span><br><span class="line">    __isoc99_scanf(<span class="string">&quot;%d&quot;</span>, &amp;v4);</span><br><span class="line">    <span class="keyword">if</span> (v4 == <span class="number">9</span>)</span><br><span class="line">        fake();     <span class="comment">// 输入 9 → fake</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        real();     <span class="comment">// 输入其他 → real</span></span><br><span class="line">    <span class="keyword">return</span> system(<span class="string">&quot;cat /ctfshow_flag&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>程序先问你<code>&quot;Which is the real flag&quot;</code>然后你输入一个数字</p>
 <ul>
-<li>输入 9 调用<code>fake()</code>函数</li>
-<li>输入其他 调用<code>real()</code>函数</li>
+<li>输入 9 → <code>fake()</code></li>
+<li>输入其他 → <code>real()</code></li>
+<li>最后统一 <code>cat /ctfshow_flag</code></li>
 </ul>
-<p>最后统一执行<code>cat /ctfshow_flag</code></p>
-<h1 id="3-fake-vsreal"><a href="#3-fake-vsreal" class="headerlink" title="3.fake()vsreal()"></a>3.<code>fake()</code>vs<code>real()</code></h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假函数（但能拿到真 flag）</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">fake</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    system(<span class="string">&quot;echo &#x27;flag is here&#x27; &gt;&gt; /ctfshow_flag&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 真函数（但拿到的是假 flag）</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">real</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    system(<span class="string">&quot;echo &#x27;flag is here&#x27; &gt; /ctfshow_flag&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="3-fake-vs-real"><a href="#3-fake-vs-real" class="headerlink" title="3. fake() vs real()"></a>3. <code>fake()</code> vs <code>real()</code></h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">fake</span><span class="params">()</span> &#123; system(<span class="string">&quot;echo &#x27;flag is here&#x27; &gt;&gt; /ctfshow_flag&quot;</span>); &#125;  <span class="comment">// &gt;&gt;</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">real</span><span class="params">()</span> &#123; system(<span class="string">&quot;echo &#x27;flag is here&#x27; &gt; /ctfshow_flag&quot;</span>);  &#125;  <span class="comment">// &gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>两个函数只差一个字符：<code>&gt;&gt;</code>vs<code>&gt;</code></p>
-<h1 id="4-核心漏洞：-vs-的文件重定向差异"><a href="#4-核心漏洞：-vs-的文件重定向差异" class="headerlink" title="4.核心漏洞：&gt;vs&gt;&gt;的文件重定向差异"></a>4.核心漏洞：<code>&gt;</code>vs<code>&gt;&gt;</code>的文件重定向差异</h1><p>这题漏洞不在代码逻辑，而在代码对文件系统产生的副作用</p>
-<h2 id="4-1-两个符号本质区别"><a href="#4-1-两个符号本质区别" class="headerlink" title="4.1 两个符号本质区别"></a>4.1 两个符号本质区别</h2><table>
+<p>两个函数只差一个字符：<code>&gt;&gt;</code> vs <code>&gt;</code>。</p>
+<h1 id="4-核心漏洞：-vs-的区别"><a href="#4-核心漏洞：-vs-的区别" class="headerlink" title="4. 核心漏洞：&gt; vs &gt;&gt; 的区别"></a>4. 核心漏洞：<code>&gt;</code> vs <code>&gt;&gt;</code> 的区别</h1><table>
 <thead>
 <tr>
-<th align="center"><font style="color:rgb(79, 79, 79);">符号</font></th>
-<th align="center"><font style="color:rgb(79, 79, 79);">术语</font></th>
-<th align="center"><font style="color:rgb(79, 79, 79);">行为描述</font></th>
-<th align="center"><font style="color:rgb(79, 79, 79);">对 flag 的影响</font></th>
+<th align="center">符号</th>
+<th align="center">术语</th>
+<th align="center">行为</th>
+<th align="center">对 flag 的影响</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center"><font style="color:rgb(79, 79, 79);">&gt;</font></td>
-<td align="center"><font style="color:rgb(79, 79, 79);">覆盖重定向</font></td>
-<td align="center"><font style="color:rgb(79, 79, 79);">覆盖写</font><br/><font style="color:rgb(79, 79, 79);">先清空文件</font><br/><font style="color:rgb(79, 79, 79);">再写入新内容</font></td>
-<td align="center"><font style="color:rgb(79, 79, 79);">毁灭性</font><br/><font style="color:rgb(79, 79, 79);">原来的真 flag 直接被删了</font></td>
+<td align="center"><code>&gt;</code></td>
+<td align="center">覆盖重定向</td>
+<td align="center">先清空文件，再写入</td>
+<td align="center">毁灭性：真 flag 被覆盖</td>
 </tr>
 <tr>
-<td align="center"><font style="color:rgb(79, 79, 79);">&gt;&gt;</font></td>
-<td align="center"><font style="color:rgb(79, 79, 79);">追加重定向</font></td>
-<td align="center"><font style="color:rgb(79, 79, 79);">追加写</font><br/><font style="color:rgb(79, 79, 79);">保留原内容</font><br/><font style="color:rgb(79, 79, 79);">只在末尾追加</font></td>
-<td align="center"><font style="color:rgb(79, 79, 79);">保护性</font><br/><font style="color:rgb(79, 79, 79);">真 flag 还在，只是后面多了一行废话</font></td>
+<td align="center"><code>&gt;&gt;</code></td>
+<td align="center">追加重定向</td>
+<td align="center">保留原内容，末尾追加</td>
+<td align="center">保护性：真 flag 完好</td>
 </tr>
 </tbody></table>
-<h2 id="4-2-推演执行流程"><a href="#4-2-推演执行流程" class="headerlink" title="4.2 推演执行流程"></a>4.2 推演执行流程</h2><p>靶机环境里<code>/ctfshow_flag</code>文件里预先存着真正的 flag</p>
 <ul>
-<li>如果选<code>real()</code>（输入非 9）</li>
+<li>选 <code>real()</code>（非 9）：<code>&gt;</code> 清空 <code>/ctfshow_flag</code> 再写入废话，真 flag 被删</li>
+<li>选 <code>fake()</code>（9）：<code>&gt;&gt;</code> 在 flag 后面追加，原文不受影响</li>
 </ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">① system(<span class="string">&quot;echo &#x27;flag is here&#x27; &gt; /ctfshow_flag&quot;</span>)</span><br><span class="line">   ┌─────────────────────────────────────────┐</span><br><span class="line">   │ /ctfshow_flag（执行前）:                 │</span><br><span class="line">   │  ctfshow&#123;xxxxxxxx&#125;                      │</span><br><span class="line">   │                                         │</span><br><span class="line">   │ /ctfshow_flag（执行后）:                 │</span><br><span class="line">   │  flag is here                           │  ← 真 flag 被覆盖，没了！</span><br><span class="line">   └─────────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">② system(<span class="string">&quot;cat /ctfshow_flag&quot;</span>)</span><br><span class="line">   输出：flag is here    ← 读到的是一句废话</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// real() 执行后</span></span><br><span class="line">/ctfshow_flag → <span class="string">&quot;flag is here&quot;</span>              <span class="comment">// 真 flag 没了！</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// fake() 执行后</span></span><br><span class="line">/ctfshow_flag → <span class="string">&quot;ctfshow&#123;xxxxxxxx&#125;&quot;</span>         <span class="comment">// 真 flag 还在</span></span><br><span class="line">                <span class="string">&quot;flag is here&quot;</span>              <span class="comment">// 废话追加在末尾</span></span><br></pre></td></tr></table></figure>
 
-<p>真 flag 在你读之前就被<code>&gt;</code>删掉了</p>
-<ul>
-<li>如果选<code>fake()</code>(输入 9)</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">① system(<span class="string">&quot;echo &#x27;flag is here&#x27; &gt;&gt; /ctfshow_flag&quot;</span>)</span><br><span class="line">   ┌─────────────────────────────────────────┐</span><br><span class="line">   │ /ctfshow_flag（执行前）:                 │</span><br><span class="line">   │  ctfshow&#123;xxxxxxxx&#125;                      │</span><br><span class="line">   │                                         │</span><br><span class="line">   │ /ctfshow_flag（执行后）:                 │</span><br><span class="line">   │  ctfshow&#123;xxxxxxxx&#125;                      │  ← 真 flag 还在！</span><br><span class="line">   │  flag is here                           │  ← 废话追加在末尾</span><br><span class="line">   └─────────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">② system(<span class="string">&quot;cat /ctfshow_flag&quot;</span>)</span><br><span class="line">   输出：</span><br><span class="line">     ctfshow&#123;xxxxxxxx&#125;          ← 第一行：真 flag</span><br><span class="line">     flag is here               ← 第二行：废话（可忽略）</span><br></pre></td></tr></table></figure>
-
-
-
-<p>实际操作：<strong>输入 9</strong> 即可获得 flag</p>
-<h1 id="5-shell-重定向符号"><a href="#5-shell-重定向符号" class="headerlink" title="5.shell 重定向符号"></a>5.shell 重定向符号</h1><table>
+<p><strong>实际操作：输入 9</strong> 即可获得 flag。</p>
+<h1 id="5-shell-重定向速查"><a href="#5-shell-重定向速查" class="headerlink" title="5. shell 重定向速查"></a>5. shell 重定向速查</h1><table>
 <thead>
 <tr>
 <th align="left">符号</th>
 <th align="left">作用</th>
 <th align="left">示例</th>
-<th align="left">什么时候用</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><strong>&gt;</strong></td>
-<td align="left">覆盖写入文件</td>
-<td align="left"><strong>echo a &gt; flag</strong></td>
-<td align="left">要创建&#x2F;覆盖一个新文件</td>
+<td align="left"><code>&gt;</code></td>
+<td align="left">覆盖写入</td>
+<td align="left"><code>echo a &gt; flag</code></td>
 </tr>
 <tr>
-<td align="left"><strong>&gt;&gt;</strong></td>
-<td align="left">追加写入文件</td>
-<td align="left"><strong>echo a &gt;&gt; flag</strong></td>
-<td align="left">要在文件末尾加内容，不动原来的</td>
+<td align="left"><code>&gt;&gt;</code></td>
+<td align="left">追加写入</td>
+<td align="left"><code>echo a &gt;&gt; flag</code></td>
 </tr>
 <tr>
-<td align="left"><strong>&lt;</strong></td>
-<td align="left">从文件读取输入</td>
-<td align="left"><strong>.&#x2F;pwn &lt; input.txt</strong></td>
-<td align="left">把文件内容喂给程序</td>
+<td align="left"><code>&lt;</code></td>
+<td align="left">从文件读取</td>
+<td align="left"><code>./pwn &lt; input.txt</code></td>
 </tr>
 <tr>
-<td align="left"><strong>2&gt;</strong></td>
+<td align="left"><code>2&gt;</code></td>
 <td align="left">重定向 stderr</td>
-<td align="left"><strong>.&#x2F;pwn 2&gt; err.log</strong></td>
-<td align="left">只看错误日志</td>
+<td align="left"><code>./pwn 2&gt; err.log</code></td>
 </tr>
 <tr>
-<td align="left"><strong>&amp;&gt;</strong></td>
-<td align="left">同时重定向 stdout + stderr</td>
-<td align="left"><strong>.&#x2F;pwn &amp;&gt; all.log</strong></td>
-<td align="left">把所有输出都存起来</td>
+<td align="left"><code>&amp;&gt;</code></td>
+<td align="left">重定向 stdout+stderr</td>
+<td align="left"><code>./pwn &amp;&gt; all.log</code></td>
 </tr>
 <tr>
-<td align="left"><strong>&#x2F;dev&#x2F;null</strong></td>
-<td align="left">黑洞（数据丢进去就消失）</td>
-<td align="left"><strong>.&#x2F;pwn &gt; &#x2F;dev&#x2F;null</strong></td>
-<td align="left">不想要输出，只想安静执行</td>
+<td align="left"><code>/dev/null</code></td>
+<td align="left">数据黑洞</td>
+<td align="left"><code>./pwn &gt; /dev/null</code></td>
 </tr>
 </tbody></table>
 
@@ -300,7 +281,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2026-07-23 21:40:56
+              2026-07-23 22:47:52
             </span>
             
                   <span class="post-categories">
@@ -340,7 +321,7 @@
     <div class="title">目录</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80%E4%BF%A1%E6%81%AF"><span class="toc-text">1. 基础信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E5%8F%8D%E7%BC%96%E8%AF%91%E5%88%86%E6%9E%90%EF%BC%88main-%E5%87%BD%E6%95%B0%EF%BC%89"><span class="toc-text">2.反编译分析（main 函数）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-fake-vsreal"><span class="toc-text">3.fake()vsreal()</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E6%A0%B8%E5%BF%83%E6%BC%8F%E6%B4%9E%EF%BC%9A-vs-%E7%9A%84%E6%96%87%E4%BB%B6%E9%87%8D%E5%AE%9A%E5%90%91%E5%B7%AE%E5%BC%82"><span class="toc-text">4.核心漏洞：&gt;vs&gt;&gt;的文件重定向差异</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-%E4%B8%A4%E4%B8%AA%E7%AC%A6%E5%8F%B7%E6%9C%AC%E8%B4%A8%E5%8C%BA%E5%88%AB"><span class="toc-text">4.1 两个符号本质区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-%E6%8E%A8%E6%BC%94%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="toc-text">4.2 推演执行流程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-shell-%E9%87%8D%E5%AE%9A%E5%90%91%E7%AC%A6%E5%8F%B7"><span class="toc-text">5.shell 重定向符号</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80%E4%BF%A1%E6%81%AF"><span class="toc-text">1. 基础信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E5%8F%8D%E7%BC%96%E8%AF%91%E5%88%86%E6%9E%90"><span class="toc-text">2. 反编译分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-fake-vs-real"><span class="toc-text">3. fake() vs real()</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E6%A0%B8%E5%BF%83%E6%BC%8F%E6%B4%9E%EF%BC%9A-vs-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">4. 核心漏洞：&gt; vs &gt;&gt; 的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-shell-%E9%87%8D%E5%AE%9A%E5%90%91%E9%80%9F%E6%9F%A5"><span class="toc-text">5. shell 重定向速查</span></a></li></ol>
       
     </div>
   </div>
