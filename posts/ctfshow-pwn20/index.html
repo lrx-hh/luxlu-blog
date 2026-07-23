@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="author" content="luxlu" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  <meta name="description" content="CTF Misc Forensics Stego Writeup?" />
+  
+  
+  
+  <title>
+    
+      [ pwn 学习 ] CTFshow-pwn20 RELRO与GOT表 
+      
+      
+      |
+    
+     luxlu
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/img/sleepy-cat-favicon.jpg">
+    <link rel="icon" href="/img/sleepy-cat-favicon.jpg">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+    
+<link rel="stylesheet" href="/css/figcaption/mac-block.css">
+
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="luxlu" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/img/avatar.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">luxlu</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">分类</a>
+        </li>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">主页</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">归档</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">关于</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">[ pwn 学习 ] CTFshow-pwn20 RELRO与GOT表</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2026-07-23 21:42:44
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="分类"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/" title="CTF">
+                    <b>#</b> CTF
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Pwn/" title="Pwn">
+                    <b>#</b> Pwn
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="1-提交格式"><a href="#1-提交格式" class="headerlink" title="1.提交格式"></a><font style="color:rgb(33, 37, 41);">1.提交格式</font></h1><p><font style="color:rgb(33, 37, 41);">提交</font><font style="color:rgb(33, 37, 41);">ctfshow{【.got表与.got.plt是否可写(可写为1，不可写为0)】,【.got的地址】,【.got.plt的地址】}</font></p>
+<p><strong><font style="color:rgb(33, 37, 41);">4 个问题 2 个”能不能写” 2 个”地址是多少”</font></strong></p>
+<h1 id="2-IDA"><a href="#2-IDA" class="headerlink" title="2. IDA"></a><strong><font style="color:rgb(33, 37, 41);">2. IDA</font></strong></h1><p><font style="color:rgb(33, 37, 41);">F5 反编译 main 函数，核心逻辑非常短：</font></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步：打印一大段花里胡哨的横幅（省略）</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;...* CTFshow --- PWN --- ...&quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;...* Hint: What is RELRO protection ? ...&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第二步：把你传的十六进制参数转成地址</span></span><br><span class="line">    <span class="type">long</span> addr = strtol(argv[<span class="number">1</span>], <span class="literal">NULL</span>, <span class="number">16</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第三步：往这个地址写入 &quot;RELR&quot; 四个字符</span></span><br><span class="line">    *(<span class="type">long</span> *)addr = <span class="number">0x52454c52</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第四步：把刚写入的内容读出来打印</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;RELRO: %x&quot;</span>, *(<span class="type">int</span> *)addr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">你给它一个地址 → 它往里写 &quot;RELR&quot; → 读出来显示给你</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th><font style="color:rgb(33, 37, 41);">地址可写</font></th>
+<th><font style="color:rgb(33, 37, 41);">地址不可写</font></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><font style="color:rgb(33, 37, 41);">打印 </font><font style="color:rgb(33, 37, 41);">RELRO: 52454c52</font></td>
+<td><font style="color:rgb(33, 37, 41);">程序直接段错误崩溃</font></td>
+</tr>
+</tbody></table>
+<p><font style="color:rgb(33, 37, 41);">程序本质上就是一个 </font>GOT 表可写性测试器<font style="color:rgb(33, 37, 41);">。</font></p>
+<p><strong><font style="color:rgb(33, 37, 41);"></font></strong></p>
+<h1 id="3-前置基础：程序怎么找到函数"><a href="#3-前置基础：程序怎么找到函数" class="headerlink" title="3.前置基础：程序怎么找到函数"></a><font style="color:rgb(33, 37, 41);">3.前置基础：程序怎么找到函数</font></h1><p><font style="color:rgb(33, 37, 41);">先理解程序怎么调用函数</font></p>
+<p><font style="color:rgb(33, 37, 41);">代码里有一行</font><font style="color:rgb(33, 37, 41);">printf(“hello”)</font></p>
+<p><font style="color:rgb(33, 37, 41);">但是</font><font style="color:rgb(33, 37, 41);">printf</font><font style="color:rgb(33, 37, 41);">的真实代码在哪？它不在程序里，在一个叫</font><font style="color:rgb(33, 37, 41);">libc</font><font style="color:rgb(33, 37, 41);">的公共库里</font></p>
+<p><font style="color:rgb(33, 37, 41);">问题是：编译的时候，编译器根本不知道运行的时候</font><font style="color:rgb(33, 37, 41);">libc</font><font style="color:rgb(33, 37, 41);">会被加载到内存的哪个位置</font></p>
+<p><font style="color:rgb(33, 37, 41);"></font></p>
+<h2 id="3-1-两张表"><a href="#3-1-两张表" class="headerlink" title="3.1 两张表"></a><font style="color:rgb(33, 37, 41);">3.1 两张表</font></h2><p><font style="color:rgb(33, 37, 41);">程序内部准备了两张表 一张是</font><font style="color:rgb(33, 37, 41);">PLT</font><font style="color:rgb(33, 37, 41);">表 一张是</font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表</font></p>
+<ul>
+<li><font style="color:rgb(33, 37, 41);">PLT</font><font style="color:rgb(33, 37, 41);">表是中转站，负责任务分发</font></li>
+<li><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表是电话簿，记录每个函数真正的内存地址</font></li>
+</ul>
+<h2 id="3-2-GOT表两部分：-got和-got-plt"><a href="#3-2-GOT表两部分：-got和-got-plt" class="headerlink" title="3.2 GOT表两部分：.got和.got.plt"></a><font style="color:rgb(33, 37, 41);">3.2 </font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表两部分：</font><font style="color:rgb(33, 37, 41);">.got</font><font style="color:rgb(33, 37, 41);">和</font><font style="color:rgb(33, 37, 41);">.got.plt</font></h2><table>
+<thead>
+<tr>
+<th></th>
+<th><code>.got</code></th>
+<th><code>.got.plt</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存放内容</td>
+<td>杂项（<font style="color:rgb(33, 37, 41);">全局变量的地址、动态链接器的内部数据</font>等）</td>
+<td><strong>函数指针</strong><font style="color:rgb(33, 37, 41);">（每个外部函数对应一个 GOT 条目）</font></td>
+</tr>
+<tr>
+<td>条目数量</td>
+<td>很少（2-4 条）</td>
+<td>较多（每个导入函数一条）</td>
+</tr>
+<tr>
+<td>是攻击目标吗</td>
+<td>不太是</td>
+<td><strong>是的</strong></td>
+</tr>
+</tbody></table>
+<h2 id="3-3-为什么GOT表需要能写"><a href="#3-3-为什么GOT表需要能写" class="headerlink" title="3.3 为什么GOT表需要能写"></a><font style="color:rgb(33, 37, 41);">3.3 为什么</font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表需要能写</font></h2><p><font style="color:rgb(33, 37, 41);">Linux</font><font style="color:rgb(33, 37, 41);">为了启动快。默认不会在程序启动时把所有函数地址都查好，而是用到谁再查谁（也就是</font><strong><font style="color:rgb(33, 37, 41);">延迟绑定 Lazy Blinding</font></strong><font style="color:rgb(33, 37, 41);">）</font></p>
+<table>
+<thead>
+<tr>
+<th><font style="color:rgb(33, 37, 41);">时机</font></th>
+<th><font style="color:rgb(33, 37, 41);">GOT 表里 </font><font style="color:rgb(33, 37, 41);">printf</font><font style="color:rgb(33, 37, 41);"> 那一栏写的是</font></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><font style="color:rgb(33, 37, 41);">程序刚启动，还没调用过 </font><font style="color:rgb(33, 37, 41);">printf</font></td>
+<td><font style="color:rgb(33, 37, 41);">“我还没查呢，去找 ld.so 帮忙查”</font></td>
+</tr>
+<tr>
+<td><font style="color:rgb(33, 37, 41);">第一次调用 </font><font style="color:rgb(33, 37, 41);">printf</font></td>
+<td><font style="color:rgb(33, 37, 41);">ld.so 查到地址，填进 GOT 表</font></td>
+</tr>
+<tr>
+<td><font style="color:rgb(33, 37, 41);">之后再调用 </font><font style="color:rgb(33, 37, 41);">printf</font></td>
+<td><font style="color:rgb(33, 37, 41);">地址已经在表里了，直接跳转</font></td>
+</tr>
+</tbody></table>
+<p><font style="color:rgb(33, 37, 41);">也就是说</font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表在程序运行过程中是需要被写入的（至少第一次调用时）</font></p>
+<p><font style="color:rgb(33, 37, 41);"></font></p>
+<h1 id="4-漏洞点：GOT劫持"><a href="#4-漏洞点：GOT劫持" class="headerlink" title="4.漏洞点：GOT劫持"></a><font style="color:rgb(33, 37, 41);">4.漏洞点：</font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">劫持</font></h1><p><font style="color:rgb(33, 37, 41);">漏洞在于如果</font><font style="color:rgb(33, 37, 41);">GOT</font><font style="color:rgb(33, 37, 41);">表是可随意更改的 黑客就可以</font></p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">原来 GOT 表里：  printf → <span class="number">0</span>x7f1234567890 (libc 里 printf 的地址)</span><br><span class="line">                                  ↓ 黑客偷偷改成</span><br><span class="line">改后 GOT 表里：  printf → <span class="number">0</span>x7f9988776655 (<span class="keyword">system</span> 函数的地址)</span><br></pre></td></tr></table></figure>
+
+<p>之后程序只要调用<code>printf(&quot;/bin/sh&quot;)</code>，实际执行的就是<code>system(&quot;/bin/sh&quot;)</code>—— 拿到 shell。</p>
+<p>也就是<strong>GOT劫持（GOT Hijacking）</strong></p>
+<h1 id="5-RELRO：给GOT上锁"><a href="#5-RELRO：给GOT上锁" class="headerlink" title="5.RELRO：给GOT上锁"></a>5.RELRO：给<code>GOT</code>上锁</h1><p>为了防<code>GOT</code>劫持，系统出了一个保护叫<code>RELRO</code>（<code>RELocation Read-Only</code>,把重定位相关的表设为可读）</p>
+<h2 id="5-1-三种等级"><a href="#5-1-三种等级" class="headerlink" title="5.1 三种等级"></a>5.1 三种等级</h2><table>
+<thead>
+<tr>
+<th><strong>等级</strong></th>
+<th><strong>保护程度</strong></th>
+<th><strong>.got 能写？</strong></th>
+<th><strong>.got.plt 能写？</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>No RELRO</td>
+<td>🔓 完全没上锁</td>
+<td>✅ 能写</td>
+<td>✅ 能写</td>
+<td>想怎么改就怎么改</td>
+</tr>
+<tr>
+<td>Partial RELRO</td>
+<td>🔐 上了一半锁</td>
+<td>❌ 不能写</td>
+<td>✅ 能写</td>
+<td>杂项页<code>.got</code>锁了，但是函数地址页<code>.got.plt</code>还能写（因为要支持延迟绑定）</td>
+</tr>
+<tr>
+<td>Full RELRO</td>
+<td>🔒 锁死了</td>
+<td>❌ 不能写</td>
+<td>❌ 不能写</td>
+<td>启动时一次性把所有地址函数查好填完，然后整本电话簿焊死。没法修改了。</td>
+</tr>
+</tbody></table>
+<h2 id="5-2-怎么判断等级"><a href="#5-2-怎么判断等级" class="headerlink" title="5.2 怎么判断等级"></a>5.2 怎么判断等级</h2><table>
+<thead>
+<tr>
+<th><strong>方法</strong></th>
+<th><strong>No RELRO</strong></th>
+<th><strong>Partial RELRO</strong></th>
+<th><strong>Full RELRO</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>checksec</code></td>
+<td><code>No RELRO</code></td>
+<td><code>Partial RELRO</code></td>
+<td><code>Full RELRO</code></td>
+</tr>
+<tr>
+<td>程序头里是否有 <code>GNU_RELRO</code>段？</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>动态段里是否有 <code>BIND_NOW</code>？</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<h1 id="6-解题"><a href="#6-解题" class="headerlink" title="6.解题"></a>6.解题</h1><h3 id="6-1-可写性"><a href="#6-1-可写性" class="headerlink" title="6.1 可写性"></a>6.1 可写性</h3><p>第一步用<code>checksec</code>看一眼</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784727082855-5541e3aa-c324-450b-a689-7db14ee91aad.png"></p>
+<p><font style="color:rgb(33, 37, 41);">RELRO:NO RELRO</font><font style="color:rgb(33, 37, 41);">没有保护</font></p>
+<p><font style="color:rgb(33, 37, 41);">NO RELRO</font><font style="color:rgb(33, 37, 41);">就是两张表都能写 所以前两个空填 1 和 1</font></p>
+<p><font style="color:rgb(33, 37, 41);"></font></p>
+<h3 id="6-2-找两张表地址"><a href="#6-2-找两张表地址" class="headerlink" title="6.2 找两张表地址"></a><font style="color:rgb(33, 37, 41);">6.2 找两张表地址</font></h3><p><font style="color:rgb(33, 37, 41);">第二步用</font><font style="color:rgb(33, 37, 41);">readelf</font><font style="color:rgb(33, 37, 41);">找地址</font></p>
+<p><font style="color:rgb(33, 37, 41);">readelf -S pwn20 | grep -A “.got”</font></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784729947150-b068ab5b-91af-4e28-8d74-3ab3e67f3842.png"></p>
+<p>就知道了<code>.got</code>和<code>.got.plt</code>的地址 并且标志是<code>WA</code>(可写)</p>
+<h2 id="6-3-可选验证：运行程序试一下"><a href="#6-3-可选验证：运行程序试一下" class="headerlink" title="6.3 可选验证：运行程序试一下"></a>6.3 可选验证：运行程序试一下</h2><p>程序本身就可以验证。给它地址，它能写进去就说明可写</p>
+<h3 id="写-got表"><a href="#写-got表" class="headerlink" title="写.got表"></a>写<code>.got</code>表</h3><!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784730094380-7c6b3e02-4dcd-4290-97b0-ab62381666f2.png"></p>
+<p><code>52454c52</code>&#x3D;<code>&quot;RELR&quot;</code>写入成功</p>
+<h3 id="写-got-plt表"><a href="#写-got-plt表" class="headerlink" title="写.got.plt表"></a>写<code>.got.plt</code>表</h3><!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784730275999-c7906b73-01ee-4f3f-8921-391c0aead5a9.png"></p>
+<h2 id="6-4-flag"><a href="#6-4-flag" class="headerlink" title="6.4 flag"></a>6.4 flag</h2><p><font style="color:rgb(33, 37, 41);">ctfshow{1_1_0x600f18_0x600f28}</font></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/pwn19-close-stdout/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2026-07-23 21:42:44
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="分类"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/" title="CTF">
+                        <b>#</b> CTF
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Pwn/" title="Pwn">
+                        <b>#</b> Pwn
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E6%8F%90%E4%BA%A4%E6%A0%BC%E5%BC%8F"><span class="toc-text">1.提交格式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-IDA"><span class="toc-text">2. IDA</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%EF%BC%9A%E7%A8%8B%E5%BA%8F%E6%80%8E%E4%B9%88%E6%89%BE%E5%88%B0%E5%87%BD%E6%95%B0"><span class="toc-text">3.前置基础：程序怎么找到函数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-%E4%B8%A4%E5%BC%A0%E8%A1%A8"><span class="toc-text">3.1 两张表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-GOT%E8%A1%A8%E4%B8%A4%E9%83%A8%E5%88%86%EF%BC%9A-got%E5%92%8C-got-plt"><span class="toc-text">3.2 GOT表两部分：.got和.got.plt</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-%E4%B8%BA%E4%BB%80%E4%B9%88GOT%E8%A1%A8%E9%9C%80%E8%A6%81%E8%83%BD%E5%86%99"><span class="toc-text">3.3 为什么GOT表需要能写</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E6%BC%8F%E6%B4%9E%E7%82%B9%EF%BC%9AGOT%E5%8A%AB%E6%8C%81"><span class="toc-text">4.漏洞点：GOT劫持</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-RELRO%EF%BC%9A%E7%BB%99GOT%E4%B8%8A%E9%94%81"><span class="toc-text">5.RELRO：给GOT上锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-%E4%B8%89%E7%A7%8D%E7%AD%89%E7%BA%A7"><span class="toc-text">5.1 三种等级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E7%AD%89%E7%BA%A7"><span class="toc-text">5.2 怎么判断等级</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-%E8%A7%A3%E9%A2%98"><span class="toc-text">6.解题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E5%8F%AF%E5%86%99%E6%80%A7"><span class="toc-text">6.1 可写性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E6%89%BE%E4%B8%A4%E5%BC%A0%E8%A1%A8%E5%9C%B0%E5%9D%80"><span class="toc-text">6.2 找两张表地址</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-3-%E5%8F%AF%E9%80%89%E9%AA%8C%E8%AF%81%EF%BC%9A%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F%E8%AF%95%E4%B8%80%E4%B8%8B"><span class="toc-text">6.3 可选验证：运行程序试一下</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99-got%E8%A1%A8"><span class="toc-text">写.got表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99-got-plt%E8%A1%A8"><span class="toc-text">写.got.plt表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-4-flag"><span class="toc-text">6.4 flag</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/lrx-hh">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+        <li>
+          
+            <a title="email" href="mailto:mailto:luxlu667@gmail.com">
+              <i class="iconfont icon-envelope"></i>
+            </a>
+            
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a href="https://luxlu.top">Copyright © 2026 luxlu</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+    <div class="footer-views">
+      
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+      
+          本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        
+      
+          本站访客数<span id="busuanzi_value_site_uv"></span>人
+        
+      
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
