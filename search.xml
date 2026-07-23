@@ -5303,4 +5303,99 @@ Ctrl+V 粘贴密码
         <tag>CTF</tag>
       </tags>
   </entry>
+  <entry>
+    <title>[ pwn 学习 ] CTFshow-pwn22 Full RELRO</title>
+    <url>/posts/ctfshow-pwn22/</url>
+    <content><![CDATA[<h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p><img src="/img/yuque/1784818928732-1c9957af-417f-4211-8531-2a994de457f4.png"></p>
+<p><code>Full RELRO</code>，<code>.got</code> 和 <code>.got.plt</code> 都不可写。</p>
+<p>思路是<strong>直接放弃延迟绑定，启动时一次性查完所有函数地址填好，然后把整本电话簿焊死</strong>。</p>
+<h1 id="2-Full-RELRO-的两个标志"><a href="#2-Full-RELRO-的两个标志" class="headerlink" title="2. Full RELRO 的两个标志"></a>2. Full RELRO 的两个标志</h1><h2 id="2-1-BIND-NOW-—-立刻绑定"><a href="#2-1-BIND-NOW-—-立刻绑定" class="headerlink" title="2.1 BIND_NOW — 立刻绑定"></a>2.1 <code>BIND_NOW</code> — 立刻绑定</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">readelf -d pwn22 | grep -i &quot;bind\|flags&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/yuque/1784819103768-926a9208-a061-48de-8cf9-2ed1be811df6.png"></p>
+<p><code>BIND_NOW</code> 告诉动态链接器：<strong>程序启动时就把所有函数地址全部查完，不要等第一次调用再查。</strong> 这是 <code>Full RELRO</code> 的硬性标志。pwn20 和 pwn21 没有这一项。</p>
+<h2 id="2-2-got-plt-消失了"><a href="#2-2-got-plt-消失了" class="headerlink" title="2.2 .got.plt 消失了"></a>2.2 <code>.got.plt</code> 消失了</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">readelf -S pwn22 | grep -A 1 &quot;\.got&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/yuque/1784819269320-d66e32a9-2bf9-4475-9a01-ce0747e8cd03.png"></p>
+<p>只有一张 <code>.got</code> 表，没有 <code>.got.plt</code>。</p>
+<p>既然不搞延迟绑定了，那张留给链接器填地址的 <code>.got.plt</code> 表也就没存在的必要了——所有函数指针直接合进 <code>.got</code> 里，一次性填完就锁。</p>
+<h1 id="3-GNU-RELRO-—-把-got-也锁死"><a href="#3-GNU-RELRO-—-把-got-也锁死" class="headerlink" title="3. GNU_RELRO — 把 .got 也锁死"></a>3. GNU_RELRO — 把 <code>.got</code> 也锁死</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">readelf -l pwn22</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/yuque/1784819381114-6270c290-14a3-4577-a8d8-eea159350b33.png"></p>
+<p>保护区范围：<code>[0x600dc0, 0x600dc0 + 0x240)</code> &#x3D; <code>[0x600dc0, 0x601000)</code></p>
+<p>对照段地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">保护区：[0x600dc0 ───────────── 0x601000)</span><br><span class="line">           ↑                        ↑</span><br><span class="line">    .init_array (0x600dc0)        边界线</span><br><span class="line">    .fini_array (0x600dc8)           │</span><br><span class="line">    .dynamic    (0x600dd0)           │</span><br><span class="line">    .got        (0x600fc0) ──────────┘  ← 圈里 → 只读</span><br><span class="line"></span><br><span class="line">.data (0x601000) ──────────────────  ← 圈外 → 可写（普通数据）</span><br></pre></td></tr></table></figure>
+
+<p>Section to Segment 映射确认：</p>
+<p><img src="/img/yuque/1784819459371-b852be9c-076f-4892-ac81-b2e0be9daa25.png"></p>
+<p><code>GNU_RELRO</code> 把 <code>.got</code> 也罩住了。启动后 <code>mprotect</code> 一把锁死，谁来写谁段错误。</p>
+<p>对比 pwn21（Partial RELRO）：pwn21 的保护区到 <code>0x601000</code>，<code>.got.plt</code> 刚好在边界外逃过一劫。pwn22 没有 <code>.got.plt</code>，<code>.got</code> 被牢牢圈住。</p>
+<h1 id="4-解题"><a href="#4-解题" class="headerlink" title="4. 解题"></a>4. 解题</h1><ul>
+<li><code>Full RELRO</code> + 无 <code>.got.plt</code> → <code>.got</code> 不可写（0）、<code>.got.plt</code> 不存在&#x2F;不可写（0）</li>
+<li><code>.got</code> 地址 → <code>0x600fc0</code></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ctfshow&#123;0_0_0x600fc0&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="5-三题对比速查"><a href="#5-三题对比速查" class="headerlink" title="5. 三题对比速查"></a>5. 三题对比速查</h1><table>
+<thead>
+<tr>
+<th></th>
+<th>pwn20 No RELRO</th>
+<th>pwn21 Partial</th>
+<th>pwn22 Full</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GNU_RELRO</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>BIND_NOW</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>.got.plt 存在？</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌ 消失了</td>
+</tr>
+<tr>
+<td>.got 可写</td>
+<td>✅ 1</td>
+<td>❌ 0</td>
+<td>❌ 0</td>
+</tr>
+<tr>
+<td>.got.plt 可写</td>
+<td>✅ 1</td>
+<td>✅ 1</td>
+<td>❌ 0</td>
+</tr>
+<tr>
+<td>GOT 劫持</td>
+<td>随便搞</td>
+<td>只能搞 .got.plt</td>
+<td>💀 彻底没门</td>
+</tr>
+<tr>
+<td>Flag</td>
+<td><code>&#123;1_1_0x..._0x...&#125;</code></td>
+<td><code>&#123;0_1_0x..._0x...&#125;</code></td>
+<td><code>&#123;0_0_0x...&#125;</code></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>CTF</category>
+        <category>Pwn</category>
+      </categories>
+      <tags>
+        <tag>Pwn</tag>
+        <tag>CTFShow</tag>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
 </search>

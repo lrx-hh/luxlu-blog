@@ -16,7 +16,7 @@
   
   <title>
     
-      archive_a: 2026/1 
+      [ pwn 学习 ] CTFshow-pwn22 Full RELRO 
       
       
       |
@@ -114,221 +114,233 @@
 
 
       <div class="flex-container">
-        <!-- 归档页，按月分组 -->
-<div class="container archives">
-  <div class="post-list">
-    
-        <div class="content-title">
-          <h2><span>2026-07</span></h2>
-        </div>
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn22 Full RELRO">
-        <div class="time-m-d">07-23</div>
-        <div class="title">
-          <a href="/posts/ctfshow-pwn22/">
-            <span>[ pwn 学习 ] CTFshow-pwn22 Full RELRO</span>
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">[ pwn 学习 ] CTFshow-pwn22 Full RELRO</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+          2026-07-23 23:15:26
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="分类"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/" title="CTF">
+                    <b>#</b> CTF
+                  </a>
+                </span>
+                
+                <span class="span--category">
+                  <a href="/categories/CTF/Pwn/" title="Pwn">
+                    <b>#</b> Pwn
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn21 Partial RELRO">
-        <div class="time-m-d">07-23</div>
-        <div class="title">
-          <a href="/posts/ctfshow-pwn21/">
-            <span>[ pwn 学习 ] CTFshow-pwn21 Partial RELRO</span>
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p><img src="/img/yuque/1784818928732-1c9957af-417f-4211-8531-2a994de457f4.png"></p>
+<p><code>Full RELRO</code>，<code>.got</code> 和 <code>.got.plt</code> 都不可写。</p>
+<p>思路是<strong>直接放弃延迟绑定，启动时一次性查完所有函数地址填好，然后把整本电话簿焊死</strong>。</p>
+<h1 id="2-Full-RELRO-的两个标志"><a href="#2-Full-RELRO-的两个标志" class="headerlink" title="2. Full RELRO 的两个标志"></a>2. Full RELRO 的两个标志</h1><h2 id="2-1-BIND-NOW-—-立刻绑定"><a href="#2-1-BIND-NOW-—-立刻绑定" class="headerlink" title="2.1 BIND_NOW — 立刻绑定"></a>2.1 <code>BIND_NOW</code> — 立刻绑定</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readelf -d pwn22 | grep -i &quot;bind\|flags&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/yuque/1784819103768-926a9208-a061-48de-8cf9-2ed1be811df6.png"></p>
+<p><code>BIND_NOW</code> 告诉动态链接器：<strong>程序启动时就把所有函数地址全部查完，不要等第一次调用再查。</strong> 这是 <code>Full RELRO</code> 的硬性标志。pwn20 和 pwn21 没有这一项。</p>
+<h2 id="2-2-got-plt-消失了"><a href="#2-2-got-plt-消失了" class="headerlink" title="2.2 .got.plt 消失了"></a>2.2 <code>.got.plt</code> 消失了</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readelf -S pwn22 | grep -A 1 &quot;\.got&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/yuque/1784819269320-d66e32a9-2bf9-4475-9a01-ce0747e8cd03.png"></p>
+<p>只有一张 <code>.got</code> 表，没有 <code>.got.plt</code>。</p>
+<p>既然不搞延迟绑定了，那张留给链接器填地址的 <code>.got.plt</code> 表也就没存在的必要了——所有函数指针直接合进 <code>.got</code> 里，一次性填完就锁。</p>
+<h1 id="3-GNU-RELRO-—-把-got-也锁死"><a href="#3-GNU-RELRO-—-把-got-也锁死" class="headerlink" title="3. GNU_RELRO — 把 .got 也锁死"></a>3. GNU_RELRO — 把 <code>.got</code> 也锁死</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readelf -l pwn22</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/yuque/1784819381114-6270c290-14a3-4577-a8d8-eea159350b33.png"></p>
+<p>保护区范围：<code>[0x600dc0, 0x600dc0 + 0x240)</code> &#x3D; <code>[0x600dc0, 0x601000)</code></p>
+<p>对照段地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">保护区：[0x600dc0 ───────────── 0x601000)</span><br><span class="line">           ↑                        ↑</span><br><span class="line">    .init_array (0x600dc0)        边界线</span><br><span class="line">    .fini_array (0x600dc8)           │</span><br><span class="line">    .dynamic    (0x600dd0)           │</span><br><span class="line">    .got        (0x600fc0) ──────────┘  ← 圈里 → 只读</span><br><span class="line"></span><br><span class="line">.data (0x601000) ──────────────────  ← 圈外 → 可写（普通数据）</span><br></pre></td></tr></table></figure>
+
+<p>Section to Segment 映射确认：</p>
+<p><img src="/img/yuque/1784819459371-b852be9c-076f-4892-ac81-b2e0be9daa25.png"></p>
+<p><code>GNU_RELRO</code> 把 <code>.got</code> 也罩住了。启动后 <code>mprotect</code> 一把锁死，谁来写谁段错误。</p>
+<p>对比 pwn21（Partial RELRO）：pwn21 的保护区到 <code>0x601000</code>，<code>.got.plt</code> 刚好在边界外逃过一劫。pwn22 没有 <code>.got.plt</code>，<code>.got</code> 被牢牢圈住。</p>
+<h1 id="4-解题"><a href="#4-解题" class="headerlink" title="4. 解题"></a>4. 解题</h1><ul>
+<li><code>Full RELRO</code> + 无 <code>.got.plt</code> → <code>.got</code> 不可写（0）、<code>.got.plt</code> 不存在&#x2F;不可写（0）</li>
+<li><code>.got</code> 地址 → <code>0x600fc0</code></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctfshow&#123;0_0_0x600fc0&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="5-三题对比速查"><a href="#5-三题对比速查" class="headerlink" title="5. 三题对比速查"></a>5. 三题对比速查</h1><table>
+<thead>
+<tr>
+<th></th>
+<th>pwn20 No RELRO</th>
+<th>pwn21 Partial</th>
+<th>pwn22 Full</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GNU_RELRO</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>BIND_NOW</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>.got.plt 存在？</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌ 消失了</td>
+</tr>
+<tr>
+<td>.got 可写</td>
+<td>✅ 1</td>
+<td>❌ 0</td>
+<td>❌ 0</td>
+</tr>
+<tr>
+<td>.got.plt 可写</td>
+<td>✅ 1</td>
+<td>✅ 1</td>
+<td>❌ 0</td>
+</tr>
+<tr>
+<td>GOT 劫持</td>
+<td>随便搞</td>
+<td>只能搞 .got.plt</td>
+<td>💀 彻底没门</td>
+</tr>
+<tr>
+<td>Flag</td>
+<td><code>&#123;1_1_0x..._0x...&#125;</code></td>
+<td><code>&#123;0_1_0x..._0x...&#125;</code></td>
+<td><code>&#123;0_0_0x...&#125;</code></td>
+</tr>
+</tbody></table>
+
       </div>
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn20 RELRO与GOT表">
-        <div class="time-m-d">07-22</div>
-        <div class="title">
-          <a href="/posts/ctfshow-pwn20/">
-            <span>[ pwn 学习 ] CTFshow-pwn20 RELRO与GOT表</span>
-          </a>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/ctfshow-pwn21/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
+              2026-07-23 23:15:26
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="分类"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/" title="CTF">
+                        <b>#</b> CTF
+                      </a>
+                    </span>
+                    
+                    <span class="span--category">
+                      <a href="/categories/CTF/Pwn/" title="Pwn">
+                        <b>#</b> Pwn
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn19 关闭输出流">
-        <div class="time-m-d">07-22</div>
-        <div class="title">
-          <a href="/posts/pwn19-close-stdout/">
-            <span>[ pwn 学习 ] CTFshow-pwn19 关闭输出流</span>
-          </a>
-        </div>
-      </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%9F%BA%E7%A1%80%E4%BF%A1%E6%81%AF"><span class="toc-text">1. 基础信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-Full-RELRO-%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%A0%87%E5%BF%97"><span class="toc-text">2. Full RELRO 的两个标志</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-BIND-NOW-%E2%80%94-%E7%AB%8B%E5%88%BB%E7%BB%91%E5%AE%9A"><span class="toc-text">2.1 BIND_NOW — 立刻绑定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-got-plt-%E6%B6%88%E5%A4%B1%E4%BA%86"><span class="toc-text">2.2 .got.plt 消失了</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-GNU-RELRO-%E2%80%94-%E6%8A%8A-got-%E4%B9%9F%E9%94%81%E6%AD%BB"><span class="toc-text">3. GNU_RELRO — 把 .got 也锁死</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E8%A7%A3%E9%A2%98"><span class="toc-text">4. 解题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E4%B8%89%E9%A2%98%E5%AF%B9%E6%AF%94%E9%80%9F%E6%9F%A5"><span class="toc-text">5. 三题对比速查</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn18">
-        <div class="time-m-d">07-21</div>
-        <div class="title">
-          <a href="/posts/ctfshow-pwn18/">
-            <span>[ pwn 学习 ] CTFshow-pwn18</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-pwn17">
-        <div class="time-m-d">07-21</div>
-        <div class="title">
-          <a href="/posts/ctfshow-pwn17/">
-            <span>[ pwn 学习 ] CTFshow-pwn17</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026-07-21 ZeroG CTF 2026">
-        <div class="time-m-d">07-21</div>
-        <div class="title">
-          <a href="/posts/zeroG-ctf-moonlight-radio/">
-            <span>2026-07-21 ZeroG CTF 2026</span>
-          </a>
-        </div>
-      </div>
-    
-        <div class="content-title">
-          <h2><span>2026-04</span></h2>
-        </div>
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-前置基础 5-12">
-        <div class="time-m-d">04-19</div>
-        <div class="title">
-          <a href="/posts/pre-basic-5-12/">
-            <span>[ pwn 学习 ] CTFshow-前置基础 5-12</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ pwn 学习 ] CTFshow-Test_your_nc 0-4">
-        <div class="time-m-d">04-02</div>
-        <div class="title">
-          <a href="/posts/pwn0-4-test-your-nc/">
-            <span>[ pwn 学习 ] CTFshow-Test_your_nc 0-4</span>
-          </a>
-        </div>
-      </div>
-    
-        <div class="content-title">
-          <h2><span>2026-03</span></h2>
-        </div>
-    
-      <div class="post-item" title="[ misc 知识点 ] 流量分析-USB+键鼠">
-        <div class="time-m-d">03-28</div>
-        <div class="title">
-          <a href="/posts/usb-keyboard-mouse-traffic/">
-            <span>[ misc 知识点 ] 流量分析-USB+键鼠</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ 其他 ] cmd 美化">
-        <div class="time-m-d">03-26</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19775744/">
-            <span>[ 其他 ] cmd 美化</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ 刷题记录 ] 部分 OtterCTF2018(内存取证)">
-        <div class="time-m-d">03-15</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19722235/">
-            <span>[ 刷题记录 ] 部分 OtterCTF2018(内存取证)</span>
-          </a>
-        </div>
-      </div>
-    
-        <div class="content-title">
-          <h2><span>2026-02</span></h2>
-        </div>
-    
-      <div class="post-item" title="[ 刷题记录 ] 攻防世界 QR1">
-        <div class="time-m-d">02-11</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19606190/">
-            <span>[ 刷题记录 ] 攻防世界 QR1</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ misc 知识点 ] AI 逃逸">
-        <div class="time-m-d">02-10</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19600108/">
-            <span>[ misc 知识点 ] AI 逃逸</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ 刷题记录 ] 2026.2.9 刷题记录">
-        <div class="time-m-d">02-10</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19598437/">
-            <span>[ 刷题记录 ] 2026.2.9 刷题记录</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="[ misc 知识点 ] 音视频隐写">
-        <div class="time-m-d">02-08</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19592265/">
-            <span>[ misc 知识点 ] 音视频隐写</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026.1.30 春秋杯">
-        <div class="time-m-d">02-08</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19591857/">
-            <span>2026.1.30 春秋杯</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026.1.24 SpringCTF">
-        <div class="time-m-d">02-06</div>
-        <div class="title">
-          <a href="/posts/cnblogs-19586281/">
-            <span>2026.1.24 SpringCTF</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026.2.2 hgame">
-        <div class="time-m-d">02-02</div>
-        <div class="title">
-          <a href="/posts/hgame-2026-misc/">
-            <span>2026.2.2 hgame</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="2026.2.2 山海杯">
-        <div class="time-m-d">02-02</div>
-        <div class="title">
-          <a href="/posts/shanhai-2026-misc/">
-            <span>2026.2.2 山海杯</span>
-          </a>
-        </div>
-      </div>
-    
-        <div class="content-title">
-          <h2><span>2026-01</span></h2>
-        </div>
-    
-      <div class="post-item" title="2026.1.30 furryCTF">
-        <div class="time-m-d">01-30</div>
-        <div class="title">
-          <a href="/posts/furryCTF-2026-full/">
-            <span>2026.1.30 furryCTF</span>
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-</div>
+
 
         
 <div class="footer">
@@ -606,6 +618,16 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
