@@ -4667,8 +4667,8 @@ Ctrl+V 粘贴密码
       </tags>
   </entry>
   <entry>
-    <title>[ pwn 学习 ] CTFshow-pwn17</title>
-    <url>/posts/ctfshow-pwn17/</url>
+    <title>[ pwn 学习 ] CTFshow-pwn17-20</title>
+    <url>/posts/pwn17-20/</url>
     <content><![CDATA[<h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">checksec pwn17</span><br><span class="line">  Arch:     amd64-<span class="number">64</span>-little</span><br><span class="line">  RELRO:    Full RELRO</span><br><span class="line">  Stack:    Canary found</span><br><span class="line">  NX:       NX enabled</span><br><span class="line">  PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
 
@@ -4678,7 +4678,7 @@ Ctrl+V 粘贴密码
 <ul>
 <li>选项 1：<code>system(&quot;id&quot;)</code>-执行 id 命令</li>
 <li><strong>选项 2：列出目录内容（可自定义目录）</strong></li>
-<li><strong>选项 3：假装要打印 <code>flag</code>（？）</strong></li>
+<li>**选项 3：假装要打印 **<code>**flag**</code><strong>（？）</strong></li>
 <li>选项 4：<code>sleep</code>+认证失败提示</li>
 <li>选项 5：退出</li>
 </ul>
@@ -4690,15 +4690,15 @@ Ctrl+V 粘贴密码
 
 <h2 id="4-1-变量定义"><a href="#4-1-变量定义" class="headerlink" title="4.1 变量定义"></a>4.1 变量定义</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">char</span> dest[<span class="number">4</span>];        <span class="comment">// dest 这个&quot;杯子&quot;只能装 4 个字符</span></span><br><span class="line"><span class="type">char</span> buf[<span class="number">10</span>];        <span class="comment">// buf 这个&quot;杯子&quot;能装 10 个字符</span></span><br><span class="line">read(<span class="number">0</span>, buf, <span class="number">10</span>);    <span class="comment">// 从键盘读 10 个字符放进 buf</span></span><br><span class="line"><span class="built_in">strcat</span>(dest, buf);   <span class="comment">// 把 buf 的内容 &quot;倒进&quot; dest ← 杯子溢出了！</span></span><br></pre></td></tr></table></figure>
 
-<p><code>dest</code>只有 4 字节 它里面预存的是 <code>ls</code>（<code>l</code> <code>s</code> <code>空格</code> <code>\0</code> 刚好 4 字节）</p>
-<h2 id="4-2-漏洞机制"><a href="#4-2-漏洞机制" class="headerlink" title="4.2 漏洞机制"></a>4.2 漏洞机制</h2><p><code>dest[4]</code>只能装 4 个字符 但是 <code>buf[10]</code> 里最多有 10 个字符 把 <code>buf</code> 的内容倒进 <code>dest</code> 会溢出 溢出数据会覆盖 <code>v4</code> 以及栈保护值 <code>canary</code></p>
+<p><code>dest</code>只有 4 字节 它里面预存的是”<code>ls </code>“(<code>l``s``空格``\0</code>刚好 4 字节)</p>
+<h2 id="4-2-漏洞机制"><a href="#4-2-漏洞机制" class="headerlink" title="4.2 漏洞机制"></a>4.2 漏洞机制</h2><p><code>dest[4]</code>只能装 4 个字符 但是<code>buf[10]</code>里最多有 10 个字符 把<code>buf</code>的内容倒进<code>dest</code>会溢出 溢出数据会覆盖<code>v4</code>以及栈保护值<code>canary</code></p>
 <p>溢出之后 还要看溢出的数据到哪里</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="built_in">strcat</span>(dest, buf);<span class="comment">//找到dest的末尾，然后把buf的内容从那里开始往后写</span></span><br><span class="line">system(dest); <span class="comment">//把dest的内容当作系统命令执行</span></span><br></pre></td></tr></table></figure>
 
-<p> 比如 <code>dest</code> 原本存的是 <code>ls</code>，输入 <code>/flag</code>，拼接后变成 <code>ls /flag</code>，然后 <code>system()</code> 会执行（溢出数据如果被 <code>system()</code> 执行，就是命令注入）</p>
-<p>这时 <code>dest</code> 存入 4 个字符 分别是：<code>l</code> <code>s</code> <code>空格符号</code> <code>固定字符串末尾 \0</code></p>
-<p>之后 <code>strcat</code> 拼接时从 <code>\0</code> 位置开始写入。</p>
-<p>找到 <code>\0</code> 后把 <code>\0</code> 替换成 <code>buf</code> 的第一个字符</p>
+<p> 比如<code>dest</code>原本存的是<code>ls</code>，输入<code> /flag</code>，拼接后变成 <code>ls /flag</code>，然后 <code>system()</code>，会执行了（溢出数据如果被<code>system()</code>执行，就是命令注入）</p>
+<p>这时<code>dest</code>存入 4 个字符 分别是：<code>l``s``空格符号``固定字符串末尾 \0</code></p>
+<p>之后<code>strcat</code>拼接时从<code>\0</code>位置开始写入。</p>
+<p>找到<code>\0</code>后把<code>\0</code>替换成<code>buf</code>的第一个字符</p>
 <table>
 <thead>
 <tr>
@@ -4720,24 +4720,24 @@ Ctrl+V 粘贴密码
 </tr>
 </tbody></table>
 <p>问题在于程序对用户的输入零过滤。你输入什么，它就往命令后面拼什么。</p>
-<p>比如原本 <code>dest</code> &#x3D; <code>ls </code></p>
-<p>你输入 <code>/flag</code></p>
-<p><code>strcat</code> 后 <code>dest</code> &#x3D; <code>ls /flag</code></p>
-<p><code>system(&quot;ls /flag&quot;)</code> 就会正常列出 <code>/flag</code> 目录</p>
+<p>比如原本<code>dest</code>&#x3D;”<code>ls </code>“</p>
+<p>你输入<code>/flag</code></p>
+<p><code>strcat</code>后<code>dest</code>&#x3D;”<code>ls /flag</code>“</p>
+<p><code>system(&quot;ls /flag&quot;)</code>就会正常列出<code>/flag</code>目录</p>
 <p>但是如果输入的不是目录名，而是一个命令分割符+任意命令呢……？</p>
-<h1 id="5-攻击思路-分号截断命令注入"><a href="#5-攻击思路-分号截断命令注入" class="headerlink" title="5.攻击思路-分号截断命令注入"></a>5.攻击思路-分号截断命令注入</h1><p><strong>在 Linux shell 中，<code>;</code> 是命令分隔符号。</strong></p>
-<p><strong>执行 <code>cmd1;cmd2</code> 时候，系统会先执行 <code>cmd1</code>，然后无论成功与否，接着执行 <code>cmd2</code></strong></p>
+<h1 id="5-攻击思路-分号截断命令注入"><a href="#5-攻击思路-分号截断命令注入" class="headerlink" title="5.攻击思路-分号截断命令注入"></a>5.攻击思路-分号截断命令注入</h1><p><strong>在 Linux shell 中，</strong><code>**;**</code><strong>是命令分隔符号。</strong></p>
+<p><strong>执行</strong><code>**cmd1;cmd2**</code><strong>时候，系统会先执行</strong><code>**cmd1**</code><strong>，然后无论成功与否，接着执行</strong><code>**cmd2**</code></p>
 <p>那我们就可以构造 payload</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line">;cat /ctf*</span><br></pre></td></tr></table></figure>
 
 <p>9 个字符 满足 10 字符以内</p>
-<p><code>dest</code> 初始内容是 <code>ls </code> 拼接后就是 <code>ls ;cat/ctf*</code></p>
-<p>那么 <code>system</code> 执行 就会 ①ls 列出当前目录 ② <code>cat /ctf*</code>(读取开头为 ctf 的文件)</p>
-<p>（<code>ctf*</code> 的话 ① <code>buf</code> 就不会超过 10 个字符 ② <code>*</code> 是 Linux 通配符，可以匹配任意长度的任意字符。只要根目录 <code>/</code> 下 <code>ctf</code> 开头的文件只有唯一一个 flag 文件。就可以精准匹配到。）</p>
+<p><code>dest</code>初始内容是<code>ls </code> 拼接后就是<code>ls ;cat/ctf*</code></p>
+<p>那么<code>system</code>执行 就会 ①ls 列出当前目录 ②<code>cat /ctf*</code>(读取开头为 ctf 的文件)</p>
+<p>（<code>ctf*</code>的话 ①<code>buf</code>就不会超过 10 个字符 ②<code>*</code>是 Linux 通配符，可以匹配任意长度的任意字符。只要根目录<code>/</code>下<code>ctf</code>开头的文件只有唯一一个 flag 文件。就可以精准匹配到。）</p>
 <p>具体操作：连接题目连上后会看到目录</p>
 <p><strong>输入2</strong></p>
-<p>程序回显 <code>Which directory?(&#39;/&#39;,&#39;./&#39; or the directory you want?)</code></p>
-<p><strong>输入 payload <code>;cat /ctf*</code></strong></p>
+<p>程序回显<code>Which directory?(&#39;/&#39;,&#39;./&#39; or the directory you want?)</code></p>
+<p>**输入 payload **<code>**;cat /ctf***</code></p>
 <p>获得 flag</p>
 <h1 id="6-更多可用的-payload"><a href="#6-更多可用的-payload" class="headerlink" title="6. 更多可用的 payload"></a>6. 更多可用的 payload</h1><table>
 <thead>
@@ -4792,9 +4792,9 @@ Ctrl+V 粘贴密码
 <td><code>make &amp;&amp; ./run</code></td>
 </tr>
 <tr>
-<td><code>||</code></td>
-<td>前一条失败才执行后一条</td>
-<td><code>cat file || echo &quot;no file&quot;</code></td>
+<td>&#96;</td>
+<td></td>
+<td>&#96;</td>
 </tr>
 <tr>
 <td><code>*</code></td>
@@ -4807,14 +4807,14 @@ Ctrl+V 粘贴密码
 <td><code>cat /???</code></td>
 </tr>
 <tr>
-<td><code>|</code></td>
+<td>&#96;</td>
+<td>&#96;</td>
 <td>管道，前一条输出作为后一条输入</td>
-<td><code>cat flag | grep ctf</code></td>
 </tr>
 <tr>
-<td><code>`</code></td>
+<td>&#96;&#96;&#96;</td>
 <td>命令替换（反引号）</td>
-<td><code>echo `ls`</code></td>
+<td><code>echo </code>ls<code> </code></td>
 </tr>
 <tr>
 <td><code>$()</code></td>
@@ -4859,7 +4859,7 @@ Ctrl+V 粘贴密码
 <td>执行命令，如果参数可控 &#x3D; 命令注入</td>
 </tr>
 </tbody></table>
-<h2 id="比较缓冲区大小-vs-实际能写入的大小"><a href="#比较缓冲区大小-vs-实际能写入的大小" class="headerlink" title="比较缓冲区大小 vs 实际能写入的大小"></a>比较缓冲区大小 vs 实际能写入的大小</h2><p>找到缓冲区定义。再看 <code>read</code> 第三个参数或 <code>strcpy/strcat</code> 的目标大小</p>
+<h2 id="比较缓冲区大小-vs-实际能写入的大小"><a href="#比较缓冲区大小-vs-实际能写入的大小" class="headerlink" title="比较缓冲区大小 vs 实际能写入的大小"></a>比较缓冲区大小 vs 实际能写入的大小</h2><p>找到缓冲区定义。再看<code>read</code>第三个参数或<code>strcpy/strcat</code>的目标大小</p>
 <p>如果写入量＞缓冲区大小→存在溢出</p>
 <h2 id="看溢出-注入后数据被用来做什么→确定漏洞类型"><a href="#看溢出-注入后数据被用来做什么→确定漏洞类型" class="headerlink" title="看溢出&#x2F;注入后数据被用来做什么→确定漏洞类型"></a>看溢出&#x2F;注入后数据被用来做什么→确定漏洞类型</h2><table>
 <thead>
@@ -4869,7 +4869,7 @@ Ctrl+V 粘贴密码
 </tr>
 </thead>
 <tbody><tr>
-<td>system() 参数可控</td>
+<td>system () 参数可控</td>
 <td>命令注入（最简单，本题）</td>
 </tr>
 <tr>
@@ -4893,25 +4893,11 @@ Ctrl+V 粘贴密码
 <li><p>注意 长度限制（本题的 10 字节）、坏字符过滤（如 &#x2F;bin&#x2F;sh 被 ban 用 &#x2F;bin&#x2F;bash 替代）等约束</p>
 </li>
 </ul>
-]]></content>
-      <categories>
-        <category>CTF</category>
-        <category>Pwn</category>
-      </categories>
-      <tags>
-        <tag>Pwn</tag>
-        <tag>CTFShow</tag>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[ pwn 学习 ] CTFshow-pwn18</title>
-    <url>/posts/ctfshow-pwn18/</url>
-    <content><![CDATA[<h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
+<h1 id="1-基础信息-1"><a href="#1-基础信息-1" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">checksec pwn17</span><br><span class="line">  Arch:     amd64-<span class="number">64</span>-little</span><br><span class="line">  RELRO:    Full RELRO</span><br><span class="line">  Stack:    Canary found</span><br><span class="line">  NX:       NX enabled</span><br><span class="line">  PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
 
 <p>64 位程序，保护全开（Canary NX PIE 一个不少）和 pwn17 一样防护拉满</p>
-<h1 id="2-反编译分析（main-函数）"><a href="#2-反编译分析（main-函数）" class="headerlink" title="2.反编译分析（main 函数）"></a>2.反编译分析（main 函数）</h1><p>拖进 IDA F5 反编译 核心逻辑很短</p>
+<h1 id="2-反编译分析（main-函数）-1"><a href="#2-反编译分析（main-函数）-1" class="headerlink" title="2.反编译分析（main 函数）"></a>2.反编译分析（main 函数）</h1><p>拖进 IDA F5 反编译 核心逻辑很短</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv, <span class="type">const</span> <span class="type">char</span> **envp)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> v4; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;Which is the real flag?&quot;</span>);</span><br><span class="line">    __isoc99_scanf(<span class="string">&quot;%d&quot;</span>, &amp;v4);</span><br><span class="line">    <span class="keyword">if</span> (v4 == <span class="number">9</span>)</span><br><span class="line">        fake();     <span class="comment">// 输入 9 → 走 fake</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        real();     <span class="comment">// 输入其他 → 走 real</span></span><br><span class="line">    <span class="keyword">return</span> system(<span class="string">&quot;cat /ctfshow_flag&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>程序先问你<code>&quot;Which is the real flag&quot;</code>然后你输入一个数字</p>
@@ -4971,61 +4957,47 @@ Ctrl+V 粘贴密码
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>&gt;</code></td>
+<td align="left"><code>**&gt;**</code></td>
 <td align="left">覆盖写入文件</td>
-<td align="left"><code>echo a &gt; flag</code></td>
+<td align="left"><code>**echo a &gt; flag**</code></td>
 <td align="left">要创建&#x2F;覆盖一个新文件</td>
 </tr>
 <tr>
-<td align="left"><code>&gt;&gt;</code></td>
+<td align="left"><code>**&gt;&gt;**</code></td>
 <td align="left">追加写入文件</td>
-<td align="left"><code>echo a &gt;&gt; flag</code></td>
+<td align="left"><code>**echo a &gt;&gt; flag**</code></td>
 <td align="left">要在文件末尾加内容，不动原来的</td>
 </tr>
 <tr>
-<td align="left"><code>&lt;</code></td>
+<td align="left"><code>**&lt;**</code></td>
 <td align="left">从文件读取输入</td>
-<td align="left"><code>./pwn &lt; input.txt</code></td>
+<td align="left"><code>**./pwn &lt; input.txt**</code></td>
 <td align="left">把文件内容喂给程序</td>
 </tr>
 <tr>
-<td align="left"><code>2&gt;</code></td>
+<td align="left"><code>**2&gt;**</code></td>
 <td align="left">重定向 stderr</td>
-<td align="left"><code>./pwn 2&gt; err.log</code></td>
+<td align="left"><code>**./pwn 2&gt; err.log**</code></td>
 <td align="left">只看错误日志</td>
 </tr>
 <tr>
-<td align="left"><code>&amp;&gt;</code></td>
+<td align="left"><code>**&amp;&gt;**</code></td>
 <td align="left">同时重定向 stdout + stderr</td>
-<td align="left"><code>./pwn &amp;&gt; all.log</code></td>
+<td align="left"><code>**./pwn &amp;&gt; all.log**</code></td>
 <td align="left">把所有输出都存起来</td>
 </tr>
 <tr>
-<td align="left"><code>/dev/null</code></td>
+<td align="left"><code>**/dev/null**</code></td>
 <td align="left">黑洞（数据丢进去就消失）</td>
-<td align="left"><code>./pwn &gt; /dev/null</code></td>
+<td align="left"><code>**./pwn &gt; /dev/null**</code></td>
 <td align="left">不想要输出，只想安静执行</td>
 </tr>
 </tbody></table>
-]]></content>
-      <categories>
-        <category>CTF</category>
-        <category>Pwn</category>
-      </categories>
-      <tags>
-        <tag>Pwn</tag>
-        <tag>CTFShow</tag>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[ pwn 学习 ] CTFshow-pwn19 关闭输出流</title>
-    <url>/posts/pwn19-close-stdout/</url>
-    <content><![CDATA[<h1 id="1-基础信息"><a href="#1-基础信息" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
+<h1 id="1-基础信息-2"><a href="#1-基础信息-2" class="headerlink" title="1. 基础信息"></a>1. 基础信息</h1><p>查看二进制文件安全防护</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">checksec pwn19</span><br><span class="line">  Arch:     amd64-64-little</span><br><span class="line">  RELRO:    Full RELRO</span><br><span class="line">  Stack:    Canary found</span><br><span class="line">  NX:       NX enabled</span><br><span class="line">  PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
 
 <p>64 位程序，保护全开</p>
-<h1 id="2-反编译分析（main-函数）"><a href="#2-反编译分析（main-函数）" class="headerlink" title="2. 反编译分析（main 函数）"></a>2. 反编译分析（main 函数）</h1><p>拖进 IDA F5 反编译</p>
+<h1 id="2-反编译分析（main-函数）-2"><a href="#2-反编译分析（main-函数）-2" class="headerlink" title="2. 反编译分析（main 函数）"></a>2. 反编译分析（main 函数）</h1><p>拖进 IDA F5 反编译</p>
 <p>核心逻辑如下</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">0x30</span>];          <span class="comment">// [rbp-0x30], 实际使用 0x20=32 字节</span></span><br><span class="line">    <span class="type">pid_t</span> pid;               <span class="comment">// [rbp-0x34]</span></span><br><span class="line"></span><br><span class="line">    setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, _IONBF, <span class="number">0</span>);   <span class="comment">// _IONBF = 2</span></span><br><span class="line">    setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, _IONBF, <span class="number">0</span>);    <span class="comment">// _IONBF = 2, 但这里传了 1 (_IOLBF)?</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打印 CTFshow 横幅 (共11段 puts)</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * *************************************                           &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Classify: CTFshow --- PWN ---                                  &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Type  : Linux_Security_Mechanisms                              &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Site  : https://ctf.show/                                      &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Hint  : Turn off output, how to get flag?                      &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;                                                                      &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;give you a shell! now you need to get flag!                           &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * *************************************                           &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Classify: CTFshow --- PWN ---                                  &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Type  : Linux_Security_Mechanisms                              &quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;     * Site  : https://ctf.show/                                      &quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ========== 关键逻辑 ==========</span></span><br><span class="line">    pid = fork();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// ===== 子进程 =====</span></span><br><span class="line">        <span class="built_in">puts</span>(<span class="string">&quot;give you a shell! now you need to get flag!&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// !!! 关闭 stdout，所以子进程的输出你看不到 !!!</span></span><br><span class="line">        fclose(<span class="built_in">stdout</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 从 stdin 读取 32 字节</span></span><br><span class="line">        read(<span class="number">0</span>, buf, <span class="number">0x20</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// !!! 直接将输入传给 system() — 命令注入漏洞 !!!</span></span><br><span class="line">        system(buf);</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// ===== 父进程 =====</span></span><br><span class="line">        wait(<span class="literal">NULL</span>);          <span class="comment">// 等待子进程结束</span></span><br><span class="line">        sleep(<span class="number">3</span>);            <span class="comment">// 睡 3 秒</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;flag is not here!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -5114,7 +5086,7 @@ Ctrl+V 粘贴密码
 <td>把 fd 1（stdout）重定向到 fd 0（stdin）<br/>— 用双向的”耳朵”通道把数据传回来</td>
 </tr>
 </tbody></table>
-<h1 id="6-更多可用的-payload"><a href="#6-更多可用的-payload" class="headerlink" title="6. 更多可用的 payload"></a>6. 更多可用的 payload</h1><table>
+<h1 id="6-更多可用的-payload-1"><a href="#6-更多可用的-payload-1" class="headerlink" title="6. 更多可用的 payload"></a>6. 更多可用的 payload</h1><table>
 <thead>
 <tr>
 <th>Payload</th>
@@ -5325,6 +5297,169 @@ Ctrl+V 粘贴密码
 <td><code>exec cat flag 1&gt;&amp;0</code></td>
 </tr>
 </tbody></table>
+<h1 id="1-提交格式"><a href="#1-提交格式" class="headerlink" title="1.提交格式"></a><font style="color:rgb(33, 37, 41);">1.提交格式</font></h1><p><font style="color:rgb(33, 37, 41);">提交</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;ctfshow&#123;【.got表与.got.plt是否可写(可写为1，不可写为0)】,【.got的地址】,【.got.plt的地址】&#125;&lt;/font&gt;</code></p>
+<p><strong><font style="color:rgb(33, 37, 41);">4 个问题 2 个”能不能写” 2 个”地址是多少”</font></strong></p>
+<h1 id="2-IDA"><a href="#2-IDA" class="headerlink" title="2. IDA"></a><strong><font style="color:rgb(33, 37, 41);">2. IDA</font></strong></h1><p><font style="color:rgb(33, 37, 41);">F5 反编译 main 函数，核心逻辑非常短：</font></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv)</span> &#123;</span><br><span class="line">    <span class="comment">// 第一步：打印一大段花里胡哨的横幅（省略）</span></span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;...* CTFshow --- PWN --- ...&quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;...* Hint: What is RELRO protection ? ...&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第二步：把你传的十六进制参数转成地址</span></span><br><span class="line">    <span class="type">long</span> addr = strtol(argv[<span class="number">1</span>], <span class="literal">NULL</span>, <span class="number">16</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第三步：往这个地址写入 &quot;RELR&quot; 四个字符</span></span><br><span class="line">    *(<span class="type">long</span> *)addr = <span class="number">0x52454c52</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第四步：把刚写入的内容读出来打印</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;RELRO: %x&quot;</span>, *(<span class="type">int</span> *)addr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">你给它一个地址 → 它往里写 &quot;RELR&quot; → 读出来显示给你</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th><font style="color:rgb(33, 37, 41);">地址可写</font></th>
+<th><font style="color:rgb(33, 37, 41);">地址不可写</font></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><font style="color:rgb(33, 37, 41);">打印 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;RELRO: 52454c52&lt;/font&gt;</code></td>
+<td><font style="color:rgb(33, 37, 41);">程序直接段错误崩溃</font></td>
+</tr>
+</tbody></table>
+<p><font style="color:rgb(33, 37, 41);">程序本质上就是一个 </font>GOT 表可写性测试器<font style="color:rgb(33, 37, 41);">。</font></p>
+<p><strong><font style="color:rgb(33, 37, 41);"></font></strong></p>
+<h1 id="3-前置基础：程序怎么找到函数"><a href="#3-前置基础：程序怎么找到函数" class="headerlink" title="3.前置基础：程序怎么找到函数"></a><font style="color:rgb(33, 37, 41);">3.前置基础：程序怎么找到函数</font></h1><p><font style="color:rgb(33, 37, 41);">先理解程序怎么调用函数</font></p>
+<p><font style="color:rgb(33, 37, 41);">代码里有一行</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf(&quot;hello&quot;)&lt;/font&gt;</code></p>
+<p><font style="color:rgb(33, 37, 41);">但是</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">的真实代码在哪？它不在程序里，在一个叫</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;libc&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">的公共库里</font></p>
+<p><font style="color:rgb(33, 37, 41);">问题是：编译的时候，编译器根本不知道运行的时候</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;libc&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">会被加载到内存的哪个位置</font></p>
+<p><font style="color:rgb(33, 37, 41);"></font></p>
+<h2 id="3-1-两张表"><a href="#3-1-两张表" class="headerlink" title="3.1 两张表"></a><font style="color:rgb(33, 37, 41);">3.1 两张表</font></h2><p><font style="color:rgb(33, 37, 41);">程序内部准备了两张表 一张是</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;PLT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表 一张是</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表</font></p>
+<ul>
+<li><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;PLT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表是中转站，负责任务分发</font></li>
+<li><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表是电话簿，记录每个函数真正的内存地址</font></li>
+</ul>
+<h2 id="3-2-GOT表两部分：-got和-got-plt"><a href="#3-2-GOT表两部分：-got和-got-plt" class="headerlink" title="3.2 &lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;表两部分：&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;.got&lt;/font&gt;和&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;.got.plt&lt;/font&gt;"></a><font style="color:rgb(33, 37, 41);">3.2 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表两部分：</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;.got&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">和</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;.got.plt&lt;/font&gt;</code></h2><table>
+<thead>
+<tr>
+<th></th>
+<th><code>.got</code></th>
+<th><code>.got.plt</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存放内容</td>
+<td>杂项（<font style="color:rgb(33, 37, 41);">全局变量的地址、动态链接器的内部数据</font>等）</td>
+<td><strong>函数指针</strong><font style="color:rgb(33, 37, 41);">（每个外部函数对应一个 GOT 条目）</font></td>
+</tr>
+<tr>
+<td>条目数量</td>
+<td>很少（2-4 条）</td>
+<td>较多（每个导入函数一条）</td>
+</tr>
+<tr>
+<td>是攻击目标吗</td>
+<td>不太是</td>
+<td><strong>是的</strong></td>
+</tr>
+</tbody></table>
+<h2 id="3-3-为什么GOT表需要能写"><a href="#3-3-为什么GOT表需要能写" class="headerlink" title="3.3 为什么&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;表需要能写"></a><font style="color:rgb(33, 37, 41);">3.3 为什么</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表需要能写</font></h2><p><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;Linux&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">为了启动快。默认不会在程序启动时把所有函数地址都查好，而是用到谁再查谁（也就是</font><strong><font style="color:rgb(33, 37, 41);">延迟绑定 Lazy Blinding</font></strong><font style="color:rgb(33, 37, 41);">）</font></p>
+<table>
+<thead>
+<tr>
+<th><font style="color:rgb(33, 37, 41);">时机</font></th>
+<th><font style="color:rgb(33, 37, 41);">GOT 表里 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);"> 那一栏写的是</font></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><font style="color:rgb(33, 37, 41);">程序刚启动，还没调用过 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf&lt;/font&gt;</code></td>
+<td><font style="color:rgb(33, 37, 41);">“我还没查呢，去找 ld.so 帮忙查”</font></td>
+</tr>
+<tr>
+<td><font style="color:rgb(33, 37, 41);">第一次调用 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf&lt;/font&gt;</code></td>
+<td><font style="color:rgb(33, 37, 41);">ld.so 查到地址，填进 GOT 表</font></td>
+</tr>
+<tr>
+<td><font style="color:rgb(33, 37, 41);">之后再调用 </font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;printf&lt;/font&gt;</code></td>
+<td><font style="color:rgb(33, 37, 41);">地址已经在表里了，直接跳转</font></td>
+</tr>
+</tbody></table>
+<p><font style="color:rgb(33, 37, 41);">也就是说</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表在程序运行过程中是需要被写入的（至少第一次调用时）</font></p>
+<p><font style="color:rgb(33, 37, 41);"></font></p>
+<h1 id="4-漏洞点：GOT劫持"><a href="#4-漏洞点：GOT劫持" class="headerlink" title="4.漏洞点：&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;劫持"></a><font style="color:rgb(33, 37, 41);">4.漏洞点：</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">劫持</font></h1><p><font style="color:rgb(33, 37, 41);">漏洞在于如果</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;GOT&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">表是可随意更改的 黑客就可以</font></p>
+<figure class="highlight basic"><table><tr><td class="code"><pre><span class="line">原来 GOT 表里：  printf → <span class="number">0</span>x7f1234567890 (libc 里 printf 的地址)</span><br><span class="line">                                  ↓ 黑客偷偷改成</span><br><span class="line">改后 GOT 表里：  printf → <span class="number">0</span>x7f9988776655 (<span class="keyword">system</span> 函数的地址)</span><br></pre></td></tr></table></figure>
+
+<p>之后程序只要调用<code>printf(&quot;/bin/sh&quot;)</code>，实际执行的就是<code>system(&quot;/bin/sh&quot;)</code>—— 拿到 shell。</p>
+<p>也就是<code>**GOT**</code><strong>劫持（<strong><strong>GOT Hijacking</strong></strong>）</strong></p>
+<h1 id="5-RELRO：给GOT上锁"><a href="#5-RELRO：给GOT上锁" class="headerlink" title="5.RELRO：给GOT上锁"></a>5.RELRO：给<code>GOT</code>上锁</h1><p>为了防<code>GOT</code>劫持，系统出了一个保护叫<code>RELRO</code>（<code>RELocation Read-Only</code>,把重定位相关的表设为可读）</p>
+<h2 id="5-1-三种等级"><a href="#5-1-三种等级" class="headerlink" title="5.1 三种等级"></a>5.1 三种等级</h2><table>
+<thead>
+<tr>
+<th><strong>等级</strong></th>
+<th><strong>保护程度</strong></th>
+<th><strong>.got 能写？</strong></th>
+<th><strong>.got.plt 能写？</strong></th>
+<th><strong>备注</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>No RELRO</td>
+<td>🔓 完全没上锁</td>
+<td>✅ 能写</td>
+<td>✅ 能写</td>
+<td>想怎么改就怎么改</td>
+</tr>
+<tr>
+<td>Partial RELRO</td>
+<td>🔐 上了一半锁</td>
+<td>❌ 不能写</td>
+<td>✅ 能写</td>
+<td>杂项页<code>.got</code>锁了，但是函数地址页<code>.got.plt</code>还能写（因为要支持延迟绑定）</td>
+</tr>
+<tr>
+<td>Full RELRO</td>
+<td>🔒 锁死了</td>
+<td>❌ 不能写</td>
+<td>❌ 不能写</td>
+<td>启动时一次性把所有地址函数查好填完，然后整本电话簿焊死。没法修改了。</td>
+</tr>
+</tbody></table>
+<h2 id="5-2-怎么判断等级"><a href="#5-2-怎么判断等级" class="headerlink" title="5.2 怎么判断等级"></a>5.2 怎么判断等级</h2><table>
+<thead>
+<tr>
+<th><strong>方法</strong></th>
+<th><strong>No RELRO</strong></th>
+<th><strong>Partial RELRO</strong></th>
+<th><strong>Full RELRO</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>checksec</code></td>
+<td><code>No RELRO</code></td>
+<td><code>Partial RELRO</code></td>
+<td><code>Full RELRO</code></td>
+</tr>
+<tr>
+<td>程序头里是否有 <code>GNU_RELRO</code>段？</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>动态段里是否有 <code>BIND_NOW</code>？</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<h1 id="6-解题"><a href="#6-解题" class="headerlink" title="6.解题"></a>6.解题</h1><h3 id="6-1-可写性"><a href="#6-1-可写性" class="headerlink" title="6.1 可写性"></a>6.1 可写性</h3><p>第一步用<code>checksec</code>看一眼</p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784727082855-5541e3aa-c324-450b-a689-7db14ee91aad.png"></p>
+<p><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;RELRO:NO RELRO&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">没有保护</font></p>
+<p><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;NO RELRO&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">就是两张表都能写 所以前两个空填 1 和 1</font></p>
+<p><font style="color:rgb(33, 37, 41);"></font></p>
+<h3 id="6-2-找两张表地址"><a href="#6-2-找两张表地址" class="headerlink" title="6.2 找两张表地址"></a><font style="color:rgb(33, 37, 41);">6.2 找两张表地址</font></h3><p><font style="color:rgb(33, 37, 41);">第二步用</font><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;readelf&lt;/font&gt;</code><font style="color:rgb(33, 37, 41);">找地址</font></p>
+<p><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;readelf -S pwn20 | grep -A &quot;\.got&quot;&lt;/font&gt;</code></p>
+<!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784729947150-b068ab5b-91af-4e28-8d74-3ab3e67f3842.png"></p>
+<p>就知道了<code>.got</code>和<code>.got.plt</code>的地址 并且标志是<code>WA</code>(可写)</p>
+<h2 id="6-3-可选验证：运行程序试一下"><a href="#6-3-可选验证：运行程序试一下" class="headerlink" title="6.3 可选验证：运行程序试一下"></a>6.3 可选验证：运行程序试一下</h2><p>程序本身就可以验证。给它地址，它能写进去就说明可写</p>
+<h3 id="写-got表"><a href="#写-got表" class="headerlink" title="写.got表"></a>写<code>.got</code>表</h3><!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784730094380-7c6b3e02-4dcd-4290-97b0-ab62381666f2.png"></p>
+<p><code>52454c52</code>&#x3D;<code>&quot;RELR&quot;</code>写入成功</p>
+<h3 id="写-got-plt表"><a href="#写-got-plt表" class="headerlink" title="写.got.plt表"></a>写<code>.got.plt</code>表</h3><!-- 这是一张图片，ocr 内容为： -->
+<p><img src="https://cdn.nlark.com/yuque/0/2026/png/61758892/1784730275999-c7906b73-01ee-4f3f-8921-391c0aead5a9.png"></p>
+<h2 id="6-4-flag"><a href="#6-4-flag" class="headerlink" title="6.4 flag"></a>6.4 flag</h2><p><code>&lt;font style=&quot;color:rgb(33, 37, 41);&quot;&gt;ctfshow&#123;1_1_0x600f18_0x600f28&#125;&lt;/font&gt;</code></p>
 ]]></content>
       <categories>
         <category>CTF</category>
@@ -5332,7 +5467,6 @@ Ctrl+V 粘贴密码
       </categories>
       <tags>
         <tag>Pwn</tag>
-        <tag>Writeup</tag>
         <tag>CTFShow</tag>
         <tag>CTF</tag>
       </tags>
