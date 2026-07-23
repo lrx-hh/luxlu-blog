@@ -163,7 +163,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-          2026-07-23 11:36:19
+          2026-07-23 18:37:02
         </span>
         
               <span class="post-categories">
@@ -194,7 +194,7 @@
 <ul>
 <li>选项 1：<code>system(&quot;id&quot;)</code>-执行 id 命令</li>
 <li><strong>选项 2：列出目录内容（可自定义目录）</strong></li>
-<li>**选项 3：假装要打印 **<code>**flag**</code><strong>（？）</strong></li>
+<li><strong>选项 3：假装要打印 <code>flag</code>（？）</strong></li>
 <li>选项 4：<code>sleep</code>+认证失败提示</li>
 <li>选项 5：退出</li>
 </ul>
@@ -241,8 +241,8 @@
 <p><code>strcat</code>后<code>dest</code>&#x3D;”<code>ls /flag</code>“</p>
 <p><code>system(&quot;ls /flag&quot;)</code>就会正常列出<code>/flag</code>目录</p>
 <p>但是如果输入的不是目录名，而是一个命令分割符+任意命令呢……？</p>
-<h1 id="5-攻击思路-分号截断命令注入"><a href="#5-攻击思路-分号截断命令注入" class="headerlink" title="5.攻击思路-分号截断命令注入"></a>5.攻击思路-分号截断命令注入</h1><p><strong>在 Linux shell 中，</strong><code>**;**</code><strong>是命令分隔符号。</strong></p>
-<p><strong>执行</strong><code>**cmd1;cmd2**</code><strong>时候，系统会先执行</strong><code>**cmd1**</code><strong>，然后无论成功与否，接着执行</strong><code>**cmd2**</code></p>
+<h1 id="5-攻击思路-分号截断命令注入"><a href="#5-攻击思路-分号截断命令注入" class="headerlink" title="5.攻击思路-分号截断命令注入"></a>5.攻击思路-分号截断命令注入</h1><p><strong>在 Linux shell 中，<code>;</code>是命令分隔符号。</strong></p>
+<p><strong>执行<code>cmd1;cmd2</code>时候，系统会先执行<code>cmd1</code>，然后无论成功与否，接着执行<code>cmd2</code></strong></p>
 <p>那我们就可以构造 payload</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;cat /ctf*</span><br></pre></td></tr></table></figure>
 
@@ -253,7 +253,7 @@
 <p>具体操作：连接题目连上后会看到目录</p>
 <p><strong>输入2</strong></p>
 <p>程序回显<code>Which directory?(&#39;/&#39;,&#39;./&#39; or the directory you want?)</code></p>
-<p>**输入 payload **<code>**;cat /ctf***</code></p>
+<p><strong>输入 payload <code>;cat/ctf*</code></strong></p>
 <p>获得 flag</p>
 <h1 id="6-更多可用的-payload"><a href="#6-更多可用的-payload" class="headerlink" title="6. 更多可用的 payload"></a>6. 更多可用的 payload</h1><table>
 <thead>
@@ -474,39 +474,39 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="left"><code>**&gt;**</code></td>
+<td align="left"><strong>&gt;</strong></td>
 <td align="left">覆盖写入文件</td>
-<td align="left"><code>**echo a &gt; flag**</code></td>
+<td align="left"><strong>echo a &gt; flag</strong></td>
 <td align="left">要创建&#x2F;覆盖一个新文件</td>
 </tr>
 <tr>
-<td align="left"><code>**&gt;&gt;**</code></td>
+<td align="left"><strong>&gt;&gt;</strong></td>
 <td align="left">追加写入文件</td>
-<td align="left"><code>**echo a &gt;&gt; flag**</code></td>
+<td align="left"><strong>echo a &gt;&gt; flag</strong></td>
 <td align="left">要在文件末尾加内容，不动原来的</td>
 </tr>
 <tr>
-<td align="left"><code>**&lt;**</code></td>
+<td align="left"><strong>&lt;</strong></td>
 <td align="left">从文件读取输入</td>
-<td align="left"><code>**./pwn &lt; input.txt**</code></td>
+<td align="left"><strong>.&#x2F;pwn &lt; input.txt</strong></td>
 <td align="left">把文件内容喂给程序</td>
 </tr>
 <tr>
-<td align="left"><code>**2&gt;**</code></td>
+<td align="left"><strong>2&gt;</strong></td>
 <td align="left">重定向 stderr</td>
-<td align="left"><code>**./pwn 2&gt; err.log**</code></td>
+<td align="left"><strong>.&#x2F;pwn 2&gt; err.log</strong></td>
 <td align="left">只看错误日志</td>
 </tr>
 <tr>
-<td align="left"><code>**&amp;&gt;**</code></td>
+<td align="left"><strong>&amp;&gt;</strong></td>
 <td align="left">同时重定向 stdout + stderr</td>
-<td align="left"><code>**./pwn &amp;&gt; all.log**</code></td>
+<td align="left"><strong>.&#x2F;pwn &amp;&gt; all.log</strong></td>
 <td align="left">把所有输出都存起来</td>
 </tr>
 <tr>
-<td align="left"><code>**/dev/null**</code></td>
+<td align="left"><strong>&#x2F;dev&#x2F;null</strong></td>
 <td align="left">黑洞（数据丢进去就消失）</td>
-<td align="left"><code>**./pwn &gt; /dev/null**</code></td>
+<td align="left"><strong>.&#x2F;pwn &gt; &#x2F;dev&#x2F;null</strong></td>
 <td align="left">不想要输出，只想安静执行</td>
 </tr>
 </tbody></table>
@@ -656,8 +656,8 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>**exec cat /ctf* &gt;&amp;0**</code></td>
-<td><code>**&gt;&amp;0**</code>**是 **<code>**1&gt;&amp;0**</code><strong>的简写，效果一样（省 1 字节）</strong></td>
+<td><em><em>exec cat &#x2F;ctf</em> &gt;&amp;0</em>*</td>
+<td><strong>&gt;&amp;0</strong>是 <strong>1&gt;&amp;0</strong>的简写，效果一样（省 1 字节）**</td>
 </tr>
 <tr>
 <td><code>exec cat /ctf* 2&gt;&amp;1</code></td>
@@ -668,7 +668,7 @@
 <td>把 stderr 也重定向到 fd 0</td>
 </tr>
 <tr>
-<td><code>**exec cat /ctf*&gt;&amp;0**</code></td>
+<td><em><em>exec cat &#x2F;ctf</em>&gt;&amp;0</em>*</td>
 <td><strong>极简写法，不带空格也能在 shell 中解析</strong></td>
 </tr>
 </tbody></table>
@@ -733,12 +733,12 @@
 </tr>
 </thead>
 <tbody><tr>
-<td><code>**fclose(stdout)**</code></td>
+<td><strong>fclose(stdout)</strong></td>
 <td><strong>关闭 fd 1，程序失去输出能力</strong></td>
 </tr>
 <tr>
-<td><code>**close(1)**</code></td>
-<td>**同 **<code>**fclose(stdout)**</code><strong>，关闭标准输出</strong></td>
+<td><strong>close(1)</strong></td>
+<td>**同 **fclose(stdout)<strong>，关闭标准输出</strong></td>
 </tr>
 <tr>
 <td><code>dup2(a, b)</code></td>
@@ -899,7 +899,7 @@
 <figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">原来 GOT 表里：  printf → <span class="number">0</span>x7f1234567890 (libc 里 printf 的地址)</span><br><span class="line">                                  ↓ 黑客偷偷改成</span><br><span class="line">改后 GOT 表里：  printf → <span class="number">0</span>x7f9988776655 (<span class="keyword">system</span> 函数的地址)</span><br></pre></td></tr></table></figure>
 
 <p>之后程序只要调用<code>printf(&quot;/bin/sh&quot;)</code>，实际执行的就是<code>system(&quot;/bin/sh&quot;)</code>—— 拿到 shell。</p>
-<p>也就是<code>**GOT**</code><strong>劫持（<strong><strong>GOT Hijacking</strong></strong>）</strong></p>
+<p>也就是<strong>GOT劫持（GOT Hijacking）</strong></p>
 <h1 id="5-RELRO：给GOT上锁"><a href="#5-RELRO：给GOT上锁" class="headerlink" title="5.RELRO：给GOT上锁"></a>5.RELRO：给<code>GOT</code>上锁</h1><p>为了防<code>GOT</code>劫持，系统出了一个保护叫<code>RELRO</code>（<code>RELocation Read-Only</code>,把重定位相关的表设为可读）</p>
 <h2 id="5-1-三种等级"><a href="#5-1-三种等级" class="headerlink" title="5.1 三种等级"></a>5.1 三种等级</h2><table>
 <thead>
@@ -994,7 +994,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="更新时间"></i>
-              2026-07-23 11:36:19
+              2026-07-23 18:37:02
             </span>
             
                   <span class="post-categories">
